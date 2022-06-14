@@ -117,7 +117,7 @@ App that suggests an outfit for the day based on weather predictions. User can l
 
 ## Wireframes
 [Add picture of your hand sketched wireframes in this section]
-<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+<img src="[PROFILE.pdf](https://github.com/niyatiprabhu/Dressmart/files/8903003/PROFILE.pdf)" width=600>
 
 ### [BONUS] Digital Wireframes & Mockups
 
