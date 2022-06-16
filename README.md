@@ -11,14 +11,15 @@ Original App Design Project - README Template
 
 ## Overview
 ### Description
-App that suggests an outfit for the day based on weather predictions. User can log the outfits that they wear on each day, and the app will suggest similar outfits on days when the weather is similar. 
+App that suggests an outfit for the day based on weather predictions. User can log the outfits that they wear on each day, and the app will suggest similar outfits on days when the weather is similar.
 
 ### App Evaluation
+[Evaluation of your app across the following attributes]
 - **Category:** Weather, Fashion, Social
 - **Mobile:** Camera, Location
 - **Story:** Gives users a smarter way to plan out what to wear for the day based on weather predictions and the user's past preferences.
 - **Market:** Anyone who checks the weather and picks out clothing based on that would find this application useful.
-- **Habit:** The app would be useful to check every morning before getting ready. It would form a habit to plan out outfits and log "feedback" at the end of every day. 
+- **Habit:** The app would be useful to check every morning before getting ready. It would form a habit to plan out outfits and log "feedback" at the end of every day.
 - **Scope:** Main features are for each specific user - logging and tracking their own outfits based on the weather. This could expand to create a social feed of other people's outfits for that day and being able to view other users' outfit profiles.
 
 ## Product Spec
@@ -29,7 +30,6 @@ App that suggests an outfit for the day based on weather predictions. User can l
 * Users can log in
 * Users can register an account
 * Users can log out
-* Users can upload a "virtual closet" with each garment they have
 * Users can view weather predictions for the day
 * Users can get a generated outfit suggestion for the day
 * Users can view their past outfits on their profile
@@ -37,12 +37,13 @@ App that suggests an outfit for the day based on weather predictions. User can l
 
 **Optional Nice-to-have Stories**
 
+* Users can upload a "virtual closet" with each garment they have
 * Users will get a push notification in the morning to remind them
-    * "Good morning! Check out today's weather to get started."
+  * "Good morning! Check out today's weather to get started."
 * Users will get a push notification in the evening to give feedback
-    * "Hey there! How did your outfit work out today?"
+  * "Hey there! How did your outfit work out today?"
 * Users can give feedback and set their preferences for hot/cold/etc
-    * The app will adjust outfit suggestions based on this
+  * The app will adjust outfit suggestions based on this
 * Users can friend other users and see friends' outfits on a feed
 * Users can share their outfits to friends
 * Users can search for other users and view their profiles
@@ -51,82 +52,121 @@ App that suggests an outfit for the day based on weather predictions. User can l
 ### 2. Screen Archetypes
 
 * Stream
-    * Users can "like" outfit posts
+  * Users can "like" outfit posts
 * Likes
-    * Users can "like" outfit posts
-* Search
-    * Users can search for other users and view their profiles
-    * Users can friend other users and see friends' outfits on a feed
+  * Users can "like" outfit posts
 * Profile
-    * Users can log out
-    * Users can view their past outfits on their profile
+  * Users can log out
+  * Users can view their past outfits on their profile
 * Login
-    * Users can log in
+  * Users can log in
 * Account Creation
-    * Users can register an account
+  * Users can register an account
 * Upload Garmet
-    * Users can upload a "virtual closet" with each garment they have
+  * Users can upload a "virtual closet" with each garment they have
 * Today
-    * Users can view weather predictions for the day
-    * Users can get a generated outfit suggestion for the day
-    * Users can share their outfit to friends
+  * Users can view weather predictions for the day
+  * Users can get a generated outfit suggestion for the day
+  * Users can share their outfit to friends
 * Feedback
-    * Users can give feedback and set their preferences for hot/cold/etc
+  * Users can give feedback and set their preferences for hot/cold/etc
 * Outfit Detail
-    * Users can view their past outfits on their profile
-* Settings
+  * Users can view their past outfits on their profile
+
 
 ### 3. Navigation
 
 **Tab Navigation** (Tab to Screen)
 
 * Feed
-    * Logout
-    * Profile (other users)
-    * Stream
-    * Search
+  * Profile (other users)
+  * Outfit detail
+  * Stream
 * Profile
-    * Outfit Detail
-    * Upload Garment
-    * Likes
+  * Logout
+  * Outfit Detail
 * Today
-    * Today(includes weather and suggestion)
-    * Feedback
-* Settings
+  * Today(includes weather and suggestion)
+  * Feedback
 
 
 **Flow Navigation** (Screen to Screen)
 
 * Stream
-   * Profile (other users)
-   * Search
-   * Outfit Detail
+  * Profile (other users)
+  * Outfit Detail
 * Profile
-   * Outfit Detail
-   * Likes
-   * Upload Garment
+  * Outfit Detail
+  * login
 * Likes
-    * Outfit Activity
+  * Outfit Activity
 * Search
-    * Profile
+  * Profile
 * Login
-    * Account Creation
-    * Profile
+  * Account Creation
+  * Profile
 * Account Creation
-    * Profile
+  * Profile
 
 ## Wireframes
 [Add picture of your hand sketched wireframes in this section]
-<img width="1204" alt="Screen Shot 2022-06-14 at 11 51 27 AM" src="https://user-images.githubusercontent.com/73393929/173666888-529bcc2c-65ba-4eea-93a9-9da81ed512e5.png">
+<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
 
 ### [BONUS] Digital Wireframes & Mockups
 
 ### [BONUS] Interactive Prototype
 
-## Schema 
+## Schema
 [This section will be completed in Unit 9]
 ### Models
 [Add table of models]
+
+User Model
+| property | id             | description     |
+| -------- |:-------------- |:--------------- |
+| String   | displayName    | the user's name |
+| String   | username       | user's username |
+| String   | password       | user's password |
+| File     | profilePicture | user's pfp      |
+
+
+OutfitPost Model
+| property      | id                 | description                              |
+| ------------- | ------------------ |:---------------------------------------- |
+| User          | author             | whoever made the post                    |
+| List<User>    | likedBy            | whichever users liked this post          |
+| WeatherCond   | weather            | weather for the associated day           |
+| List<Garment> | garments           | all the pieces of clothing in the outfit |
+| File          | wearingOutfitPhoto | picture of user wearing outfit               |
+
+WeatherCond Model
+| property | id          | description                    |
+|:-------- |:----------- |:------------------------------ |
+| int      | temperature | today's avg temp               |
+| String   | condition   | {sunny, cloudy, partly cloudy} |
+| String   | precip      | {rain, snow, hail, none}       |
+| String   | wind        | {high, slight, none}           |
+
+Garment
+| property | id             | description                      |
+|:-------- |:-------------- |:-------------------------------- |
+| String   | description    | description of what the item is  |
+| String   | garmentType    | {top, bottom, outer, shoes}      |
+| String   | subType        | changes depending on garmentType |
+| File     | garmentPicture | picture of the item              |
+
+- if garmentType==Bottom
+  subtype=={shorts, pants, skirt}
+- if garmentType==Top
+  subtype=={shortSleeve, longSleeve, sleeveless}
+- if garmentType==Shoes
+  subtype=={sneakers, boots, formal, sandals}
+- if garmentType==Outer
+  subType=={coat, jacket}
+
+
+
+
 ### Networking
 - [Add list of network requests by screen ]
 - [Create basic snippets for each Parse network request]
