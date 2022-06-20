@@ -14,6 +14,8 @@ public class User extends ParseUser {
     public static final String KEY_DISPLAY_NAME = "displayName";
     public static final String KEY_PROFILE_PICTURE = "profilePicture";
 
+    public User(){}
+
     public List<OutfitPost> getOutfits() {
         List<OutfitPost> outfits = getList(KEY_OUTFITS);
         if (outfits == null) {
