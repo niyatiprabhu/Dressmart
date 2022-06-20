@@ -122,30 +122,26 @@ App that suggests an outfit for the day based on weather predictions. User can l
 [Add table of models]
 
 User Model
-| property | id             | description     |
-| -------- |:-------------- |:--------------- |
-| String   | displayName    | the user's name |
-| String   | username       | user's username |
-| String   | password       | user's password |
-| File     | profilePicture | user's pfp      |
+| property         | id             | description     |
+| ---------------- |:-------------- |:--------------- |
+| String           | displayName    | the user's name |
+| String           | username       | user's username |
+| String           | password       | user's password |
+| File             | profilePicture | user's pfp      |
+| List<OutfitPost> | outfits        | user's outfits. |
+ 
 
 
 OutfitPost Model
-| property      | id                 | description                              |
-| ------------- | ------------------ |:---------------------------------------- |
-| User          | author             | whoever made the post                    |
-| List<User>    | likedBy            | whichever users liked this post          |
-| WeatherCond   | weather            | weather for the associated day           |
-| List<Garment> | garments           | all the pieces of clothing in the outfit |
-| File          | wearingOutfitPhoto | picture of user wearing outfit               |
+| property      | id                   | description                              |
+| ------------- | ------------------   |:---------------------------------------- |
+| User          | author               | whoever made the post                    |
+| List<User>    | likedBy              | whichever users liked this post          |
+| List<Garment> | garments             | all the pieces of clothing in the outfit |
+| File          | wearingOutfitPicture | picture of user wearing outfit           |
+| int           | temperature          | today's avg temp                         |
+| String        | conditions           | {sunny, cloudy, partly cloudy}           |
 
-WeatherCond Model
-| property | id          | description                    |
-|:-------- |:----------- |:------------------------------ |
-| int      | temperature | today's avg temp               |
-| String   | condition   | {sunny, cloudy, partly cloudy} |
-| String   | precip      | {rain, snow, hail, none}       |
-| String   | wind        | {high, slight, none}           |
 
 Garment
 | property | id             | description                      |
@@ -154,6 +150,8 @@ Garment
 | String   | garmentType    | {top, bottom, outer, shoes}      |
 | String   | subType        | changes depending on garmentType |
 | File     | garmentPicture | picture of the item              |
+| User     | owner          | owner of the item                |
+
 
 - if garmentType==Bottom
   subtype=={shorts, pants, skirt}
