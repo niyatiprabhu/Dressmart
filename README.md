@@ -111,8 +111,7 @@ App that suggests an outfit for the day based on weather predictions. User can l
 ## Wireframes
 [Add picture of your hand sketched wireframes in this section]
 ![IMG_0063](https://user-images.githubusercontent.com/73393929/174159974-5f6fd541-ded2-4834-8348-15988b151440.JPG)
-
-### [BONUS] Digital Wireframes & Mockups
+BONUS] Digital Wireframes & Mockups
 
 ### [BONUS] Interactive Prototype
 
