@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.example.dressmart.models.User;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
