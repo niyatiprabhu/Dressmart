@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.example.dressmart.models.User;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -64,11 +63,8 @@ public class SignupActivity extends AppCompatActivity {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
-                    Log.i("Signup Activity", "if");
                     loginUser(username,password);
                 } else {
-                    Log.i("Signup Activity", e.getMessage());
-
                     // Sign up didn't succeed.
                 }
             }
