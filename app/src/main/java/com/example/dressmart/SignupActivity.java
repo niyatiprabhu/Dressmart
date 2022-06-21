@@ -64,11 +64,8 @@ public class SignupActivity extends AppCompatActivity {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
-                    Log.i("Signup Activity", "if");
                     loginUser(username,password);
                 } else {
-                    Log.i("Signup Activity", e.getMessage());
-
                     // Sign up didn't succeed.
                 }
             }
