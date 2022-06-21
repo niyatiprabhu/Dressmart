@@ -51,12 +51,23 @@
             android:id="@+id/tvNumOutfitsProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginStart="56dp"
+            android:layout_marginTop="28dp"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/ivProfilePicProfile"
             app:layout_constraintTop_toBottomOf="@+id/tvDisplayNameProfile"
             tools:text="6 Outfits" />
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="78dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="28dp"
+            android:text="log out"
+            android:textSize="8sp"
+            app:layout_constraintStart_toEndOf="@+id/tvNumOutfitsProfile"
+            app:layout_constraintTop_toBottomOf="@+id/tvUsernameProfile" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView

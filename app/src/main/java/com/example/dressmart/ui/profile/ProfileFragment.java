@@ -1,9 +1,11 @@
 package com.example.dressmart.ui.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +18,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.dressmart.LoginActivity;
+import com.example.dressmart.MainActivity;
 import com.example.dressmart.adapters.ProfileAdapter;
 import com.example.dressmart.databinding.FragmentProfileBinding;
 import com.example.dressmart.models.OutfitPost;
@@ -41,6 +45,7 @@ public class ProfileFragment extends Fragment {
     ImageView ivProfilePicProfile;
     TextView tvDisplayNameProfile;
     TextView tvNumOutfitsProfile;
+    Button btnLogout;
 
     User user = (User) ParseUser.getCurrentUser();
 
@@ -77,6 +82,17 @@ public class ProfileFragment extends Fragment {
         tvDisplayNameProfile = binding.tvDisplayNameProfile;
         ivProfilePicProfile = binding.ivProfilePicProfile;
         tvNumOutfitsProfile = binding.tvNumOutfitsProfile;
+        btnLogout = binding.btnLogout;
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser.logOut();
+                Intent i = new Intent(getActivity(), LoginActivity.class);
+                startActivity(i);
+                getActivity().finish();
+            }
+        });
 
         user.fetchInBackground(new GetCallback<ParseObject>() {
             @Override
