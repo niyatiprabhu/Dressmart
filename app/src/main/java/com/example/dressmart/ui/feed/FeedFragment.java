@@ -1,20 +1,40 @@
 package com.example.dressmart.ui.feed;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.dressmart.R;
+import com.example.dressmart.adapters.FeedAdapter;
 import com.example.dressmart.databinding.FragmentFeedBinding;
+import com.example.dressmart.models.OutfitPost;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FeedFragment extends Fragment {
 
     private FragmentFeedBinding binding;
+    public static final String TAG = "Feed Fragment";
+
+    protected FeedAdapter adapter;
+    protected List<OutfitPost> allPosts;
+
+    private RecyclerView rvPosts;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -23,15 +43,58 @@ public class FeedFragment extends Fragment {
 
         binding = FragmentFeedBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        rvPosts = view.findViewById(R.id.rvPosts);
+
+        // initialize the array that will hold posts and create a PostsAdapter
+        allPosts = new ArrayList<>();
+        adapter = new FeedAdapter(getContext(), allPosts);
+        // set the adapter on the recycler view
+        rvPosts.setAdapter(adapter);
+        // set the layout manager on the recycler view
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        rvPosts.setLayoutManager(llm);
+
+        queryPosts(0);
+
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    protected void queryPosts(int skip) {
+        // specify what type of data we want to query - Post.class
+        ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
+        // include data referred by user key
+        query.include(OutfitPost.KEY_AUTHOR);
+        query.include(OutfitPost.KEY_LIKED_BY);
+        // limit query to latest 20 items
+        query.setLimit(20);
+        query.setSkip(skip);
+        // order posts by creation date (newest first)
+        query.addDescendingOrder("createdAt");
+        // start an asynchronous call for posts
+        query.findInBackground(new FindCallback<OutfitPost>() {
+            @Override
+            public void done(List<OutfitPost> posts, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting posts", e);
+                    return;
+                }
+                // save received posts to list and notify adapter of new data
+                allPosts.addAll(posts);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }

@@ -3,6 +3,7 @@ package com.example.dressmart.models;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 @ParseClassName("Garment")
 public class Garment extends ParseObject {
@@ -12,6 +13,15 @@ public class Garment extends ParseObject {
     public static final String KEY_SUBTYPE = "subType";
     public static final String KEY_GARMENT_PICTURE = "garmentPicture";
     public static final String KEY_OWNER = "owner";
+
+    public Garment(){}
+
+    public Garment(String description, String garmentType, String subtype, User owner) {
+        setDescription(description);
+        setGarmentType(garmentType);
+        setSubtype(subtype);
+        put(KEY_OWNER, owner);
+    }
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);

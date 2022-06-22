@@ -9,7 +9,9 @@
         android:id="@+id/ivUserPost"
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:scaleType="centerCrop"
         tools:layout_editor_absoluteX="-1dp"
         tools:layout_editor_absoluteY="1dp"
         tools:srcCompat="@tools:sample/avatars" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+

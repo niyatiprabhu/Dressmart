@@ -2,6 +2,7 @@ package com.example.dressmart.ui.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,12 +24,17 @@ import com.example.dressmart.LoginActivity;
 import com.example.dressmart.MainActivity;
 import com.example.dressmart.adapters.ProfileAdapter;
 import com.example.dressmart.databinding.FragmentProfileBinding;
+import com.example.dressmart.models.Garment;
 import com.example.dressmart.models.OutfitPost;
 import com.example.dressmart.models.User;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.w3c.dom.Text;
 
@@ -35,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
+
+    public static final String TAG = "Profile Fragment";
 
     private FragmentProfileBinding binding;
 
@@ -65,12 +74,49 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+
+
+
+        // ********************************** TESTING ADDING A NEW OUTFIT POST AND SEEING IF IT SHOWS UP ON GRIDVIEW
+//        Garment top = new Garment("White tee", "Top", "Short-Sleeved", (User) ParseUser.getCurrentUser());
+//        top.saveInBackground();
+//        Garment bottom = new Garment("Corduroy Pants", "Bottoms", "Pants", (User) ParseUser.getCurrentUser());
+//        bottom.saveInBackground();
+//        Garment outer = new Garment("Green Sweater", "Outer", "Sweater", (User) ParseUser.getCurrentUser());
+//        outer.saveInBackground();
+//        Garment shoes = new Garment("Black Converse", "Shoes", "Sneakers", (User) ParseUser.getCurrentUser());
+//        shoes.saveInBackground();
+//        List<Garment> garments = new ArrayList<>();
+//        garments.add(top);
+//        garments.add(bottom);
+//        garments.add(outer);
+//        garments.add(shoes);
+//        OutfitPost newPost = new OutfitPost((User)ParseUser.getCurrentUser(), new ArrayList<>(), garments, 55, "Partly Cloudy");
+//        newPost.saveInBackground(new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                if (e != null) {
+//                    Log.e(TAG, e.getMessage(), e);
+//                    Toast.makeText(getContext(), "Error while saving!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                Log.i(TAG, "Post save was successful!");
+//                Toast.makeText(getContext(), "Success!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+
+
+
+
+
         rvPostsProfile = binding.rvPostsProfile;
 
         int numberOfColumns = 3;
         GridLayoutManager glm = new GridLayoutManager(getContext(), numberOfColumns);
 
-        // initialize the array that will hold posts and create a PostsAdapter
+        // initialize the array that will hold posts and create a ProfileAdapter
         posts = new ArrayList<>();
         adapter = new ProfileAdapter(getContext(), posts);
         // set the adapter on the recycler view
@@ -101,20 +147,41 @@ public class ProfileFragment extends Fragment {
                 Glide.with(ProfileFragment.this).load(user.getProfilePicture().getUrl()).circleCrop().into(ivProfilePicProfile);
                 tvUsernameProfile.setText("@" + user.getUsername());
                 tvDisplayNameProfile.setText(user.getDisplayName());
-                tvNumOutfitsProfile.setText(getNumOutfits());
+                tvNumOutfitsProfile.setText(user.getNumOutfits());
             }
         });
+        Log.i(TAG, "Number of posts: " + adapter.getItemCount());
+        queryPosts(0);
 
     }
 
-    private String getNumOutfits() {
-        int numOutfits = user.getOutfits().size();
-        String displayVal = String.valueOf(numOutfits);
-        if (numOutfits == 1) {
-            displayVal += " Outfit";
-        } else {
-            displayVal += " Outfits";
-        }
-        return displayVal;
+
+    protected void queryPosts(int skip) {
+        // specify what type of data we want to query - Post.class
+        Log.i(TAG, "in queryPost");
+        ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
+        // include data referred by user key
+        query.include(OutfitPost.KEY_AUTHOR);
+        query.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
+        // limit query to latest 20 items
+        query.setLimit(20);
+        query.setSkip(skip);
+        // order posts by creation date (newest first)
+        query.addDescendingOrder("createdAt");
+        // start an asynchronous call for posts
+        query.findInBackground(new FindCallback<OutfitPost>() {
+            @Override
+            public void done(List<OutfitPost> fetchedPosts, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting posts", e);
+                    return;
+                }
+
+                // save received posts to list and notify adapter of new data
+                posts.addAll(fetchedPosts);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }
