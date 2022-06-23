@@ -18,6 +18,16 @@ public class OutfitPost extends ParseObject{
     public static final String KEY_TEMPERATURE = "temperature";
     public static final String KEY_CONDITIONS = "conditions";
 
+    public OutfitPost(){}
+
+    public OutfitPost(User currentUser, ArrayList<User> likedBy, List<Garment> garments, int temp, String conditions) {
+        setAuthor(currentUser);
+        setLikedBy(likedBy);
+        setGarments(garments);
+        put(KEY_TEMPERATURE, temp);
+        put(KEY_CONDITIONS, conditions);
+    }
+
     public User getAuthor() {
         return (User) getParseUser(KEY_AUTHOR);
 

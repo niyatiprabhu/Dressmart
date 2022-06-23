@@ -24,6 +24,18 @@ public class User extends ParseUser {
         return outfits;
     }
 
+    public String getNumOutfits() {
+        int numOutfits = getOutfits().size();
+        return numOutfits + (numOutfits == 1 ? " Outfit" : " Outfits");
+    }
+
+    public void addOutfit(OutfitPost post) {
+        List<OutfitPost> posts = getOutfits();
+        posts.add(post);
+        setOutfits(posts);
+        saveInBackground();
+    }
+
     public void setOutfits(List<OutfitPost> outfitPosts) {
         put(KEY_OUTFITS, outfitPosts);
     }
