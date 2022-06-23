@@ -1,10 +1,13 @@
 package com.example.dressmart.ui.today;
 
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -19,7 +22,9 @@ import com.example.dressmart.R;
 import com.example.dressmart.WeatherCond;
 import com.example.dressmart.databinding.FragmentTodayBinding;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import okhttp3.Headers;
 
@@ -29,13 +34,21 @@ public class TodayFragment extends Fragment {
     private FragmentTodayBinding binding;
     public static final String TAG = "Today Fragment";
 
-    private static final String paramFahrenheit = "units=I&";
-    private static final String paramOneDay = "days=1&";
-    private static final String paramCity = "city=Seattle,WA&";
-    private final String secretKey = getActivity().getString(R.string.api_key);
-
-
     public static final String BASE_URL = "https://api.weatherbit.io/v2.0/forecast/daily?";
+
+    ImageView ivWeatherIconToday;
+    TextView tvTempToday;
+    TextView tvConditionsToday;
+    ImageView ivTopToday;
+    ImageView ivBottomsToday;
+    ImageView ivOuterToday;
+    ImageView ivShoesToday;
+    TextView tvTopDescriptionToday;
+    TextView tvBottomsDescriptionToday;
+    TextView tvOuterDescriptionToday;
+    TextView tvShoesDescriptionToday;
+    Button btnSubmitToday;
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -52,6 +65,36 @@ public class TodayFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        WeatherCond weather = new WeatherCond(getContext());
+        weatherFromJson(weather);
+
+        ivWeatherIconToday = binding.ivWeatherIconToday;
+        tvTempToday = binding.tvTempToday;
+        tvConditionsToday = binding.tvConditionsToday;
+        ivTopToday = binding.ivTopToday;
+        ivBottomsToday = binding.ivBottomsToday;
+        ivOuterToday = binding.ivOuterToday;
+        ivShoesToday = binding.ivShoesToday;
+        tvTopDescriptionToday = binding.tvTopDescriptionToday;
+        tvBottomsDescriptionToday = binding.tvBottomsDescriptionToday;
+        tvOuterDescriptionToday = binding.tvOuterDescriptionToday;
+        tvShoesDescriptionToday = binding.tvShoesDescriptionToday;
+        btnSubmitToday = binding.btnSubmitToday;
+
+
+        // ******** CHECK WHY API NOT WORKING CORRECTLY
+        setConditions(weather);
+        tvTempToday.setText(String.valueOf((int)weather.getAvgTemp()));
+        // set ivWeatherIconToday using the provided icon from API somehow
+
+
+    }
+
+    private void weatherFromJson(WeatherCond weather) {
+        String paramFahrenheit = "units=I&";
+        String paramOneDay = "days=1&";
+        String paramCity = "city=Seattle,WA&";
+        String secretKey = getActivity().getString(R.string.api_key);
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(BASE_URL + paramFahrenheit + paramOneDay + paramCity + secretKey, new JsonHttpResponseHandler() {
@@ -59,15 +102,27 @@ public class TodayFragment extends Fragment {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.d(TAG, "onSuccess");
                 JSONObject jsonObject = json.jsonObject;
-                WeatherCond weather = new WeatherCond(jsonObject);
+                try {
+                    weather.populateWeather(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.i(TAG, "Oops! onFailure");
             }
         });
+    }
 
+    private void setConditions(WeatherCond weather) {
+        if (weather.getCloudCoveragePercentage() < 25) {
+            tvConditionsToday.setText("Sunny");
+        } else if (weather.getCloudCoveragePercentage() < 60) {
+            tvConditionsToday.setText("Partly Cloudy");
+        } else {
+            tvConditionsToday.setText("Overcast");
+        }
     }
 
     @Override
