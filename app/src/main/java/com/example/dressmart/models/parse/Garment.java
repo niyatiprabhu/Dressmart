@@ -1,4 +1,4 @@
-package com.example.dressmart.models;
+package com.example.dressmart.models.parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseException;

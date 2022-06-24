@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dressmart.R;
 import com.example.dressmart.adapters.FeedAdapter;
 import com.example.dressmart.databinding.FragmentFeedBinding;
-import com.example.dressmart.models.OutfitPost;
+import com.example.dressmart.models.parse.OutfitPost;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;

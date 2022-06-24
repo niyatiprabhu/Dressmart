@@ -4,17 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.dressmart.R;
-import com.example.dressmart.models.OutfitPost;
-import com.example.dressmart.ui.profile.ProfileFragment;
+import com.example.dressmart.models.parse.OutfitPost;
 import com.parse.ParseFile;
 
 import java.util.List;

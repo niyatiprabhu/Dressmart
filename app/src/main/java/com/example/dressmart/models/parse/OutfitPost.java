@@ -1,8 +1,7 @@
-package com.example.dressmart.models;
+package com.example.dressmart.models.parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -73,8 +72,17 @@ public class OutfitPost extends ParseObject{
         return getInt(KEY_TEMPERATURE);
     }
 
+    public void setTemperature(int temp) {
+        put(KEY_TEMPERATURE, temp);
+    }
+
+
     public String getConditions() {
         return getString(KEY_CONDITIONS);
+    }
+
+    public void setConditions(String conditions) {
+        put(KEY_CONDITIONS, conditions);
     }
 
 

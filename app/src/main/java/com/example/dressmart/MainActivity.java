@@ -43,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setActionBar(toolbar);
+    }
 
+    void switchToHome() {
 
     }
 
