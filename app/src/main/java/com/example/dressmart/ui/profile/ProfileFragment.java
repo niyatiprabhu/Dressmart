@@ -75,23 +75,23 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-
-
+        Log.i(TAG, user.getNumOutfits());
 
         // ********************************** TESTING ADDING A NEW OUTFIT POST AND SEEING IF IT SHOWS UP ON GRIDVIEW
-//        Garment top = new Garment("White tee", "Top", "Short-Sleeved", (User) ParseUser.getCurrentUser());
+//        Garment top = new Garment("White tee", "Top", "Short-Sleeved");
 //        top.saveInBackground();
-//        Garment bottom = new Garment("Corduroy Pants", "Bottoms", "Pants", (User) ParseUser.getCurrentUser());
+//        Garment bottom = new Garment("Corduroy Pants", "Bottoms", "Pants");
 //        bottom.saveInBackground();
-//        Garment outer = new Garment("Green Sweater", "Outer", "Sweater", (User) ParseUser.getCurrentUser());
+//        Garment outer = new Garment("Green Sweater", "Outer", "Sweater");
 //        outer.saveInBackground();
-//        Garment shoes = new Garment("Black Converse", "Shoes", "Sneakers", (User) ParseUser.getCurrentUser());
+//        Garment shoes = new Garment("Black Converse", "Shoes", "Sneakers");
 //        shoes.saveInBackground();
 //        List<Garment> garments = new ArrayList<>();
 //        garments.add(top);
 //        garments.add(bottom);
 //        garments.add(outer);
 //        garments.add(shoes);
+//        user.setCloset(garments);
 //        OutfitPost newPost = new OutfitPost((User)ParseUser.getCurrentUser(), new ArrayList<>(), garments, 55, "Partly Cloudy");
 //        newPost.saveInBackground(new SaveCallback() {
 //            @Override

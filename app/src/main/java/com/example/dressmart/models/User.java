@@ -13,6 +13,7 @@ public class User extends ParseUser {
     public static final String KEY_OUTFITS = "outfits";
     public static final String KEY_DISPLAY_NAME = "displayName";
     public static final String KEY_PROFILE_PICTURE = "profilePicture";
+    public static final String KEY_CLOSET = "closet";
 
     public User(){}
 
@@ -54,6 +55,15 @@ public class User extends ParseUser {
 
     public void setProfilePicture(ParseFile newProfilePicture) {
         put(KEY_PROFILE_PICTURE, newProfilePicture);
+    }
+
+    // getter and setter for closet
+    public List<Garment> getCloset() {
+        return getList(KEY_CLOSET);
+    }
+
+    public void setCloset(List<Garment> newCloset) {
+        put(KEY_CLOSET, newCloset);
     }
 
 }

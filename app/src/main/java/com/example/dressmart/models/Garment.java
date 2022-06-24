@@ -1,6 +1,7 @@
 package com.example.dressmart.models;
 
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -12,15 +13,13 @@ public class Garment extends ParseObject {
     public static final String KEY_GARMENT_TYPE = "garmentType";
     public static final String KEY_SUBTYPE = "subType";
     public static final String KEY_GARMENT_PICTURE = "garmentPicture";
-    public static final String KEY_OWNER = "owner";
 
     public Garment(){}
 
-    public Garment(String description, String garmentType, String subtype, User owner) {
+    public Garment(String description, String garmentType, String subtype) {
         setDescription(description);
         setGarmentType(garmentType);
         setSubtype(subtype);
-        put(KEY_OWNER, owner);
     }
 
     public String getDescription() {
@@ -31,8 +30,8 @@ public class Garment extends ParseObject {
         put(KEY_DESCRIPTION, newDescription);
     }
 
-    public String getGarmentType() {
-        return getString(KEY_GARMENT_TYPE);
+    public String getGarmentType() throws ParseException {
+        return fetchIfNeeded().getString(KEY_GARMENT_TYPE);
     }
 
     public void setGarmentType(String newType) {
@@ -55,7 +54,4 @@ public class Garment extends ParseObject {
         put(KEY_GARMENT_PICTURE, newPicture);
     }
 
-    public User getOwner() {
-        return (User) getParseUser(KEY_OWNER);
-    }
 }

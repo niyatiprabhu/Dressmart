@@ -7,8 +7,11 @@ import android.util.Log;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import okhttp3.Headers;
 
@@ -17,7 +20,6 @@ public class WeatherCond {
 
     public static final String TAG = "WeatherCond";
 
-    Context context;
 
 
     private double avgTemp;
@@ -25,17 +27,17 @@ public class WeatherCond {
     private double windSpeed;
     private double cloudCoveragePercentage;
 
-    public WeatherCond(Context context){
-        this.context = context;
-    }
+    public WeatherCond(){}
 
     public void populateWeather(JSONObject jsonObject) throws JSONException {
-        double maxTemp = jsonObject.getDouble("max_temp");
-        double minTemp = jsonObject.getDouble("min_temp");
-        avgTemp = (maxTemp + minTemp) / 2;
-        chanceOfPrecip = jsonObject.getDouble("pop");
-        windSpeed = jsonObject.getDouble("wind_spd");
-        cloudCoveragePercentage = jsonObject.getDouble("clouds");
+        JSONObject data = jsonObject.getJSONArray("data").getJSONObject(0);
+        JSONObject weather = data.getJSONObject("weather");
+        double highTemp = data.getDouble("high_temp");
+        double lowTemp = data.getDouble("low_temp");
+        avgTemp = (highTemp + lowTemp) / 2;
+        chanceOfPrecip = data.getDouble("pop");
+        windSpeed = data.getDouble("wind_spd");
+        cloudCoveragePercentage = data.getDouble("clouds");
     }
 
     public double getAvgTemp() {
