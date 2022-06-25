@@ -60,6 +60,7 @@ public class SignupActivity extends AppCompatActivity {
         user.setPassword(password);
         user.setDisplayName(displayName);
         user.setOutfits(new ArrayList<>());
+        user.setCloset(new ArrayList<>());
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {

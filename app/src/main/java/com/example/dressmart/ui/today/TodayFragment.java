@@ -187,10 +187,10 @@ public class TodayFragment extends Fragment {
                             Toast.makeText(getContext(), "Error while saving!", Toast.LENGTH_SHORT).show();
                             return;
                         }
+                        user.addOutfit(post);
                         Log.i(TAG, "Post save was successful!");
                         Toast.makeText(getContext(), "Success!", Toast.LENGTH_SHORT).show();
-                        // ***** WANT TO GO BACK TO HOME FRAGMENT AFTER SUBMITTING PHOTO
-                        //mainActivity.goToFeedFrag();
+
                     }
                 });
             }

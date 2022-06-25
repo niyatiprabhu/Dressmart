@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.dressmart.LoginActivity;
 import com.example.dressmart.adapters.ProfileAdapter;
 import com.example.dressmart.databinding.FragmentProfileBinding;
+import com.example.dressmart.models.parse.Garment;
 import com.example.dressmart.models.parse.OutfitPost;
 import com.example.dressmart.models.parse.User;
 import com.parse.FindCallback;
@@ -30,6 +32,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
