@@ -1,4 +1,4 @@
-package com.example.dressmart.models;
+package com.example.dressmart.models.parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -13,6 +13,7 @@ public class User extends ParseUser {
     public static final String KEY_OUTFITS = "outfits";
     public static final String KEY_DISPLAY_NAME = "displayName";
     public static final String KEY_PROFILE_PICTURE = "profilePicture";
+    public static final String KEY_CLOSET = "closet";
 
     public User(){}
 
@@ -24,10 +25,6 @@ public class User extends ParseUser {
         return outfits;
     }
 
-    public String getNumOutfits() {
-        int numOutfits = getOutfits().size();
-        return numOutfits + (numOutfits == 1 ? " Outfit" : " Outfits");
-    }
 
     public void addOutfit(OutfitPost post) {
         List<OutfitPost> posts = getOutfits();
@@ -56,4 +53,17 @@ public class User extends ParseUser {
         put(KEY_PROFILE_PICTURE, newProfilePicture);
     }
 
+    // getter and setter for closet
+    public List<Garment> getCloset() {
+        return getList(KEY_CLOSET);
+    }
+
+    public void setCloset(List<Garment> newCloset) {
+        put(KEY_CLOSET, newCloset);
+    }
+
+    public String getNumOutfits() {
+        int numOutfits = getOutfits().size();
+        return numOutfits == 1 ? numOutfits + " Outfit" : numOutfits + " Outfits";
+    }
 }

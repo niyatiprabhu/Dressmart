@@ -27,7 +27,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUsername"
+        app:layout_constraintTop_toBottomOf="@+id/tvWeather"
         tools:srcCompat="@tools:sample/avatars" />
 
 
@@ -70,13 +70,13 @@
         tools:srcCompat="@drawable/default_profile_pic" />
 
     <TextView
-        android:id="@+id/tvUsername"
+        android:id="@+id/tvWeather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/tvDisplayName"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="niyatiprabhu" />
+        tools:text="Sunny and 75" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.dressmart.models.User;
+import com.example.dressmart.models.parse.User;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -60,6 +60,7 @@ public class SignupActivity extends AppCompatActivity {
         user.setPassword(password);
         user.setDisplayName(displayName);
         user.setOutfits(new ArrayList<>());
+        user.setCloset(new ArrayList<>());
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {

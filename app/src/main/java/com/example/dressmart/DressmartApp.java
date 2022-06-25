@@ -1,11 +1,10 @@
 package com.example.dressmart;
 
 import android.app.Application;
-import android.content.Context;
 
-import com.example.dressmart.models.Garment;
-import com.example.dressmart.models.OutfitPost;
-import com.example.dressmart.models.User;
+import com.example.dressmart.models.parse.Garment;
+import com.example.dressmart.models.parse.OutfitPost;
+import com.example.dressmart.models.parse.User;
 import com.parse.Parse;
 import com.parse.ParseObject;
 

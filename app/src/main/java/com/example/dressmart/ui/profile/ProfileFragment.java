@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,26 +16,23 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.dressmart.LoginActivity;
-import com.example.dressmart.MainActivity;
 import com.example.dressmart.adapters.ProfileAdapter;
 import com.example.dressmart.databinding.FragmentProfileBinding;
-import com.example.dressmart.models.Garment;
-import com.example.dressmart.models.OutfitPost;
-import com.example.dressmart.models.User;
+import com.example.dressmart.models.parse.Garment;
+import com.example.dressmart.models.parse.OutfitPost;
+import com.example.dressmart.models.parse.User;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,23 +71,23 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-
-
+        Log.i(TAG, user.getNumOutfits());
 
         // ********************************** TESTING ADDING A NEW OUTFIT POST AND SEEING IF IT SHOWS UP ON GRIDVIEW
-//        Garment top = new Garment("White tee", "Top", "Short-Sleeved", (User) ParseUser.getCurrentUser());
+//        Garment top = new Garment("White tee", "Top", "Short-Sleeved");
 //        top.saveInBackground();
-//        Garment bottom = new Garment("Corduroy Pants", "Bottoms", "Pants", (User) ParseUser.getCurrentUser());
+//        Garment bottom = new Garment("Corduroy Pants", "Bottoms", "Pants");
 //        bottom.saveInBackground();
-//        Garment outer = new Garment("Green Sweater", "Outer", "Sweater", (User) ParseUser.getCurrentUser());
+//        Garment outer = new Garment("Green Sweater", "Outer", "Sweater");
 //        outer.saveInBackground();
-//        Garment shoes = new Garment("Black Converse", "Shoes", "Sneakers", (User) ParseUser.getCurrentUser());
+//        Garment shoes = new Garment("Black Converse", "Shoes", "Sneakers");
 //        shoes.saveInBackground();
 //        List<Garment> garments = new ArrayList<>();
 //        garments.add(top);
 //        garments.add(bottom);
 //        garments.add(outer);
 //        garments.add(shoes);
+//        user.setCloset(garments);
 //        OutfitPost newPost = new OutfitPost((User)ParseUser.getCurrentUser(), new ArrayList<>(), garments, 55, "Partly Cloudy");
 //        newPost.saveInBackground(new SaveCallback() {
 //            @Override

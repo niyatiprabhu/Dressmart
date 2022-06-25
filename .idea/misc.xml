@@ -13,14 +13,15 @@
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.8805128205128205" />
         <entry key="app/src/main/res/layout/fragment_feed.xml" value="0.375" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.5421875" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.49537037037037035" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.1888412017167382" />
         <entry key="app/src/main/res/layout/fragment_today.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_post.xml" value="0.1953125" />
-        <entry key="app/src/main/res/layout/item_user_post.xml" value="0.5411458333333333" />
+        <entry key="app/src/main/res/layout/item_user_post.xml" value="0.25" />
         <entry key="app/src/main/res/layout/outfit_post.xml" value="0.375" />
         <entry key="app/src/main/res/layout/toolbar_main.xml" value="0.5625" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.5635416666666667" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.5484375" />
+        <entry key="app/src/main/res/xml/fileprovider.xml" value="0.35052083333333334" />
       </map>
     </option>
   </component>
