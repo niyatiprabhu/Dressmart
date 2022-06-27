@@ -39,20 +39,16 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
-    public static final String TAG = "Profile Fragment";
+    private static final String TAG = "Profile Fragment";
 
     private FragmentProfileBinding binding;
 
-    RecyclerView rvPostsProfile;
-    ProfileAdapter adapter;
-    List<OutfitPost> posts;
-    TextView tvUsernameProfile;
-    ImageView ivProfilePicProfile;
-    TextView tvDisplayNameProfile;
-    TextView tvNumOutfitsProfile;
-    Button btnLogout;
+    private RecyclerView rvPostsProfile;
+    private ProfileAdapter adapter;
+    private List<OutfitPost> posts;
 
-    User user = (User) ParseUser.getCurrentUser();
+
+    private User user = (User) ParseUser.getCurrentUser();
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -120,13 +116,8 @@ public class ProfileFragment extends Fragment {
         // set the layout manager on the recycler view
         rvPostsProfile.setLayoutManager(glm);
 
-        tvUsernameProfile = binding.tvUsernameProfile;
-        tvDisplayNameProfile = binding.tvDisplayNameProfile;
-        ivProfilePicProfile = binding.ivProfilePicProfile;
-        tvNumOutfitsProfile = binding.tvNumOutfitsProfile;
-        btnLogout = binding.btnLogout;
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseUser.logOut();
@@ -140,10 +131,10 @@ public class ProfileFragment extends Fragment {
             @Override
             public void done(ParseObject object, ParseException e) {
                 user = (User) object;
-                Glide.with(ProfileFragment.this).load(user.getProfilePicture().getUrl()).circleCrop().into(ivProfilePicProfile);
-                tvUsernameProfile.setText("@" + user.getUsername());
-                tvDisplayNameProfile.setText(user.getDisplayName());
-                tvNumOutfitsProfile.setText(user.getNumOutfits());
+                Glide.with(ProfileFragment.this).load(user.getProfilePicture().getUrl()).circleCrop().into(binding.ivProfilePicProfile);
+                binding.tvUsernameProfile.setText("@" + user.getUsername());
+                binding.tvDisplayNameProfile.setText(user.getDisplayName());
+                binding.tvNumOutfitsProfile.setText(user.getNumOutfits());
             }
         });
         Log.i(TAG, "Number of posts: " + adapter.getItemCount());

@@ -27,10 +27,10 @@ import java.util.List;
 public class FeedFragment extends Fragment {
 
     private FragmentFeedBinding binding;
-    public static final String TAG = "Feed Fragment";
+    private static final String TAG = "Feed Fragment";
 
-    protected FeedAdapter adapter;
-    protected List<OutfitPost> allPosts;
+    private FeedAdapter adapter;
+    private List<OutfitPost> allPosts;
 
     private RecyclerView rvPosts;
 

@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-import com.example.dressmart.MainActivity;
 import com.example.dressmart.R;
 import com.example.dressmart.models.WeatherCondition;
 import com.example.dressmart.databinding.FragmentTodayBinding;
@@ -173,12 +172,12 @@ public class TodayFragment extends Fragment {
                 // prompt camera app to take outfit pic
                 onLaunchCamera(v);
                 OutfitPost post = new OutfitPost();
-                post.setTemperature((int)weatherCondition.getAvgTemp());
-                post.setConditions(weatherCondition.getConditions());
-                post.setAuthor((User)ParseUser.getCurrentUser());
-                post.setGarments(outfitGarments);
-                post.setWearingOutfitPicture(new ParseFile(photoFile));
-                post.setLikedBy(new ArrayList<>());
+                post.setParseTemperature((int)weatherCondition.getAvgTemp());
+                post.setParseConditions(weatherCondition.getConditions());
+                post.setParseAuthor((User)ParseUser.getCurrentUser());
+                post.setParseGarments(outfitGarments);
+                post.setParseWearingOutfitPicture(new ParseFile(photoFile));
+                post.setParseLikedBy(new ArrayList<>());
                 post.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -187,7 +186,7 @@ public class TodayFragment extends Fragment {
                             Toast.makeText(getContext(), "Error while saving!", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        user.addOutfit(post);
+                        user.addParseOutfit(post);
                         Log.i(TAG, "Post save was successful!");
                         Toast.makeText(getContext(), "Success!", Toast.LENGTH_SHORT).show();
 

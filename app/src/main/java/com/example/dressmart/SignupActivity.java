@@ -4,48 +4,37 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
+import com.example.dressmart.databinding.ActivitySignupBinding;
 import com.example.dressmart.models.parse.User;
-import com.parse.LogInCallback;
+import com.example.dressmart.util.UserUtil;
 import com.parse.ParseException;
-import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import java.util.ArrayList;
 
 public class SignupActivity extends AppCompatActivity {
 
-    public static final String TAG = "Signup Activity";
+    private static final String TAG = "Signup Activity";
 
-    EditText etUsernameSignup;
-    EditText etPasswordSignup;
-    EditText etDisplayNameSignup;
-    ImageButton ibUploadProfilePictureSignup;
-    Button btnDoneSignup;
+   private ActivitySignupBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        binding = ActivitySignupBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        etUsernameSignup = findViewById(R.id.etUsernameSignup);
-        etPasswordSignup = findViewById(R.id.etPasswordSignup);
-        etDisplayNameSignup = findViewById(R.id.etDisplayNameSignup);
-        ibUploadProfilePictureSignup = findViewById(R.id.ibUploadProfilePicSignup);
-        btnDoneSignup = findViewById(R.id.btnDoneSignup);
 
-        btnDoneSignup.setOnClickListener(new View.OnClickListener() {
+        binding.btnDoneSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = etUsernameSignup.getText().toString();
-                String password = etPasswordSignup.getText().toString();
-                String displayName = etDisplayNameSignup.getText().toString();
+                String username = binding.etUsernameSignup.getText().toString();
+                String password = binding.etPasswordSignup.getText().toString();
+                String displayName = binding.etDisplayNameSignup.getText().toString();
                 // TO DO: uploading profile picture
                 signupUser(username, password, displayName);
             }
@@ -58,13 +47,14 @@ public class SignupActivity extends AppCompatActivity {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-        user.setDisplayName(displayName);
-        user.setOutfits(new ArrayList<>());
-        user.setCloset(new ArrayList<>());
+        user.setParseDisplayName(displayName);
+        user.setParseOutfits(new ArrayList<>());
+        user.setParseCloset(new ArrayList<>());
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
-                    loginUser(username,password);
+                    UserUtil.loginUser(username,password);
+                    goMainActivity();
                 } else {
                     // Sign up didn't succeed.
                 }
@@ -72,22 +62,6 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void loginUser(String username, String password) {
-        Log.i(TAG, "Attempting to login user " + username);
-        // Navigate to the main activity if correct
-        ParseUser.logInInBackground(username, password, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (e != null) {
-                    // something went wrong
-                    Log.e(TAG, "Issue with login", e);
-                    return;
-                }
-                goMainActivity();
-                Toast.makeText(SignupActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void goMainActivity() {
         Intent i = new Intent(this, MainActivity.class);
