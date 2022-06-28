@@ -53,8 +53,7 @@ public class SignupActivity extends AppCompatActivity {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
-                    UserUtil.loginUser(username,password);
-                    goMainActivity();
+                    UserUtil.loginUser(username,password, SignupActivity.this);
                 } else {
                     // Sign up didn't succeed.
                 }
@@ -63,10 +62,4 @@ public class SignupActivity extends AppCompatActivity {
     }
 
 
-    private void goMainActivity() {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        // don't want to come back to login screen when click back
-        finish();
-    }
 }

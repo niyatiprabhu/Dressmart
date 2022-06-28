@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // if user already logged in, go straight to main activity
         if (ParseUser.getCurrentUser() != null) {
-            goMainActivity();
+            UserUtil.goMainActivity(LoginActivity.this);
         }
 
 
@@ -45,8 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String username = binding.etUsername.getText().toString();
                 String password = binding.etPassword.getText().toString();
-                UserUtil.loginUser(username, password);
-                goMainActivity();
+                UserUtil.loginUser(username, password, LoginActivity.this);
             }
         });
 
@@ -61,10 +60,5 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void goMainActivity() {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        // don't want to come back to login screen when click back
-        finish();
-    }
+
 }
