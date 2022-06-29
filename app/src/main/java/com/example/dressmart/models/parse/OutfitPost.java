@@ -37,7 +37,6 @@ public class OutfitPost extends ParseObject{
 
     public void setParseAuthor(User user) {
         put(KEY_AUTHOR, user);
-        saveInBackground();
     }
 
     public List<User> getLikedBy() {
@@ -50,7 +49,6 @@ public class OutfitPost extends ParseObject{
 
     public void setParseLikedBy(List<User> newLikedBy) {
         put(KEY_LIKED_BY, newLikedBy);
-        saveInBackground();
     }
 
     public List<Garment> getGarments() {
@@ -63,7 +61,6 @@ public class OutfitPost extends ParseObject{
 
     public void setParseGarments(List<Garment> newGarments) {
         put(KEY_GARMENTS, newGarments);
-        saveInBackground();
     }
 
     public ParseFile getWearingOutfitPicture() {
@@ -72,8 +69,6 @@ public class OutfitPost extends ParseObject{
 
     public void setParseWearingOutfitPicture(ParseFile wearingOutfitPicture) {
         put(KEY_WEARING_OUTFIT_PICTURE, wearingOutfitPicture);
-        saveInBackground();
-
     }
 
     public int getTemperature() {
@@ -82,7 +77,6 @@ public class OutfitPost extends ParseObject{
 
     public void setParseTemperature(int temp) {
         put(KEY_TEMPERATURE, temp);
-        saveInBackground();
     }
 
 
@@ -92,7 +86,5 @@ public class OutfitPost extends ParseObject{
 
     public void setParseConditions(String conditions) {
         put(KEY_CONDITIONS, conditions);
-        saveInBackground();
-
     }
 }

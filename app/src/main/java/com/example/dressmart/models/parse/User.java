@@ -37,7 +37,6 @@ public class User extends ParseUser {
 
     public void setParseOutfits(List<OutfitPost> outfitPosts) {
         put(KEY_OUTFITS, outfitPosts);
-        saveInBackground();
     }
 
     public String getDisplayName() {
@@ -46,7 +45,6 @@ public class User extends ParseUser {
 
     public void setParseDisplayName(String newDisplayName) {
         put(KEY_DISPLAY_NAME, newDisplayName);
-        saveInBackground();
     }
 
     public ParseFile getProfilePicture() {
@@ -55,7 +53,6 @@ public class User extends ParseUser {
 
     public void setParseProfilePicture(ParseFile newProfilePicture) {
         put(KEY_PROFILE_PICTURE, newProfilePicture);
-        saveInBackground();
     }
 
     // getter and setter for closet
@@ -65,7 +62,6 @@ public class User extends ParseUser {
 
     public void setParseCloset(List<Garment> newCloset) {
         put(KEY_CLOSET, newCloset);
-        saveInBackground();
     }
 
     public String getNumOutfits() {

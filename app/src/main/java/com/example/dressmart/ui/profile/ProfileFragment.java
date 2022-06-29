@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.dressmart.LoginActivity;
@@ -28,6 +29,7 @@ import com.example.dressmart.models.parse.OutfitPost;
 import com.example.dressmart.models.parse.User;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -105,12 +107,12 @@ public class ProfileFragment extends Fragment {
 
         rvPostsProfile = binding.rvPostsProfile;
 
-        int numberOfColumns = 3;
+        int numberOfColumns = 2;
         GridLayoutManager glm = new GridLayoutManager(getContext(), numberOfColumns);
 
         // initialize the array that will hold posts and create a ProfileAdapter
         posts = new ArrayList<>();
-        adapter = new ProfileAdapter(getContext(), posts);
+        adapter = new ProfileAdapter(getActivity(), posts);
         // set the adapter on the recycler view
         rvPostsProfile.setAdapter(adapter);
         // set the layout manager on the recycler view
@@ -120,10 +122,15 @@ public class ProfileFragment extends Fragment {
         binding.btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser.logOut();
-                Intent i = new Intent(getActivity(), LoginActivity.class);
-                startActivity(i);
-                getActivity().finish();
+                ParseUser.logOutInBackground(new LogOutCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        Intent i = new Intent(getActivity(), LoginActivity.class);
+                        startActivity(i);
+                        getActivity().finish();
+                    }
+                });
+
             }
         });
 
@@ -131,9 +138,10 @@ public class ProfileFragment extends Fragment {
             @Override
             public void done(ParseObject object, ParseException e) {
                 user = (User) object;
-                Glide.with(ProfileFragment.this).load(user.getProfilePicture().getUrl()).circleCrop().into(binding.ivProfilePicProfile);
+                Glide.with(getContext()).load(user.getProfilePicture().getUrl()).circleCrop().into(binding.ivProfilePicProfile);
                 binding.tvUsernameProfile.setText("@" + user.getUsername());
                 binding.tvDisplayNameProfile.setText(user.getDisplayName());
+                Log.i(TAG, "Number of fits: " + user.getNumOutfits());
                 binding.tvNumOutfitsProfile.setText(user.getNumOutfits());
             }
         });
@@ -149,6 +157,8 @@ public class ProfileFragment extends Fragment {
         ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
         // include data referred by user key
         query.include(OutfitPost.KEY_AUTHOR);
+        query.include(OutfitPost.KEY_GARMENTS);
+        query.include(OutfitPost.KEY_LIKED_BY);
         query.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
         // limit query to latest 20 items
         query.setLimit(20);

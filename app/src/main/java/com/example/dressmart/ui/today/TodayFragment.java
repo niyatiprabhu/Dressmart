@@ -1,7 +1,10 @@
 package com.example.dressmart.ui.today;
 
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -47,11 +50,17 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -81,6 +90,9 @@ public class TodayFragment extends Fragment {
     private double longitude;
     int PERMISSION_ID = 44;
 
+    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
+
+    private LocationRequest mLocationRequest;
 
 
     WeatherCondition weatherCondition;
@@ -101,57 +113,63 @@ public class TodayFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        getLastLocation();
+        view.setVisibility(View.INVISIBLE);
 
+        mFusedLocationClient = getFusedLocationProviderClient(getActivity());
+        startLocationUpdates();
         weatherFromJson();
 
     }
 
 
-    @SuppressLint("MissingPermission")
-    private void getLastLocation() {
-        // check if permissions are given
-        if (checkPermissions()) {
+    // Trigger new location updates at interval
+    protected void startLocationUpdates() {
 
-            // check if location is enabled
-            if (isLocationEnabled()) {
+        // Create the location request to start receiving updates
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(UPDATE_INTERVAL);
 
-                // getting current location from fused location client
-                Task<Location> task = mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+        // Create LocationSettingsRequest object using location request
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        LocationSettingsRequest locationSettingsRequest = builder.build();
+
+        // Check whether location settings are satisfied
+        // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
+        SettingsClient settingsClient = LocationServices.getSettingsClient(getActivity());
+        settingsClient.checkLocationSettings(locationSettingsRequest);
+
+        // new Google API SDK v11 uses getFusedLocationProviderClient(this)
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        getFusedLocationProviderClient(getActivity()).requestLocationUpdates(mLocationRequest, new LocationCallback() {
                     @Override
-                    public void onSuccess(Location location) {
-                        latitude =location.getLatitude();
+                    public void onLocationResult(LocationResult locationResult) {
+                        // do work here
+                        if (locationResult == null) {
+                            Toast.makeText(getActivity(), "locationResult is null", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        //onLocationChanged(locationResult.getLastLocation());
+                        Location location = locationResult.getLastLocation();
+                        latitude = location.getLatitude();
                         longitude = location.getLongitude();
                     }
-                });
-
-            } else {
-                Toast.makeText(getContext(), "Please turn on your location.", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        } else {
-            // if permissions aren't available,
-            // request for permissions
-            requestPermissions();
-        }
+                },
+                Looper.myLooper());
     }
 
 
-    private LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            Location mLastLocation = locationResult.getLastLocation();
-            latitude = mLastLocation.getLatitude();
-            longitude = mLastLocation.getLongitude();
-            Log.i(TAG, "latitude: " + latitude + " longitude: " + longitude);
-        }
-    };
-
     // method to check for permissions
     private boolean checkPermissions() {
-        return ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(
+                getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         // If we want background location
         // on Android 10.0 and higher,
@@ -159,19 +177,6 @@ public class TodayFragment extends Fragment {
         // ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    // method to request for permissions
-    private void requestPermissions() {
-        ActivityCompat.requestPermissions(getActivity(), new String[]{
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ID);
-    }
-
-    // method to check
-    // if location is enabled
-    private boolean isLocationEnabled() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
 
     // If everything is alright then
     @Override
@@ -181,19 +186,10 @@ public class TodayFragment extends Fragment {
 
         if (requestCode == PERMISSION_ID) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
+//                getLastLocation();
             }
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (checkPermissions()) {
-            getLastLocation();
-        }
-    }
-
 
 
     private void weatherFromJson() {
@@ -221,12 +217,12 @@ public class TodayFragment extends Fragment {
 
     private void setWeatherIcon() {
         if (weatherCondition.getConditions().equals("Sunny")) {
-            Glide.with(getContext()).load(R.drawable.sun_icon).override(400, 400).into(binding.ivWeatherIconToday);
+            Glide.with(getActivity()).load(R.drawable.sun_icon).override(400, 400).into(binding.ivWeatherIconToday);
         } else if (weatherCondition.getConditions().equals("Partly Cloudy")) {
-            Glide.with(getContext()).load(R.drawable.partly_cloudy).override(400, 400).into(binding.ivWeatherIconToday);
+            Glide.with(getActivity()).load(R.drawable.partly_cloudy).override(400, 400).into(binding.ivWeatherIconToday);
 
         } else {
-            Glide.with(getContext()).load(R.drawable.cloudy_weather).override(400, 400).into(binding.ivWeatherIconToday);
+            Glide.with(getActivity()).load(R.drawable.cloudy_weather).override(400, 400).into(binding.ivWeatherIconToday);
 
         }
     }
@@ -237,13 +233,9 @@ public class TodayFragment extends Fragment {
         binding.tvTempToday.setText(String.valueOf((int) weatherCondition.getAvgTemp()));
 
         // set ivWeatherIconToday using the provided icon from API somehow
-
-
-
     }
 
     public void parseJson(JsonHttpResponseHandler.JSON json) {
-        JSONObject jsonObject = json.jsonObject;
         try {
             weatherCondition = WeatherCondition.weatherFromJson(json.jsonObject);
             bind();
@@ -255,93 +247,113 @@ public class TodayFragment extends Fragment {
 
     public void selectOutfit() throws ParseException {
         User user = (User) ParseUser.getCurrentUser();
-        Garment top = null, bottoms = null, outer = null, shoes = null;
 
-//        HashMap<String, List<Garment>> closet = new HashMap<>();
-//        for(Garment item : user.getCloset()) {
-//            if(closet.containsKey(item.getGarmentType())) {
-//                //Add to existing list
-//                closet.get(item.getGarmentType()).add(item);
-//
-//            } else {
-//                //Create new list
-//                List<Garment> garments = new ArrayList<Garment>(1);
-//                garments.add(item);
-//                closet.put(item.getGarmentType(), garments);
-//            }
-//        }
-//
-//        for (Garment item : closet.get("Top")) {
-//            if (weatherCondition.getAvgTemp() < 60 && item.getSubtype().equals("Long-Sleeved")) {
-//
-//            }
-//        }
-//        for (Garment item : closet.get("Bottoms")) {
-//
-//        }
-//        for (Garment item : closet.get("Outer")) {
-//
-//        }
-//        for (Garment item : closet.get("Shoes")) {
-//
-//        }
+        // Specify which class to query
+        ParseQuery<User> query = ParseQuery.getQuery(User.class);
+        query.include(User.KEY_CLOSET);
+        query.include(User.KEY_OUTFITS);
+        // Specify the object id
+        query.getInBackground(user.getObjectId(), new GetCallback<User>() {
+            public void done(User user, ParseException e) {
+                if (e == null) {
+                    getView().setVisibility(View.VISIBLE);
+                    Garment top = null, bottoms = null, outer = null, shoes = null;
 
-        for (Garment item : user.getCloset()) {
-            if (item.getGarmentType().equals("Top")) {
-                top = item;
-            } else if (item.getGarmentType().equals("Bottoms")) {
-                bottoms = item;
-            } else if (item.getGarmentType().equals("Outer")) {
-                outer = item;
-            } else {
-                shoes = item;
-            }
-        }
+                    //        HashMap<String, List<Garment>> closet = new HashMap<>();
+                    //        for(Garment item : user.getCloset()) {
+                    //            if(closet.containsKey(item.getGarmentType())) {
+                    //                //Add to existing list
+                    //                closet.get(item.getGarmentType()).add(item);
+                    //
+                    //            } else {
+                    //                //Create new list
+                    //                List<Garment> garments = new ArrayList<Garment>(1);
+                    //                garments.add(item);
+                    //                closet.put(item.getGarmentType(), garments);
+                    //            }
+                    //        }
+                    //
+                    //        for (Garment item : closet.get("Top")) {
+                    //            if (weatherCondition.getAvgTemp() < 60 && item.getSubtype().equals("Long-Sleeved")) {
+                    //
+                    //            }
+                    //        }
+                    //        for (Garment item : closet.get("Bottoms")) {
+                    //
+                    //        }
+                    //        for (Garment item : closet.get("Outer")) {
+                    //
+                    //        }
+                    //        for (Garment item : closet.get("Shoes")) {
+                    //
+                    //        }
 
 
-        // add the garments to a list to associate with the post that is created
-        List<Garment> outfitGarments = new ArrayList<>();
-        outfitGarments.add(top);
-        outfitGarments.add(bottoms);
-        outfitGarments.add(outer);
-        outfitGarments.add(shoes);
 
-        // bind the garments to the UI
-        Glide.with(getContext()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivTopToday);
-        Glide.with(getContext()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivBottomsToday);
-        Glide.with(getContext()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivOuterToday);
-        Glide.with(getContext()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivShoesToday);
-        binding.tvTopDescriptionToday.setText(top.getDescription());
-        binding.tvBottomsDescriptionToday.setText(bottoms.getDescription());
-        binding.tvOuterDescriptionToday.setText(outer.getDescription());
-        binding.tvShoesDescriptionToday.setText(shoes.getDescription());
+                            for (Garment item : user.getCloset()) {
+                                if (item.getGarmentType().equals("Top")) {
+                                    top = item;
+                                } else if (item.getGarmentType().equals("Bottoms")) {
+                                    bottoms = item;
+                                } else if (item.getGarmentType().equals("Outer")) {
+                                    outer = item;
+                                } else {
+                                    shoes = item;
+                                }
+                            }
 
-        binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // prompt camera app to take outfit pic
-                onLaunchCamera(v);
-                OutfitPost post = new OutfitPost();
-                post.setParseTemperature((int)weatherCondition.getAvgTemp());
-                post.setParseConditions(weatherCondition.getConditions());
-                post.setParseAuthor((User)ParseUser.getCurrentUser());
-                post.setParseGarments(outfitGarments);
-                post.setParseWearingOutfitPicture(new ParseFile(photoFile));
-                post.setParseLikedBy(new ArrayList<>());
-                post.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e != null) {
-                            Log.e(TAG, "Issue with saving post", e);
-                            Toast.makeText(getContext(), "Error while saving!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        user.addParseOutfit(post);
-                        Log.i(TAG, "Post save was successful!");
-                        Toast.makeText(getContext(), "Success!", Toast.LENGTH_SHORT).show();
 
-                    }
-                });
+                            // add the garments to a list to associate with the post that is created
+                            List<Garment> outfitGarments = new ArrayList<>();
+                            outfitGarments.add(top);
+                            outfitGarments.add(bottoms);
+                            outfitGarments.add(outer);
+                            outfitGarments.add(shoes);
+
+
+                            // bind the garments to the UI
+                            Glide.with(getActivity()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivTopToday);
+                            Glide.with(getActivity()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivBottomsToday);
+                            Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivOuterToday);
+                            Glide.with(getActivity()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivShoesToday);
+                            binding.tvTopDescriptionToday.setText(top.getDescription());
+                            binding.tvBottomsDescriptionToday.setText(bottoms.getDescription());
+                            binding.tvOuterDescriptionToday.setText(outer.getDescription());
+                            binding.tvShoesDescriptionToday.setText(shoes.getDescription());
+
+                            binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    // prompt camera app to take outfit pic
+                                    onLaunchCamera(v);
+                                    OutfitPost post = new OutfitPost();
+                                    post.setParseTemperature((int)weatherCondition.getAvgTemp());
+                                    post.setParseConditions(weatherCondition.getConditions());
+                                    post.setParseAuthor((User)ParseUser.getCurrentUser());
+                                    post.setParseGarments(outfitGarments);
+                                    post.setParseWearingOutfitPicture(new ParseFile(photoFile));
+                                    post.setParseLikedBy(new ArrayList<>());
+                                    post.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e != null) {
+                                                Log.e(TAG, "Issue with saving post", e);
+                                                Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            user.addParseOutfit(post);
+                                            user.saveInBackground();
+                                            Log.i(TAG, "Post save was successful!");
+                                            Toast.makeText(getActivity(), "Success!", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    });
+
+                                }
+                            });
+                } else {
+                    Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -363,12 +375,12 @@ public class TodayFragment extends Fragment {
         // wrap File object into a content provider
         // required for API >= 24
         // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider.dressmart", photoFile);
+        Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.codepath.fileprovider.dressmart", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
         // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
         // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             // Start the image capture intent to take photo
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
@@ -379,7 +391,7 @@ public class TodayFragment extends Fragment {
         // Get safe storage directory for photos
         // Use `getExternalFilesDir` on Context to access package-specific directories.
         // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+        File mediaStorageDir = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){

@@ -30,16 +30,14 @@ public class Garment extends ParseObject {
 
     public void setParseDescription(String newDescription) {
         put(KEY_DESCRIPTION, newDescription);
-        saveInBackground();
     }
 
-    public String getGarmentType() throws ParseException {
-        return fetchIfNeeded().getString(KEY_GARMENT_TYPE);
+    public String getGarmentType() {
+        return getString(KEY_GARMENT_TYPE);
     }
 
     public void setParseGarmentType(String newType) {
         put(KEY_GARMENT_TYPE, newType);
-        saveInBackground();
     }
 
     public String getSubtype() {
@@ -48,8 +46,6 @@ public class Garment extends ParseObject {
 
     public void setParseSubtype(String newType) {
         put(KEY_SUBTYPE, newType);
-        saveInBackground();
-
     }
 
     public ParseFile getGarmentPicture() {
@@ -58,7 +54,6 @@ public class Garment extends ParseObject {
 
     public void setParseGarmentPicture(ParseFile newPicture) {
         put(KEY_GARMENT_PICTURE, newPicture);
-        saveInBackground();
     }
 
 }
