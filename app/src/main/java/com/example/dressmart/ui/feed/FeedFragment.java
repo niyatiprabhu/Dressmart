@@ -27,10 +27,10 @@ import java.util.List;
 public class FeedFragment extends Fragment {
 
     private FragmentFeedBinding binding;
-    public static final String TAG = "Feed Fragment";
+    private static final String TAG = "Feed Fragment";
 
-    protected FeedAdapter adapter;
-    protected List<OutfitPost> allPosts;
+    private FeedAdapter adapter;
+    private List<OutfitPost> allPosts;
 
     private RecyclerView rvPosts;
 
@@ -53,11 +53,11 @@ public class FeedFragment extends Fragment {
 
         // initialize the array that will hold posts and create a PostsAdapter
         allPosts = new ArrayList<>();
-        adapter = new FeedAdapter(getContext(), allPosts);
+        adapter = new FeedAdapter(getActivity(), allPosts);
         // set the adapter on the recycler view
         rvPosts.setAdapter(adapter);
         // set the layout manager on the recycler view
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rvPosts.setLayoutManager(llm);
 
         queryPosts(0);
@@ -76,6 +76,7 @@ public class FeedFragment extends Fragment {
         // include data referred by user key
         query.include(OutfitPost.KEY_AUTHOR);
         query.include(OutfitPost.KEY_LIKED_BY);
+        query.include(OutfitPost.KEY_GARMENTS);
         // limit query to latest 20 items
         query.setLimit(20);
         query.setSkip(skip);

@@ -11,43 +11,45 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dressmart.databinding.ActivityLoginBinding;
+import com.example.dressmart.databinding.FragmentFeedBinding;
+import com.example.dressmart.models.parse.User;
+import com.example.dressmart.util.UserUtil;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public final String TAG = "Login Activity";
-    EditText etUsername;
-    EditText etPassword;
-    TextView tvNewUser;
-    Button btnLogin;
+    private final String TAG = "Login Activity";
+
+    private ActivityLoginBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+
 
         // if user already logged in, go straight to main activity
         if (ParseUser.getCurrentUser() != null) {
-            goMainActivity();
+            UserUtil.goMainActivity(LoginActivity.this);
         }
 
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-        tvNewUser = findViewById(R.id.tvNewUser);
-        btnLogin = findViewById(R.id.btnLogin);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = etUsername.getText().toString();
-                String password = etPassword.getText().toString();
-                loginUser(username, password);
+                String username = binding.etUsername.getText().toString();
+                String password = binding.etPassword.getText().toString();
+                UserUtil.loginUser(username, password, LoginActivity.this);
             }
         });
 
-        tvNewUser.setOnClickListener(new View.OnClickListener() {
+        binding.tvNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(LoginActivity.this, SignupActivity.class);
@@ -55,31 +57,8 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
     }
 
-    private void loginUser(String username, String password) {
-        Log.i(TAG, "Attempting to login user " + username);
-        // Navigate to the main activity if correct
-        ParseUser.logInInBackground(username, password, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (e != null) {
-                    // something went wrong
-                    Log.e(TAG, "Issue with login", e);
-                    return;
-                }
-                goMainActivity();
-                Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
-    private void goMainActivity() {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        // don't want to come back to login screen when click back
-        finish();
-    }
+
 }

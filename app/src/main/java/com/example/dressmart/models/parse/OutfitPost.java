@@ -7,6 +7,9 @@ import com.parse.ParseObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parse class to model a post that exists on profile and main feed
+ */
 @ParseClassName("OutfitPost")
 public class OutfitPost extends ParseObject{
 
@@ -20,9 +23,9 @@ public class OutfitPost extends ParseObject{
     public OutfitPost(){}
 
     public OutfitPost(User currentUser, ArrayList<User> likedBy, List<Garment> garments, int temp, String conditions) {
-        setAuthor(currentUser);
-        setLikedBy(likedBy);
-        setGarments(garments);
+        setParseAuthor(currentUser);
+        setParseLikedBy(likedBy);
+        setParseGarments(garments);
         put(KEY_TEMPERATURE, temp);
         put(KEY_CONDITIONS, conditions);
     }
@@ -32,7 +35,7 @@ public class OutfitPost extends ParseObject{
 
     }
 
-    public void setAuthor(User user) {
+    public void setParseAuthor(User user) {
         put(KEY_AUTHOR, user);
     }
 
@@ -44,7 +47,7 @@ public class OutfitPost extends ParseObject{
         return likedBy;
     }
 
-    public void setLikedBy(List<User> newLikedBy) {
+    public void setParseLikedBy(List<User> newLikedBy) {
         put(KEY_LIKED_BY, newLikedBy);
     }
 
@@ -56,7 +59,7 @@ public class OutfitPost extends ParseObject{
         return garments;
     }
 
-    public void setGarments(List<Garment> newGarments) {
+    public void setParseGarments(List<Garment> newGarments) {
         put(KEY_GARMENTS, newGarments);
     }
 
@@ -64,7 +67,7 @@ public class OutfitPost extends ParseObject{
         return getParseFile(KEY_WEARING_OUTFIT_PICTURE);
     }
 
-    public void setWearingOutfitPicture(ParseFile wearingOutfitPicture) {
+    public void setParseWearingOutfitPicture(ParseFile wearingOutfitPicture) {
         put(KEY_WEARING_OUTFIT_PICTURE, wearingOutfitPicture);
     }
 
@@ -72,7 +75,7 @@ public class OutfitPost extends ParseObject{
         return getInt(KEY_TEMPERATURE);
     }
 
-    public void setTemperature(int temp) {
+    public void setParseTemperature(int temp) {
         put(KEY_TEMPERATURE, temp);
     }
 
@@ -81,10 +84,7 @@ public class OutfitPost extends ParseObject{
         return getString(KEY_CONDITIONS);
     }
 
-    public void setConditions(String conditions) {
+    public void setParseConditions(String conditions) {
         put(KEY_CONDITIONS, conditions);
     }
-
-
-
 }

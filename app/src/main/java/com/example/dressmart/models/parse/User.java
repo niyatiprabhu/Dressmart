@@ -7,6 +7,9 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  Parse class that models a user on Dressmart
+ */
 @ParseClassName("_User")
 public class User extends ParseUser {
 
@@ -26,14 +29,13 @@ public class User extends ParseUser {
     }
 
 
-    public void addOutfit(OutfitPost post) {
+    public void addParseOutfit(OutfitPost post) {
         List<OutfitPost> posts = getOutfits();
         posts.add(post);
-        setOutfits(posts);
-        saveInBackground();
+        setParseOutfits(posts);
     }
 
-    public void setOutfits(List<OutfitPost> outfitPosts) {
+    public void setParseOutfits(List<OutfitPost> outfitPosts) {
         put(KEY_OUTFITS, outfitPosts);
     }
 
@@ -41,7 +43,7 @@ public class User extends ParseUser {
         return getString(KEY_DISPLAY_NAME);
     }
 
-    public void setDisplayName(String newDisplayName) {
+    public void setParseDisplayName(String newDisplayName) {
         put(KEY_DISPLAY_NAME, newDisplayName);
     }
 
@@ -49,7 +51,7 @@ public class User extends ParseUser {
         return getParseFile(KEY_PROFILE_PICTURE);
     }
 
-    public void setProfilePicture(ParseFile newProfilePicture) {
+    public void setParseProfilePicture(ParseFile newProfilePicture) {
         put(KEY_PROFILE_PICTURE, newProfilePicture);
     }
 
@@ -58,7 +60,7 @@ public class User extends ParseUser {
         return getList(KEY_CLOSET);
     }
 
-    public void setCloset(List<Garment> newCloset) {
+    public void setParseCloset(List<Garment> newCloset) {
         put(KEY_CLOSET, newCloset);
     }
 
