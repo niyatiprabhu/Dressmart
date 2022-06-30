@@ -24,8 +24,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clWeather"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="436dp"
+        android:layout_height="101dp"
         android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -89,18 +89,14 @@
 
     <GridLayout
         android:id="@+id/glGarments"
-        android:layout_width="438dp"
-        android:layout_height="414dp"
-        android:layout_margin="15dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:columnCount="2"
-        android:padding="15dp"
         android:rowCount="2"
         app:layout_constraintBottom_toTopOf="@+id/btnSubmitToday"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvOurPicks"
-        app:layout_constraintVertical_bias="0.857">
+        app:layout_constraintTop_toBottomOf="@+id/tvOurPicks">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvTopGarment"
@@ -108,22 +104,24 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
+            android:layout_margin="10dp"
             android:elevation="15dp"
-            android:padding="15dp"
             app:cardCornerRadius="8dp">
 
             <LinearLayout
                 android:layout_width="200dp"
-                android:layout_height="250dp"
+                android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivGarmentPic1"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center"
-                    android:padding="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="15dp"
+                    android:cropToPadding="true"
+                    android:padding="10dp"
                     android:scaleType="centerCrop"
                     tools:srcCompat="@tools:sample/avatars" />
 
@@ -132,8 +130,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
                     android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textStyle="italic"
                     app:layout_constraintEnd_toEndOf="@id/ivGarmentPic1"
                     app:layout_constraintStart_toStartOf="@id/ivGarmentPic1"
                     app:layout_constraintTop_toBottomOf="@id/ivGarmentPic1"
@@ -149,21 +148,23 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
+            android:layout_margin="10dp"
             android:elevation="15dp"
-            android:padding="15dp"
             app:cardCornerRadius="8dp">
 
             <LinearLayout
                 android:layout_width="200dp"
-                android:layout_height="250dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivGarmentPic2"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
                     android:layout_gravity="center"
-                    android:padding="15dp"
+                    android:layout_margin="15dp"
+                    android:cropToPadding="true"
+                    android:padding="10dp"
                     android:scaleType="centerCrop"
                     tools:srcCompat="@tools:sample/avatars" />
 
@@ -172,8 +173,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="38dp"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
                     android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textStyle="italic"
                     app:layout_constraintEnd_toEndOf="@id/ivGarmentPic2"
                     app:layout_constraintStart_toStartOf="@id/ivGarmentPic2"
                     app:layout_constraintTop_toBottomOf="@id/ivGarmentPic2"
@@ -188,21 +190,23 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
+            android:layout_margin="10dp"
             android:elevation="15dp"
-            android:padding="15dp"
             app:cardCornerRadius="8dp">
 
             <LinearLayout
                 android:layout_width="200dp"
-                android:layout_height="250dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivGarmentPic3"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
                     android:layout_gravity="center"
-                    android:padding="15dp"
+                    android:layout_margin="15dp"
+                    android:cropToPadding="true"
+                    android:padding="10dp"
                     android:scaleType="centerCrop"
                     tools:srcCompat="@tools:sample/avatars" />
 
@@ -211,9 +215,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_horizontal"
                     android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textStyle="italic"
                     app:layout_constraintEnd_toEndOf="@id/ivGarmentPic3"
                     app:layout_constraintStart_toStartOf="@id/ivGarmentPic3"
                     app:layout_constraintTop_toBottomOf="@id/ivGarmentPic3"
@@ -228,21 +233,23 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
+            android:layout_margin="10dp"
             android:elevation="15dp"
-            android:padding="15dp"
             app:cardCornerRadius="8dp">
 
             <LinearLayout
-                android:layout_width="200dp"
-                android:layout_height="250dp"
+                android:layout_width="191dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivGarmentPic4"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
                     android:layout_gravity="center"
-                    android:padding="15dp"
+                    android:layout_margin="15dp"
+                    android:cropToPadding="true"
+                    android:padding="10dp"
                     android:scaleType="centerCrop"
                     tools:srcCompat="@tools:sample/avatars" />
 
@@ -251,8 +258,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
                     android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textStyle="italic"
                     app:layout_constraintEnd_toEndOf="@id/ivGarmentPic4"
                     app:layout_constraintStart_toStartOf="@id/ivGarmentPic4"
                     app:layout_constraintTop_toBottomOf="@id/ivGarmentPic4"
