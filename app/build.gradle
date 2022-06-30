@@ -58,6 +58,8 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-location:20.0.0'
 
+    implementation 'com.github.IslamKhSh:CardSlider:1.0.1'
+
 
 
 

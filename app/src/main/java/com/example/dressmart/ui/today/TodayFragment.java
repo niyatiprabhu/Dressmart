@@ -345,11 +345,16 @@ public class TodayFragment extends Fragment {
                             // bind the garments to the UI
                             Glide.with(getActivity()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic1);
                             Glide.with(getActivity()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic2);
-                            Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic3);
+                            if (outer != null)
+                                Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic3);
                             Glide.with(getActivity()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic4);
                             binding.tvGarmentDescription1.setText(top.getDescription());
                             binding.tvGarmentDescription2.setText(bottoms.getDescription());
-                            binding.tvGarmentDescription3.setText(outer.getDescription());
+                            if (outer != null) {
+                                binding.tvGarmentDescription3.setText(outer.getDescription());
+                            } else {
+                                binding.tvGarmentDescription3.setText("None");
+                            }
                             binding.tvGarmentDescription4.setText(shoes.getDescription());
 
                             binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
