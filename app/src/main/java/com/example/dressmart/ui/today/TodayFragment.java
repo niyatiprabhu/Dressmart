@@ -244,50 +244,94 @@ public class TodayFragment extends Fragment {
             public void done(User user, ParseException e) {
                 if (e == null) {
                     getView().setVisibility(View.VISIBLE);
-                    Garment top = null, bottoms = null, outer = null, shoes = null;
-
-                    //        HashMap<String, List<Garment>> closet = new HashMap<>();
-                    //        for(Garment item : user.getCloset()) {
-                    //            if(closet.containsKey(item.getGarmentType())) {
-                    //                //Add to existing list
-                    //                closet.get(item.getGarmentType()).add(item);
-                    //
-                    //            } else {
-                    //                //Create new list
-                    //                List<Garment> garments = new ArrayList<Garment>(1);
-                    //                garments.add(item);
-                    //                closet.put(item.getGarmentType(), garments);
-                    //            }
-                    //        }
-                    //
-                    //        for (Garment item : closet.get("Top")) {
-                    //            if (weatherCondition.getAvgTemp() < 60 && item.getSubtype().equals("Long-Sleeved")) {
-                    //
-                    //            }
-                    //        }
-                    //        for (Garment item : closet.get("Bottoms")) {
-                    //
-                    //        }
-                    //        for (Garment item : closet.get("Outer")) {
-                    //
-                    //        }
-                    //        for (Garment item : closet.get("Shoes")) {
-                    //
-                    //        }
 
 
+                    HashMap<String, List<Garment>> closet = new HashMap<>();
+                    for(Garment item : user.getCloset()) {
+                        if(closet.containsKey(item.getGarmentType())) {
+                            //Add to existing list
+                            closet.get(item.getGarmentType()).add(item);
 
-                            for (Garment item : user.getCloset()) {
-                                if (item.getGarmentType().equals("Top")) {
-                                    top = item;
-                                } else if (item.getGarmentType().equals("Bottoms")) {
-                                    bottoms = item;
-                                } else if (item.getGarmentType().equals("Outer")) {
+                        } else {
+                            //Create new list
+                            List<Garment> garments = new ArrayList<Garment>(1);
+                            garments.add(item);
+                            closet.put(item.getGarmentType(), garments);
+                        }
+                    }
+                    Garment top = closet.get("Top").get(0);
+                    Garment bottoms = closet.get("Bottoms").get(0);
+                    Garment outer = null;
+                    Garment shoes = closet.get("Shoes").get(0);
+
+                    for (Garment item : closet.get("Top")) {
+                        if (weatherCondition.getAvgTemp() < 60) {
+                            if (item.getSubtype().equals("Long-Sleeved")) {
+                                top = item;
+                            }
+                        } else {
+                            if (item.getSubtype().equals("Short-Sleeved")) {
+                                top = item;
+                            }
+                        }
+                    }
+                    for (Garment item : closet.get("Bottoms")) {
+                        if (weatherCondition.getAvgTemp() < 60) {
+                            if (item.getSubtype().equals("Pants")) {
+                                bottoms = item;
+                            }
+                        } else if (weatherCondition.getAvgTemp() >= 60) {
+                            if (item.getSubtype().equals("Shorts")) {
+                                bottoms = item;
+                            }
+                        }
+                    }
+                    for (Garment item : closet.get("Outer")) {
+                        if (weatherCondition.getAvgTemp() < 40) {
+                            if (item.getSubtype().equals("Coat")) {
+                                outer = item;
+                            }
+                        } else if (weatherCondition.getAvgTemp() < 60) {
+                            if (weatherCondition.getWindSpeed() > 15 || weatherCondition.getChanceOfPrecip() > 50) {
+                                if (item.getSubtype().equals("Jacket")) {
                                     outer = item;
-                                } else {
-                                    shoes = item;
+                                }
+                            } else {
+                                if (item.getSubtype().equals("Sweater")) {
+                                    outer = item;
                                 }
                             }
+                        }
+                    }
+                    for (Garment item : closet.get("Shoes")) {
+                        if (weatherCondition.getAvgTemp() < 40 || weatherCondition.getChanceOfPrecip() > 70) {
+                            if (item.getSubtype().equals("Boots")) {
+                                shoes = item;
+                            }
+                        } else if (weatherCondition.getAvgTemp() > 70 && !weatherCondition.getConditions().equals("Overcast")) {
+                            if (item.getSubtype().equals("Sandals")) {
+                                shoes = item;
+                            }
+                        } else {
+                            if (item.getSubtype().equals("Sneakers")) {
+                                shoes = item;
+                            }
+                        }
+                    }
+
+
+
+//                            for (Garment item : user.getCloset()) {
+//                                if (item.getGarmentType().equals("Top")) {
+//                                    top = item;
+//                                } else if (item.getGarmentType().equals("Bottoms")) {
+//                                    bottoms = item;
+//                                } else if (item.getGarmentType().equals("Outer")) {
+//                                    outer = item;
+//                                } else {
+//                                    shoes = item;
+//                                }
+//                            }
 
 
                             // add the garments to a list to associate with the post that is created
