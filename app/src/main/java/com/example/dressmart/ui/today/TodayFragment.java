@@ -164,19 +164,6 @@ public class TodayFragment extends Fragment {
     }
 
 
-    // method to check for permissions
-    private boolean checkPermissions() {
-        return ContextCompat.checkSelfPermission(
-                getActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-        // If we want background location
-        // on Android 10.0 and higher,
-        // use:
-        // ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
-
 
     // If everything is alright then
     @Override
@@ -312,14 +299,14 @@ public class TodayFragment extends Fragment {
 
 
                             // bind the garments to the UI
-                            Glide.with(getActivity()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivTopToday);
-                            Glide.with(getActivity()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivBottomsToday);
-                            Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivOuterToday);
-                            Glide.with(getActivity()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivShoesToday);
-                            binding.tvTopDescriptionToday.setText(top.getDescription());
-                            binding.tvBottomsDescriptionToday.setText(bottoms.getDescription());
-                            binding.tvOuterDescriptionToday.setText(outer.getDescription());
-                            binding.tvShoesDescriptionToday.setText(shoes.getDescription());
+                            Glide.with(getActivity()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic1);
+                            Glide.with(getActivity()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic2);
+                            Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic3);
+                            Glide.with(getActivity()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic4);
+                            binding.tvGarmentDescription1.setText(top.getDescription());
+                            binding.tvGarmentDescription2.setText(bottoms.getDescription());
+                            binding.tvGarmentDescription3.setText(outer.getDescription());
+                            binding.tvGarmentDescription4.setText(shoes.getDescription());
 
                             binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                                 @Override
