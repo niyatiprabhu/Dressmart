@@ -16,6 +16,7 @@
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.1888412017167382" />
         <entry key="app/src/main/res/layout/fragment_today.xml" value="0.165" />
         <entry key="app/src/main/res/layout/item_garment.xml" value="0.35208333333333336" />
+        <entry key="app/src/main/res/layout/item_garment_card.xml" value="0.23854166666666668" />
         <entry key="app/src/main/res/layout/item_post.xml" value="0.1953125" />
         <entry key="app/src/main/res/layout/item_user_post.xml" value="0.25" />
         <entry key="app/src/main/res/layout/outfit_post.xml" value="0.375" />

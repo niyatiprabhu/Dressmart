@@ -33,17 +33,20 @@ import androidx.core.app.AppOpsManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.dressmart.R;
+import com.example.dressmart.adapters.GarmentAdapter;
 import com.example.dressmart.models.WeatherCondition;
 import com.example.dressmart.databinding.FragmentTodayBinding;
 import com.example.dressmart.models.parse.Garment;
 import com.example.dressmart.models.parse.OutfitPost;
 import com.example.dressmart.models.parse.User;
+import com.example.dressmart.ui.feed.FeedFragment;
 import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -319,80 +322,84 @@ public class TodayFragment extends Fragment {
                         }
                     }
 
+                    // put the chosen items at the top of their respective lists
+                    closet.get("Top").remove(top);
+                    closet.get("Top").add(0, top);
+                    closet.get("Bottoms").remove(bottoms);
+                    closet.get("Bottoms").add(0, bottoms);
+                    closet.get("Outer").remove(outer);
+                    closet.get("Outer").add(0, outer);
+                    closet.get("Shoes").remove(shoes);
+                    closet.get("Shoes").add(0, shoes);
+
+                    // set the adapters for all 4 garment cards
+                    binding.vpGarment1.setAdapter(new GarmentAdapter(closet.get("Top"), getContext()));
+                    binding.vpGarment2.setAdapter(new GarmentAdapter(closet.get("Bottoms"), getContext()));
+                    binding.vpGarment3.setAdapter(new GarmentAdapter(closet.get("Outer"), getContext()));
+                    binding.vpGarment4.setAdapter(new GarmentAdapter(closet.get("Shoes"), getContext()));
 
 
-//                            for (Garment item : user.getCloset()) {
-//                                if (item.getGarmentType().equals("Top")) {
-//                                    top = item;
-//                                } else if (item.getGarmentType().equals("Bottoms")) {
-//                                    bottoms = item;
-//                                } else if (item.getGarmentType().equals("Outer")) {
-//                                    outer = item;
-//                                } else {
-//                                    shoes = item;
-//                                }
-//                            }
+                    // bind the garments to the UI
+//                    Glide.with(getActivity()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic1);
+//                    Glide.with(getActivity()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic2);
+//                    if (outer != null) {
+//                        Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic3);
+//                    }
+//                    Glide.with(getActivity()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic4);
+//                    binding.tvGarmentDescription1.setText(top.getDescription());
+//                    binding.tvGarmentDescription2.setText(bottoms.getDescription());
+//                    if (outer != null) {
+//                        binding.tvGarmentDescription3.setText(outer.getDescription());
+//                    } else {
+//                        binding.tvGarmentDescription3.setText("None");
+//                    }
+//                    binding.tvGarmentDescription4.setText(shoes.getDescription());
 
+                    // add the garments to a list to associate with the post that is created
+                    List<Garment> outfitGarments = new ArrayList<>();
+                    outfitGarments.add(top);
+                    outfitGarments.add(bottoms);
+                    outfitGarments.add(outer);
+                    outfitGarments.add(shoes);
 
-                            // add the garments to a list to associate with the post that is created
-                            List<Garment> outfitGarments = new ArrayList<>();
-                            outfitGarments.add(top);
-                            outfitGarments.add(bottoms);
-                            outfitGarments.add(outer);
-                            outfitGarments.add(shoes);
-
-
-                            // bind the garments to the UI
-                            Glide.with(getActivity()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic1);
-                            Glide.with(getActivity()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic2);
-                            if (outer != null)
-                                Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic3);
-                            Glide.with(getActivity()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic4);
-                            binding.tvGarmentDescription1.setText(top.getDescription());
-                            binding.tvGarmentDescription2.setText(bottoms.getDescription());
-                            if (outer != null) {
-                                binding.tvGarmentDescription3.setText(outer.getDescription());
-                            } else {
-                                binding.tvGarmentDescription3.setText("None");
-                            }
-                            binding.tvGarmentDescription4.setText(shoes.getDescription());
-
-                            binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
+                    binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // prompt camera app to take outfit pic
+                            onLaunchCamera(v);
+                            OutfitPost post = new OutfitPost();
+                            post.setParseTemperature((int)weatherCondition.getAvgTemp());
+                            post.setParseConditions(weatherCondition.getConditions());
+                            post.setParseAuthor((User)ParseUser.getCurrentUser());
+                            post.setParseGarments(outfitGarments);
+                            post.setParseWearingOutfitPicture(new ParseFile(photoFile));
+                            post.setParseLikedBy(new ArrayList<>());
+                            post.saveInBackground(new SaveCallback() {
                                 @Override
-                                public void onClick(View v) {
-                                    // prompt camera app to take outfit pic
-                                    onLaunchCamera(v);
-                                    OutfitPost post = new OutfitPost();
-                                    post.setParseTemperature((int)weatherCondition.getAvgTemp());
-                                    post.setParseConditions(weatherCondition.getConditions());
-                                    post.setParseAuthor((User)ParseUser.getCurrentUser());
-                                    post.setParseGarments(outfitGarments);
-                                    post.setParseWearingOutfitPicture(new ParseFile(photoFile));
-                                    post.setParseLikedBy(new ArrayList<>());
-                                    post.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e != null) {
-                                                Log.e(TAG, "Issue with saving post", e);
-                                                Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
-                                                return;
-                                            }
-                                            user.addParseOutfit(post);
-                                            user.saveInBackground();
-                                            Log.i(TAG, "Post save was successful!");
-                                            Toast.makeText(getActivity(), "Success!", Toast.LENGTH_SHORT).show();
-
-                                        }
-                                    });
+                                public void done(ParseException e) {
+                                    if (e != null) {
+                                        Log.e(TAG, "Issue with saving post", e);
+                                        Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    user.addParseOutfit(post);
+                                    user.saveInBackground();
+                                    Log.i(TAG, "Post save was successful!");
+                                    // navigate back to the feed fragment after successful post
+//                                    Fragment fragment = new FeedFragment();
+//                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_activity_main, fragment);
+//                                    fragmentTransaction.addToBackStack(null);
+//                                    fragmentTransaction.commit();
 
                                 }
                             });
+                        }
+                    });
                 } else {
                     Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
     @Override
