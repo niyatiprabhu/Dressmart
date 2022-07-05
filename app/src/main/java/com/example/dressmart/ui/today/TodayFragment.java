@@ -339,21 +339,6 @@ public class TodayFragment extends Fragment {
                     binding.vpGarment4.setAdapter(new GarmentAdapter(closet.get("Shoes"), getContext()));
 
 
-                    // bind the garments to the UI
-//                    Glide.with(getActivity()).load(top.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic1);
-//                    Glide.with(getActivity()).load(bottoms.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic2);
-//                    if (outer != null) {
-//                        Glide.with(getActivity()).load(outer.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic3);
-//                    }
-//                    Glide.with(getActivity()).load(shoes.getGarmentPicture().getUrl()).override(450, 350).into(binding.ivGarmentPic4);
-//                    binding.tvGarmentDescription1.setText(top.getDescription());
-//                    binding.tvGarmentDescription2.setText(bottoms.getDescription());
-//                    if (outer != null) {
-//                        binding.tvGarmentDescription3.setText(outer.getDescription());
-//                    } else {
-//                        binding.tvGarmentDescription3.setText("None");
-//                    }
-//                    binding.tvGarmentDescription4.setText(shoes.getDescription());
 
                     // add the garments to a list to associate with the post that is created
                     List<Garment> outfitGarments = new ArrayList<>();
