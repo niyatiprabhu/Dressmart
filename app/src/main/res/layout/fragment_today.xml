@@ -104,7 +104,8 @@
             android:layout_marginTop="24dp"
             app:cardSlider_otherPagesWidth="5dp"
             app:cardSlider_pageMargin="2dp"
-            app:cardSlider_smallScaleFactor="0.9" />
+            app:cardSlider_smallScaleFactor="0.9"
+            android:clipChildren="true"/>
 
         <com.github.islamkhsh.CardSliderViewPager
             android:id="@+id/vpGarment2"
@@ -113,7 +114,8 @@
             android:layout_marginTop="24dp"
             app:cardSlider_otherPagesWidth="5dp"
             app:cardSlider_pageMargin="2dp"
-            app:cardSlider_smallScaleFactor="0.9" />
+            app:cardSlider_smallScaleFactor="0.9"
+            android:clipChildren="true"/>
 
         <com.github.islamkhsh.CardSliderViewPager
             android:id="@+id/vpGarment3"
@@ -122,7 +124,8 @@
             android:layout_marginTop="24dp"
             app:cardSlider_otherPagesWidth="5dp"
             app:cardSlider_pageMargin="2dp"
-            app:cardSlider_smallScaleFactor="0.9" />
+            app:cardSlider_smallScaleFactor="0.9"
+            android:clipChildren="true"/>
 
         <com.github.islamkhsh.CardSliderViewPager
             android:id="@+id/vpGarment4"
@@ -131,7 +134,8 @@
             android:layout_marginTop="24dp"
             app:cardSlider_otherPagesWidth="5dp"
             app:cardSlider_pageMargin="2dp"
-            app:cardSlider_smallScaleFactor="0.9" />
+            app:cardSlider_smallScaleFactor="0.9"
+            android:clipChildren="true" />
 
     </GridLayout>
 
