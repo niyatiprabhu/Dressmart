@@ -49,7 +49,7 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
     @Override
     public void bindVH(@NonNull GarmentAdapter.ViewHolder viewHolder, int i) {
         // makes sure that when a certain garment is chosen, it will appear on top.
-        Garment chosenItem = garments.get(0);
+        Garment chosenItem = garments.get(i);
         Log.i("Garments Adapter", "size of garments: " + garments.size());
         if (chosenItem != null) {
             Glide.with(context).load(chosenItem.getGarmentPicture().getUrl()).into(viewHolder.ivGarmentPic);
@@ -57,7 +57,6 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
         } else {
             viewHolder.tvGarmentDescription.setText("None");
         }
-        // also, potentially make list circular so that it will scroll either direction infinitely
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

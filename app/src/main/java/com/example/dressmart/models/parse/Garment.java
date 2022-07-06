@@ -5,16 +5,19 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
+import java.util.Date;
+
 /**
  * Parse class to model a garment object, which make up an OutfitPost
   */
 @ParseClassName("Garment")
-public class Garment extends ParseObject {
+public class Garment extends ParseObject implements Comparable<Garment>{
 
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_GARMENT_TYPE = "garmentType";
     public static final String KEY_SUBTYPE = "subType";
     public static final String KEY_GARMENT_PICTURE = "garmentPicture";
+    public static final String KEY_DATE_LAST_WORN = "dateLastWorn";
 
     public Garment(){}
 
@@ -56,4 +59,16 @@ public class Garment extends ParseObject {
         put(KEY_GARMENT_PICTURE, newPicture);
     }
 
+    public Date getDateLastWorn() {
+        return getDate(KEY_DATE_LAST_WORN);
+    }
+
+    public void setDateLastWorn(Date date) {
+        put(KEY_DATE_LAST_WORN, date);
+    }
+
+    @Override
+    public int compareTo(Garment o) {
+        return 0;
+    }
 }

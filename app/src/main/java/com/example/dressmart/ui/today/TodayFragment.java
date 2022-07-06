@@ -72,6 +72,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -267,6 +270,20 @@ public class TodayFragment extends Fragment {
                     Garment outer = null;
                     Garment shoes = closet.get("Shoes").get(0);
 
+                    Comparator<Garment> dateComparator = new Comparator<Garment>() {
+                        @Override
+                        public int compare(Garment g1, Garment g2) {
+                            return g1.getDateLastWorn().compareTo(g2.getDateLastWorn());
+                        }
+                    };
+                    // sort each list by ascending date last created
+                    Collections.sort(closet.get("Top"), dateComparator);
+                    Collections.sort(closet.get("Bottoms"), dateComparator);
+                    Collections.sort(closet.get("Outer"), dateComparator);
+                    Collections.sort(closet.get("Shoes"), dateComparator);
+
+                    // each list is sorted from least recently worn to most recently worn,
+                    // so the items that will be recommended won't be the most recent items
                     for (Garment item : closet.get("Top")) {
                         if (weatherCondition.getAvgTemp() < 60) {
                             if (item.getSubtype().equals("Long-Sleeved")) {
