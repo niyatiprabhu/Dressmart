@@ -24,11 +24,11 @@ import java.util.List;
 
 public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder> {
     // this will have to be one of the "values" in the hashmap which corresponds to a list of a specific garment type
-    private List<Garment> garments;
+    private ArrayList<Garment> garments;
 
     private Context context;
 
-    public GarmentAdapter(List<Garment> garments, Context context){
+    public GarmentAdapter(ArrayList<Garment> garments, Context context){
         this.context = context;
         this.garments = garments;
     }
@@ -49,7 +49,7 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
     @Override
     public void bindVH(@NonNull GarmentAdapter.ViewHolder viewHolder, int i) {
         // makes sure that when a certain garment is chosen, it will appear on top.
-        Garment chosenItem = garments.get(0);
+        Garment chosenItem = garments.get(i);
         Log.i("Garments Adapter", "size of garments: " + garments.size());
         if (chosenItem != null) {
             Glide.with(context).load(chosenItem.getGarmentPicture().getUrl()).into(viewHolder.ivGarmentPic);
@@ -58,6 +58,8 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
             viewHolder.tvGarmentDescription.setText("None");
         }
     }
+
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
 

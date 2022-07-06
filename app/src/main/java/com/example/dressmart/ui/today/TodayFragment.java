@@ -249,7 +249,7 @@ public class TodayFragment extends Fragment {
                     getView().setVisibility(View.VISIBLE);
 
 
-                    HashMap<String, List<Garment>> closet = new HashMap<>();
+                    HashMap<String, ArrayList<Garment>> closet = new HashMap<>();
                     for(Garment item : user.getCloset()) {
                         if(closet.containsKey(item.getGarmentType())) {
                             //Add to existing list
@@ -257,7 +257,7 @@ public class TodayFragment extends Fragment {
 
                         } else {
                             //Create new list
-                            List<Garment> garments = new ArrayList<Garment>(1);
+                            ArrayList<Garment> garments = new ArrayList<Garment>(1);
                             garments.add(item);
                             closet.put(item.getGarmentType(), garments);
                         }
@@ -364,7 +364,7 @@ public class TodayFragment extends Fragment {
                                 public void done(ParseException e) {
                                     if (e != null) {
                                         Log.e(TAG, "Issue with saving post", e);
-                                        Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
                                         return;
                                     }
                                     user.addParseOutfit(post);
