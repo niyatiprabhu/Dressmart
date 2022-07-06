@@ -12,16 +12,20 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.dressmart.databinding.ActivitySignupBinding;
 import com.example.dressmart.models.parse.User;
 import com.example.dressmart.util.UserUtil;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -30,6 +34,8 @@ public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "Signup Activity";
 
     private ActivitySignupBinding binding;
+
+    private ParseFile photoFile;
 
 
 
@@ -50,7 +56,11 @@ public class SignupActivity extends AppCompatActivity {
                 // TO DO: assigning user's profile picture
                 // extract the file from a the image bitmap and assign it to user.
                 // use this same concept for the outfit post button
-                signupUser(username, password, displayName);
+                try {
+                    signupUser(username, password, displayName);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -98,6 +108,10 @@ public class SignupActivity extends AppCompatActivity {
                 case 0:
                     if (resultCode == RESULT_OK && data != null) {
                         Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
+                        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+                        selectedImage.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
+                        byte[] imageByte = byteArrayOutputStream.toByteArray();
+                        photoFile = new ParseFile("image_file.png",imageByte);
                         binding.ivProfilePicSignup.setImageBitmap(selectedImage);
                     }
 
@@ -111,7 +125,6 @@ public class SignupActivity extends AppCompatActivity {
                                     filePathColumn, null, null, null);
                             if (cursor != null) {
                                 cursor.moveToFirst();
-
                                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                                 String picturePath = cursor.getString(columnIndex);
                                 binding.ivProfilePicSignup.setImageBitmap(BitmapFactory.decodeFile(picturePath));
@@ -125,7 +138,7 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
-    private void signupUser(String username, String password, String displayName) {
+    private void signupUser(String username, String password, String displayName) throws ParseException {
         // Create the ParseUser
         User user = new User();
         user.setUsername(username);
@@ -133,15 +146,24 @@ public class SignupActivity extends AppCompatActivity {
         user.setParseDisplayName(displayName);
         user.setParseOutfits(new ArrayList<>());
         user.setParseCloset(new ArrayList<>());
+        if (photoFile != null) {
+            user.setParseProfilePicture(photoFile);
+            photoFile.save();
+        }
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
                     UserUtil.loginUser(username,password, SignupActivity.this);
                 } else {
                     // Sign up didn't succeed.
+                    Log.e(TAG, e.getMessage());
                 }
             }
         });
+
+
+
+
     }
 
 

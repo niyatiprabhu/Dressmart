@@ -57,7 +57,6 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
         } else {
             viewHolder.tvGarmentDescription.setText("None");
         }
-        // also, potentially make list circular so that it will scroll either direction infinitely
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
