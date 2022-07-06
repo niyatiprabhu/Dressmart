@@ -1,188 +1,341 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".ui.today.TodayFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/tvToday"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="20dp"
-        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:text="Today"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_conversion_absoluteHeight="19dp"
+        tools:layout_conversion_absoluteWidth="411dp" />
 
-        <TextView
-            android:id="@+id/tvToday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Today"
-            android:textAlignment="center" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clWeather"
+        android:layout_width="385dp"
+        android:layout_height="109dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvToday"
+        tools:layout_conversion_absoluteHeight="181dp"
+        tools:layout_conversion_absoluteWidth="422dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clWeather"
-            android:layout_width="422dp"
-            android:layout_height="194dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/ivWeatherIconToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="-30dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvTempToday"
-                tools:src="@tools:sample/avatars" />
-
-            <TextView
-                android:id="@+id/tvTempToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="60dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                app:layout_constraintStart_toEndOf="@+id/ivWeatherIconToday"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="55" />
-
-            <TextView
-                android:id="@+id/tvConditionsToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="28dp"
-                android:layout_marginTop="68dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                app:layout_constraintStart_toEndOf="@+id/tvTempToday"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Partly Cloudy" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/tvOurPicks"
+        <ImageView
+            android:id="@+id/ivWeatherIconToday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Our Picks For You"
-            android:textAlignment="center"
+            android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clWeather" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_conversion_absoluteHeight="128dp"
+            tools:layout_conversion_absoluteWidth="128dp"
+            tools:src="@tools:sample/avatars" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvTempToday"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="bottom|center_horizontal"
-            android:orientation="horizontal">
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintStart_toEndOf="@+id/ivWeatherIconToday"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_conversion_absoluteHeight="45dp"
+            tools:layout_conversion_absoluteWidth="38dp"
+            tools:text="55" />
 
-            <ImageView
-                android:id="@+id/ivTopToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:src="@tools:sample/avatars" />
-
-            <ImageView
-                android:id="@+id/ivBottomsToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:src="@tools:sample/avatars" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvTopDescriptionToday"
-                android:layout_width="82dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView"
-                tools:text="UT Tee" />
-
-            <TextView
-                android:id="@+id/tvBottomsDescriptionToday"
-                android:layout_width="99dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView"
-                tools:text="Cargo Pants" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvConditionsToday"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="48dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintStart_toEndOf="@+id/tvTempToday"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_conversion_absoluteHeight="30dp"
+            tools:layout_conversion_absoluteWidth="130dp"
+            tools:text="Partly Cloudy" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageView
-                android:id="@+id/ivOuterToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:src="@tools:sample/avatars" />
 
-            <ImageView
-                android:id="@+id/ivShoesToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:src="@tools:sample/avatars" />
+    <TextView
+        android:id="@+id/tvOurPicks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Our Picks For You"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clWeather"
+        tools:layout_conversion_absoluteHeight="19dp"
+        tools:layout_conversion_absoluteWidth="110dp" />
 
-        </LinearLayout>
+    <GridLayout
+        android:id="@+id/glGarments"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:columnCount="2"
+        android:rowCount="2"
+        app:layout_constraintBottom_toTopOf="@+id/btnSubmitToday"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvOurPicks">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <com.github.islamkhsh.CardSliderViewPager
+            android:id="@+id/vpGarment1"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardSlider_otherPagesWidth="5dp"
+            app:cardSlider_pageMargin="2dp"
+            app:cardSlider_smallScaleFactor="0.9" />
 
-            <TextView
-                android:id="@+id/tvOuterDescriptionToday"
-                android:layout_width="216dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="TextView"
-                tools:text="Green Cardigan" />
+        <com.github.islamkhsh.CardSliderViewPager
+            android:id="@+id/vpGarment2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardSlider_otherPagesWidth="5dp"
+            app:cardSlider_pageMargin="2dp"
+            app:cardSlider_smallScaleFactor="0.9" />
 
-            <TextView
-                android:id="@+id/tvShoesDescriptionToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="55dp"
-                android:text="TextView"
-                tools:text="Doc Martens" />
-        </LinearLayout>
+        <com.github.islamkhsh.CardSliderViewPager
+            android:id="@+id/vpGarment3"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardSlider_otherPagesWidth="5dp"
+            app:cardSlider_pageMargin="2dp"
+            app:cardSlider_smallScaleFactor="0.9" />
 
-    </LinearLayout>
+        <com.github.islamkhsh.CardSliderViewPager
+            android:id="@+id/vpGarment4"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardSlider_otherPagesWidth="5dp"
+            app:cardSlider_pageMargin="2dp"
+            app:cardSlider_smallScaleFactor="0.9" />
 
+    </GridLayout>
+
+
+
+<!--    <GridLayout-->
+<!--        android:id="@+id/glGarments"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:columnCount="2"-->
+<!--        android:rowCount="2"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/btnSubmitToday"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvOurPicks">-->
+
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/cvTopGarment"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:elevation="15dp"-->
+<!--            app:cardCornerRadius="8dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:clipToPadding="false"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivGarmentPic1"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="125dp"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:layout_margin="15dp"-->
+<!--                    android:cropToPadding="true"-->
+<!--                    android:padding="10dp"-->
+<!--                    android:scaleType="centerCrop"-->
+<!--                    tools:srcCompat="@tools:sample/avatars" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tvGarmentDescription1"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="italic"-->
+<!--                    app:layout_constraintEnd_toEndOf="@id/ivGarmentPic1"-->
+<!--                    app:layout_constraintStart_toStartOf="@id/ivGarmentPic1"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/ivGarmentPic1"-->
+<!--                    tools:text="White tee" />-->
+<!--            </LinearLayout>-->
+
+
+<!--        </androidx.cardview.widget.CardView>-->
+
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/cvBottomsGarment"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:elevation="15dp"-->
+<!--            app:cardCornerRadius="8dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivGarmentPic2"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="125dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_margin="15dp"-->
+<!--                    android:cropToPadding="true"-->
+<!--                    android:padding="10dp"-->
+<!--                    android:scaleType="centerCrop"-->
+<!--                    tools:srcCompat="@tools:sample/avatars" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tvGarmentDescription2"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="38dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="italic"-->
+<!--                    app:layout_constraintEnd_toEndOf="@id/ivGarmentPic2"-->
+<!--                    app:layout_constraintStart_toStartOf="@id/ivGarmentPic2"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/ivGarmentPic2"-->
+<!--                    tools:text="Green cargos" />-->
+<!--            </LinearLayout>-->
+
+<!--        </androidx.cardview.widget.CardView>-->
+
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/cvOuterGarment"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:elevation="15dp"-->
+<!--            app:cardCornerRadius="8dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivGarmentPic3"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="125dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_margin="15dp"-->
+<!--                    android:cropToPadding="true"-->
+<!--                    android:padding="10dp"-->
+<!--                    android:scaleType="centerCrop"-->
+<!--                    tools:srcCompat="@tools:sample/avatars" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tvGarmentDescription3"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:gravity="center_horizontal"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="italic"-->
+<!--                    app:layout_constraintEnd_toEndOf="@id/ivGarmentPic3"-->
+<!--                    app:layout_constraintStart_toStartOf="@id/ivGarmentPic3"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/ivGarmentPic3"-->
+<!--                    tools:text="Green sweater" />-->
+
+<!--            </LinearLayout>-->
+<!--        </androidx.cardview.widget.CardView>-->
+
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/cvShoesGarment"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:elevation="15dp"-->
+<!--            app:cardCornerRadius="8dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivGarmentPic4"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="125dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_margin="15dp"-->
+<!--                    android:cropToPadding="true"-->
+<!--                    android:padding="10dp"-->
+<!--                    android:scaleType="centerCrop"-->
+<!--                    tools:srcCompat="@tools:sample/avatars" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tvGarmentDescription4"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="italic"-->
+<!--                    app:layout_constraintEnd_toEndOf="@id/ivGarmentPic4"-->
+<!--                    app:layout_constraintStart_toStartOf="@id/ivGarmentPic4"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/ivGarmentPic4"-->
+<!--                    tools:text="Black converse" />-->
+<!--            </LinearLayout>-->
+
+<!--        </androidx.cardview.widget.CardView>-->
+
+
+<!--    </GridLayout>-->
 
     <Button
         android:id="@+id/btnSubmitToday"
-        android:layout_width="211dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="24dp"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
         android:gravity="center"
         android:text="show it off"
         android:textAlignment="center"
         app:icon="@android:drawable/ic_menu_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        tools:layout_conversion_absoluteHeight="50dp"
+        tools:layout_conversion_absoluteWidth="170dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -107,6 +107,7 @@ public class ProfileFragment extends Fragment {
 
         rvPostsProfile = binding.rvPostsProfile;
 
+
         int numberOfColumns = 2;
         GridLayoutManager glm = new GridLayoutManager(getContext(), numberOfColumns);
 
