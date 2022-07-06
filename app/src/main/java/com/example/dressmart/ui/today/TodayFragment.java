@@ -276,7 +276,7 @@ public class TodayFragment extends Fragment {
                             return g1.getDateLastWorn().compareTo(g2.getDateLastWorn());
                         }
                     };
-                    // sort each list by ascending date last created
+                    // sort each list by ascending date last worn
                     Collections.sort(closet.get("Top"), dateComparator);
                     Collections.sort(closet.get("Bottoms"), dateComparator);
                     Collections.sort(closet.get("Outer"), dateComparator);
@@ -288,10 +288,12 @@ public class TodayFragment extends Fragment {
                         if (weatherCondition.getAvgTemp() < 60) {
                             if (item.getSubtype().equals("Long-Sleeved")) {
                                 top = item;
+                                break;
                             }
                         } else {
                             if (item.getSubtype().equals("Short-Sleeved")) {
                                 top = item;
+                                break;
                             }
                         }
                     }
@@ -299,10 +301,12 @@ public class TodayFragment extends Fragment {
                         if (weatherCondition.getAvgTemp() < 60) {
                             if (item.getSubtype().equals("Pants")) {
                                 bottoms = item;
+                                break;
                             }
                         } else if (weatherCondition.getAvgTemp() >= 60) {
                             if (item.getSubtype().equals("Shorts")) {
                                 bottoms = item;
+                                break;
                             }
                         }
                     }
@@ -310,15 +314,18 @@ public class TodayFragment extends Fragment {
                         if (weatherCondition.getAvgTemp() < 40) {
                             if (item.getSubtype().equals("Coat")) {
                                 outer = item;
+                                break;
                             }
                         } else if (weatherCondition.getAvgTemp() < 60) {
                             if (weatherCondition.getWindSpeed() > 15 || weatherCondition.getChanceOfPrecip() > 50) {
                                 if (item.getSubtype().equals("Jacket")) {
                                     outer = item;
+                                    break;
                                 }
                             } else {
                                 if (item.getSubtype().equals("Sweater")) {
                                     outer = item;
+                                    break;
                                 }
                             }
                         }
@@ -327,14 +334,17 @@ public class TodayFragment extends Fragment {
                         if (weatherCondition.getAvgTemp() < 40 || weatherCondition.getChanceOfPrecip() > 70) {
                             if (item.getSubtype().equals("Boots")) {
                                 shoes = item;
+                                break;
                             }
                         } else if (weatherCondition.getAvgTemp() > 70 && !weatherCondition.getConditions().equals("Overcast")) {
                             if (item.getSubtype().equals("Sandals")) {
                                 shoes = item;
+                                break;
                             }
                         } else {
                             if (item.getSubtype().equals("Sneakers")) {
                                 shoes = item;
+                                break;
                             }
                         }
                     }
