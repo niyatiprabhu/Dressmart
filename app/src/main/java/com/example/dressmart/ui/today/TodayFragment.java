@@ -349,6 +349,8 @@ public class TodayFragment extends Fragment {
                         }
                     }
 
+                    // ************ decide the chosen outfit's "match score" based on each color
+
                     // put the chosen items at the top of their respective lists
                     closet.get("Top").remove(top);
                     closet.get("Top").add(0, top);
@@ -360,19 +362,23 @@ public class TodayFragment extends Fragment {
                     closet.get("Shoes").add(0, shoes);
 
                     // set the adapters for all 4 garment cards
-                    binding.vpGarment1.setAdapter(new GarmentAdapter(closet.get("Top"), getContext()));
-                    binding.vpGarment2.setAdapter(new GarmentAdapter(closet.get("Bottoms"), getContext()));
-                    binding.vpGarment3.setAdapter(new GarmentAdapter(closet.get("Outer"), getContext()));
-                    binding.vpGarment4.setAdapter(new GarmentAdapter(closet.get("Shoes"), getContext()));
+                    GarmentAdapter topAdapter = new GarmentAdapter(closet.get("Top"), getContext());
+                    GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get("Bottoms"), getContext());
+                    GarmentAdapter outerAdapter = new GarmentAdapter(closet.get("Outer"), getContext());
+                    GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get("Shoes"), getContext());
+                    binding.vpGarment1.setAdapter(topAdapter);
+                    binding.vpGarment2.setAdapter(bottomsAdapter);
+                    binding.vpGarment3.setAdapter(outerAdapter);
+                    binding.vpGarment4.setAdapter(shoesAdapter);
 
 
 
-                    // add the garments to a list to associate with the post that is created
+                    // add the garments at the top of the viewpager to a list to associate with the post that is created
                     List<Garment> outfitGarments = new ArrayList<>();
-                    outfitGarments.add(top);
-                    outfitGarments.add(bottoms);
-                    outfitGarments.add(outer);
-                    outfitGarments.add(shoes);
+                    outfitGarments.add(closet.get("Top").get(binding.vpGarment1.getCurrentItem()));
+                    outfitGarments.add(closet.get("Bottoms").get(binding.vpGarment2.getCurrentItem()));
+                    outfitGarments.add(closet.get("Outer").get(binding.vpGarment3.getCurrentItem()));
+                    outfitGarments.add(closet.get("Shoes").get(binding.vpGarment4.getCurrentItem()));
 
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -383,9 +389,11 @@ public class TodayFragment extends Fragment {
                             post.setParseTemperature((int)weatherCondition.getAvgTemp());
                             post.setParseConditions(weatherCondition.getConditions());
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
-                            post.setParseGarments(outfitGarments);
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
                             post.setParseLikedBy(new ArrayList<>());
+                            post.setParseGarments(new ArrayList<>());
+                            post.setParseGarments(outfitGarments);
+
                             post.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {

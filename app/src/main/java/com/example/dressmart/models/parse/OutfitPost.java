@@ -61,6 +61,7 @@ public class OutfitPost extends ParseObject{
 
     public void setParseGarments(List<Garment> newGarments) {
         put(KEY_GARMENTS, newGarments);
+
     }
 
     public ParseFile getWearingOutfitPicture() {
