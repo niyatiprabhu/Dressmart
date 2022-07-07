@@ -371,6 +371,8 @@ public class TodayFragment extends Fragment {
                     binding.vpGarment3.setAdapter(outerAdapter);
                     binding.vpGarment4.setAdapter(shoesAdapter);
 
+
+
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -382,11 +384,17 @@ public class TodayFragment extends Fragment {
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
                             post.setParseLikedBy(new ArrayList<>());
-                            // set top, bottom, outer and shoes as the garments that ended up on top of card view
+
+                            // set the chosen garments to the actual cards the user chose
                             post.setParseTop(closet.get("Top").get(binding.vpGarment1.getCurrentItem()));
                             post.setParseBottoms(closet.get("Bottoms").get(binding.vpGarment2.getCurrentItem()));
                             post.setParseOuter(closet.get("Outer").get(binding.vpGarment3.getCurrentItem()));
                             post.setParseShoes(closet.get("Shoes").get(binding.vpGarment4.getCurrentItem()));
+
+                            // calculate the match score of the 4 garments put together and display it
+                            // in the rating stars, the number of stars filled up corresponds to the value of calculateMatchScore
+                            // set the visibility of the color match rating stars to VISIBLE and the submit button to GONE
+                            post.setColorMatchScore(calculateMatchScore(post.getTop(), post.getBottoms(), post.getOuter(), post.getShoes()));
                             post.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
@@ -413,6 +421,20 @@ public class TodayFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private double calculateMatchScore(Garment top, Garment bottoms, Garment outer, Garment shoes) {
+        // use Palette library to determine the dominant color in each garment
+        double score = 5;
+        // reduce score if:
+        // top and bottoms are same color family
+        // top and bottom are both bright colors (clash)
+        // raise score if:
+        // top and bottom have both light and dark (contrast)
+        // top and bottom are complementary colors
+        // top matches color of shoes
+
+        return score;
     }
 
     @Override

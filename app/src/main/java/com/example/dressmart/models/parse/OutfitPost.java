@@ -22,13 +22,13 @@ public class OutfitPost extends ParseObject{
     public static final String KEY_BOTTOMS = "bottoms";
     public static final String KEY_OUTER = "outer";
     public static final String KEY_SHOES = "shoes";
+    public static final String KEY_COLOR_MATCH_SCORE = "colorMatchScore";
 
     public OutfitPost(){}
 
 
     public User getAuthor() {
         return (User) getParseUser(KEY_AUTHOR);
-
     }
 
     public void setParseAuthor(User user) {
@@ -79,6 +79,14 @@ public class OutfitPost extends ParseObject{
 
     public void setParseShoes(Garment shoes) {
         put(KEY_SHOES, shoes);
+    }
+
+    public double getColorMatchScore() {
+        return getDouble(KEY_COLOR_MATCH_SCORE);
+    }
+
+    public void setColorMatchScore(double colorMatchScore) {
+        put(KEY_COLOR_MATCH_SCORE, colorMatchScore);
     }
 
     public ParseFile getWearingOutfitPicture() {
