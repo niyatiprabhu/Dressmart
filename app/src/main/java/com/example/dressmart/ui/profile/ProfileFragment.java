@@ -158,7 +158,10 @@ public class ProfileFragment extends Fragment {
         ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
         // include data referred by user key
         query.include(OutfitPost.KEY_AUTHOR);
-        query.include(OutfitPost.KEY_GARMENTS);
+        query.include(OutfitPost.KEY_TOP);
+        query.include(OutfitPost.KEY_BOTTOMS);
+        query.include(OutfitPost.KEY_OUTER);
+        query.include(OutfitPost.KEY_SHOES);
         query.include(OutfitPost.KEY_LIKED_BY);
         query.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
         // limit query to latest 20 items

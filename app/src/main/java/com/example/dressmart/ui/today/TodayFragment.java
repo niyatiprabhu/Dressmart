@@ -371,15 +371,6 @@ public class TodayFragment extends Fragment {
                     binding.vpGarment3.setAdapter(outerAdapter);
                     binding.vpGarment4.setAdapter(shoesAdapter);
 
-
-
-                    // add the garments at the top of the viewpager to a list to associate with the post that is created
-                    List<Garment> outfitGarments = new ArrayList<>();
-                    outfitGarments.add(closet.get("Top").get(binding.vpGarment1.getCurrentItem()));
-                    outfitGarments.add(closet.get("Bottoms").get(binding.vpGarment2.getCurrentItem()));
-                    outfitGarments.add(closet.get("Outer").get(binding.vpGarment3.getCurrentItem()));
-                    outfitGarments.add(closet.get("Shoes").get(binding.vpGarment4.getCurrentItem()));
-
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -391,9 +382,11 @@ public class TodayFragment extends Fragment {
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
                             post.setParseLikedBy(new ArrayList<>());
-                            post.setParseGarments(new ArrayList<>());
-                            post.setParseGarments(outfitGarments);
-
+                            // set top, bottom, outer and shoes as the garments that ended up on top of card view
+                            post.setParseTop(closet.get("Top").get(binding.vpGarment1.getCurrentItem()));
+                            post.setParseBottoms(closet.get("Bottoms").get(binding.vpGarment2.getCurrentItem()));
+                            post.setParseOuter(closet.get("Outer").get(binding.vpGarment3.getCurrentItem()));
+                            post.setParseShoes(closet.get("Shoes").get(binding.vpGarment4.getCurrentItem()));
                             post.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
