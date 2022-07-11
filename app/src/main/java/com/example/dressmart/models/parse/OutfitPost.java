@@ -15,24 +15,20 @@ public class OutfitPost extends ParseObject{
 
     public static final String KEY_AUTHOR = "author";
     public static final String KEY_LIKED_BY = "likedBy";
-    public static final String KEY_GARMENTS = "garments";
     public static final String KEY_WEARING_OUTFIT_PICTURE = "wearingOutfitPicture";
     public static final String KEY_TEMPERATURE = "temperature";
     public static final String KEY_CONDITIONS = "conditions";
+    public static final String KEY_TOP = "top";
+    public static final String KEY_BOTTOMS = "bottoms";
+    public static final String KEY_OUTER = "outer";
+    public static final String KEY_SHOES = "shoes";
+    public static final String KEY_COLOR_MATCH_SCORE = "colorMatchScore";
 
     public OutfitPost(){}
 
-    public OutfitPost(User currentUser, ArrayList<User> likedBy, List<Garment> garments, int temp, String conditions) {
-        setParseAuthor(currentUser);
-        setParseLikedBy(likedBy);
-        setParseGarments(garments);
-        put(KEY_TEMPERATURE, temp);
-        put(KEY_CONDITIONS, conditions);
-    }
 
     public User getAuthor() {
         return (User) getParseUser(KEY_AUTHOR);
-
     }
 
     public void setParseAuthor(User user) {
@@ -51,16 +47,46 @@ public class OutfitPost extends ParseObject{
         put(KEY_LIKED_BY, newLikedBy);
     }
 
-    public List<Garment> getGarments() {
-        List<Garment> garments = getList(KEY_GARMENTS);
-        if (garments == null) {
-            return new ArrayList<>();
-        }
-        return garments;
+    public Garment getTop() {
+        return (Garment) get(KEY_TOP);
     }
 
-    public void setParseGarments(List<Garment> newGarments) {
-        put(KEY_GARMENTS, newGarments);
+    public void setParseTop(Garment top) {
+        put(KEY_TOP, top);
+    }
+
+    public Garment getBottoms() {
+        return (Garment) get(KEY_BOTTOMS);
+    }
+
+    public void setParseBottoms(Garment bottoms) {
+        put(KEY_BOTTOMS, bottoms);
+    }
+
+    public Garment getOuter() {
+        return (Garment) get(KEY_OUTER);
+    }
+
+    public void setParseOuter(Garment outer) {
+        if (outer != null) {
+            put(KEY_OUTER, outer);
+        }
+    }
+
+    public Garment getShoes() {
+        return (Garment) get(KEY_SHOES);
+    }
+
+    public void setParseShoes(Garment shoes) {
+        put(KEY_SHOES, shoes);
+    }
+
+    public double getColorMatchScore() {
+        return getDouble(KEY_COLOR_MATCH_SCORE);
+    }
+
+    public void setColorMatchScore(double colorMatchScore) {
+        put(KEY_COLOR_MATCH_SCORE, colorMatchScore);
     }
 
     public ParseFile getWearingOutfitPicture() {
