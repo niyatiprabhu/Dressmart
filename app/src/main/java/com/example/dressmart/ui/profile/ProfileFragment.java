@@ -191,31 +191,59 @@ public class ProfileFragment extends Fragment {
     }
 
     protected void querySearchResults(String description) {
-        ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
-        query.include(OutfitPost.KEY_AUTHOR);
-        query.include(OutfitPost.KEY_TOP);
-        query.include(OutfitPost.KEY_BOTTOMS);
-        query.include(OutfitPost.KEY_OUTER);
-        query.include(OutfitPost.KEY_SHOES);
+        // make a Garment query for each type of top to query the item that matches the description
+        ParseQuery<Garment> topQuery = ParseQuery.getQuery(Garment.class);
+        topQuery.include(Garment.KEY_OWNER);
+        topQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        topQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
 
-        // limit query to current user
-        query.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
-        // limit query to include only garment with the description
-        query.whereContains(Garment.KEY_DESCRIPTION, description);
-        query.addDescendingOrder("createdAt");
-        query.findInBackground(new FindCallback<OutfitPost>() {
-            @Override
-            public void done(List<OutfitPost> fetchedResults, ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting search results", e);
-                    return;
-                }
+        ParseQuery<Garment> bottomsQuery = ParseQuery.getQuery(Garment.class);
+        bottomsQuery.include(Garment.KEY_OWNER);
+        bottomsQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        bottomsQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
 
-                // save received posts to list and notify adapter of new data
-                searchAdapter.addAll(fetchedResults);
-                searchAdapter.notifyDataSetChanged();
-            }
-        });
+        ParseQuery<Garment> outerQuery = ParseQuery.getQuery(Garment.class);
+        outerQuery.include(Garment.KEY_OWNER);
+        outerQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        outerQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
+
+        ParseQuery<Garment> shoesQuery = ParseQuery.getQuery(Garment.class);
+        shoesQuery.include(Garment.KEY_OWNER);
+        shoesQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        shoesQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
+
+        // make a compound query
+        List<ParseQuery<Garment>> queries = new ArrayList<>();
+        queries.add(topQuery);
+        queries.add(bottomsQuery);
+        queries.add(outerQuery);
+        queries.add(shoesQuery);
+
+        //ParseQuery<OutfitPost> mainQuery = ParseQuery.or(queries);
+//        mainQuery.include(OutfitPost.KEY_AUTHOR);
+//        mainQuery.include(OutfitPost.KEY_TOP);
+//        mainQuery.include(OutfitPost.KEY_BOTTOMS);
+//        mainQuery.include(OutfitPost.KEY_OUTER);
+//        mainQuery.include(OutfitPost.KEY_SHOES);
+//
+//        // limit query to current user
+//        mainQuery.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
+//        // limit query to include only garment with the description
+//        mainQuery.whereContains(Garment.KEY_DESCRIPTION, description);
+//        mainQuery.addDescendingOrder("createdAt");
+//        mainQuery.findInBackground(new FindCallback<OutfitPost>() {
+//            @Override
+//            public void done(List<OutfitPost> fetchedResults, ParseException e) {
+//                // check for errors
+//                if (e != null) {
+//                    Log.e(TAG, "Issue with getting search results", e);
+//                    return;
+//                }
+//
+//                // save received posts to list and notify adapter of new data
+//                searchAdapter.addAll(fetchedResults);
+//                searchAdapter.notifyDataSetChanged();
+//            }
+//        });
     }
 }

@@ -383,30 +383,38 @@ public class TodayFragment extends Fragment {
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
                             post.setParseTop(finalTop);
                             post.setParseBottoms(finalBottoms);
-                            post.setParseOuter(finalOuter);
+                            if (finalOuter != null) {
+                                post.setParseOuter(finalOuter);
+                            }
                             post.setParseShoes(finalShoes);
 
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
-                            post.setParseLikedBy(new ArrayList<>());
-                            post.saveInBackground(new SaveCallback() {
+                            post.getWearingOutfitPicture().saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    if (e != null) {
-                                        Log.e(TAG, "Issue with saving post", e);
-                                        //Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                    user.addParseOutfit(post);
-                                    user.saveInBackground();
-                                    Log.i(TAG, "Post save was successful!");
-                                    // navigate back to the feed fragment after successful post
+                                    post.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e != null) {
+                                                Log.e(TAG, "Issue with saving post", e);
+                                                //Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            user.addParseOutfit(post);
+                                            user.saveInBackground();
+                                            Log.i(TAG, "Post save was successful!");
+                                            // navigate back to the feed fragment after successful post
 //                                    Fragment fragment = new FeedFragment();
 //                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_activity_main, fragment);
 //                                    fragmentTransaction.addToBackStack(null);
 //                                    fragmentTransaction.commit();
 
+                                        }
+                                    });
                                 }
                             });
+                            post.setParseLikedBy(new ArrayList<>());
+
                         }
                     });
                 } else {
