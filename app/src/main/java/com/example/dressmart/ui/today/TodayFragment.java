@@ -8,9 +8,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
+import android.graphics.RectF;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,6 +42,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
@@ -100,6 +108,7 @@ public class TodayFragment extends Fragment {
 
     private LocationRequest mLocationRequest;
 
+    private static boolean hasSubmitted;
 
     WeatherCondition weatherCondition;
 
@@ -224,8 +233,8 @@ public class TodayFragment extends Fragment {
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
         setWeatherIcon();
         binding.tvTempToday.setText(String.valueOf((int) weatherCondition.getAvgTemp()));
-
-        // set ivWeatherIconToday using the provided icon from API somehow
+        binding.rbMatchScore.setVisibility(View.GONE);
+        binding.tvNumStars.setVisibility(View.GONE);
     }
 
     public void parseJson(JsonHttpResponseHandler.JSON json) {
@@ -351,6 +360,9 @@ public class TodayFragment extends Fragment {
                         }
                     }
 
+                    // ************ decide the chosen outfit's "match score" based on each color
+                    //binding.vpGarment1.addOn
+
                     // put the chosen items at the top of their respective lists
                     closet.get("Top").remove(top);
                     closet.get("Top").add(0, top);
@@ -362,16 +374,16 @@ public class TodayFragment extends Fragment {
                     closet.get("Shoes").add(0, shoes);
 
                     // set the adapters for all 4 garment cards
-                    binding.vpGarment1.setAdapter(new GarmentAdapter(closet.get("Top"), getContext()));
-                    binding.vpGarment2.setAdapter(new GarmentAdapter(closet.get("Bottoms"), getContext()));
-                    binding.vpGarment3.setAdapter(new GarmentAdapter(closet.get("Outer"), getContext()));
-                    binding.vpGarment4.setAdapter(new GarmentAdapter(closet.get("Shoes"), getContext()));
+                    GarmentAdapter topAdapter = new GarmentAdapter(closet.get("Top"), getContext());
+                    GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get("Bottoms"), getContext());
+                    GarmentAdapter outerAdapter = new GarmentAdapter(closet.get("Outer"), getContext());
+                    GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get("Shoes"), getContext());
+                    binding.vpGarment1.setAdapter(topAdapter);
+                    binding.vpGarment2.setAdapter(bottomsAdapter);
+                    binding.vpGarment3.setAdapter(outerAdapter);
+                    binding.vpGarment4.setAdapter(shoesAdapter);
 
 
-                    Garment finalTop = top;
-                    Garment finalBottoms = bottoms;
-                    Garment finalOuter = outer;
-                    Garment finalShoes = shoes;
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -381,29 +393,47 @@ public class TodayFragment extends Fragment {
                             post.setParseTemperature((int)weatherCondition.getAvgTemp());
                             post.setParseConditions(weatherCondition.getConditions());
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
-                            post.setParseTop(finalTop);
-                            post.setParseBottoms(finalBottoms);
-                            if (finalOuter != null) {
-                                post.setParseOuter(finalOuter);
-                            }
-                            post.setParseShoes(finalShoes);
 
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
-                            post.getWearingOutfitPicture().saveInBackground(new SaveCallback() {
+                            post.setParseLikedBy(new ArrayList<>());
+
+                            // set the chosen garments to the actual cards the user chose
+                            post.setParseTop(closet.get("Top").get(binding.vpGarment1.getCurrentItem()));
+                            post.setParseBottoms(closet.get("Bottoms").get(binding.vpGarment2.getCurrentItem()));
+                            post.setParseOuter(closet.get("Outer").get(binding.vpGarment3.getCurrentItem()));
+                            post.setParseShoes(closet.get("Shoes").get(binding.vpGarment4.getCurrentItem()));
+
+                            // calculate the match score of the 4 garments put together and display it
+                            // in the rating stars, the number of stars filled up corresponds to the value of calculateMatchScore
+                            // set the visibility of the color match rating stars to VISIBLE and the submit button to GONE
+                            try {
+                                post.setColorMatchScore(calculateMatchScore(post.getTop(), post.getBottoms(), post.getOuter(), post.getShoes()));
+                            } catch (ParseException ex) {
+                                ex.printStackTrace();
+                            }
+                            post.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    post.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e != null) {
-                                                Log.e(TAG, "Issue with saving post", e);
-                                                //Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
-                                                return;
-                                            }
-                                            user.addParseOutfit(post);
-                                            user.saveInBackground();
-                                            Log.i(TAG, "Post save was successful!");
-                                            // navigate back to the feed fragment after successful post
+                                    if (e != null) {
+                                        Log.e(TAG, "Issue with saving post", e);
+                                        //Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    user.addParseOutfit(post);
+                                    user.saveInBackground();
+                                    Log.i(TAG, "Post save was successful!");
+
+                                    // display the match score and remove the submit button
+                                    binding.btnSubmitToday.setVisibility(View.GONE);
+                                    binding.tvNumStars.setText("Match Score: " + String.valueOf(post.getColorMatchScore()) + "!");
+                                    binding.rbMatchScore.setRating((float) post.getColorMatchScore());
+                                    binding.tvNumStars.setVisibility(View.VISIBLE);
+                                    binding.rbMatchScore.setVisibility(View.VISIBLE);
+
+                                    // set flag to true
+                                    hasSubmitted = true;
+
+                                    // navigate back to the feed fragment after successful post
 //                                    Fragment fragment = new FeedFragment();
 //                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_activity_main, fragment);
 //                                    fragmentTransaction.addToBackStack(null);
@@ -424,12 +454,158 @@ public class TodayFragment extends Fragment {
         });
     }
 
+    private double calculateMatchScore(Garment top, Garment bottoms, Garment outer, Garment shoes) throws ParseException {
+        // use Palette library to determine the dominant color in each garment
+        Bitmap bitmapTop = BitmapFactory.decodeFile(top.getGarmentPicture().getFile().getPath());
+        bitmapTop = scaleCenterCrop(bitmapTop, getSquareCropDimension(bitmapTop), getSquareCropDimension(bitmapTop));
+        Bitmap bitmapBottoms = BitmapFactory.decodeFile(bottoms.getGarmentPicture().getFile().getPath());
+        bitmapBottoms = scaleCenterCrop(bitmapBottoms, getSquareCropDimension(bitmapBottoms), getSquareCropDimension(bitmapBottoms));
+        Bitmap bitmapShoes = BitmapFactory.decodeFile(shoes.getGarmentPicture().getFile().getPath());
+        bitmapShoes = scaleCenterCrop(bitmapShoes, getSquareCropDimension(bitmapShoes), getSquareCropDimension(bitmapShoes));
+
+        Palette pTop = Palette.from(bitmapTop).generate();
+        Palette pBottoms = Palette.from(bitmapBottoms).generate();
+        Palette pShoes = Palette.from(bitmapShoes).generate();
+
+        Palette.Swatch topSwatch = pTop.getVibrantSwatch() == null ? pTop.getMutedSwatch() : pTop.getVibrantSwatch();
+        Palette.Swatch bottomsSwatch = pBottoms.getVibrantSwatch() == null ? pBottoms.getMutedSwatch() : pBottoms.getVibrantSwatch();
+        Palette.Swatch shoesSwatch = pShoes.getVibrantSwatch() == null ? pShoes.getMutedSwatch() : pShoes.getVibrantSwatch();
+
+        String topColor = getColorFromRgb(topSwatch.getHsl());
+        String bottomsColor = getColorFromRgb(bottomsSwatch.getHsl());
+        String shoesColor = getColorFromRgb(shoesSwatch.getHsl());
+
+        Log.i(TAG, "top: " + topColor + " bottoms: " + bottomsColor + " shoes: " + shoesColor);
+        Log.i(TAG, "bottoms hue: " + bottomsSwatch.getHsl()[0]);
+
+        double score = 2.5;
+        // reduce score if:
+        // top and bottoms are same color family
+        if (topColor.equals(bottomsColor)) {
+            score -= 1;
+        }
+        // top and bottom are both bright colors (clash)
+        if (isBright(topSwatch.getHsl()) && isBright(bottomsSwatch.getHsl())) {
+            score -= 1;
+        }
+        // raise score if:
+        // top and bottom have both light and dark (contrast)
+        if (isLight(topSwatch.getHsl()) && isDark(bottomsSwatch.getHsl())
+                || isDark(topSwatch.getHsl()) && isLight(bottomsSwatch.getHsl()))    {
+            score += 0.5;
+        }
+        // top and bottom are complementary colors
+        if (areComplementary(topColor, bottomsColor)) {
+            score += 1;
+        }
+        // top matches color of shoes
+        if (topColor.equals(shoesColor)) {
+            score += 1;
+        }
+        return score;
+    }
+
+    private String getColorFromRgb(float[] hsl) {
+        float hue = hsl[0];
+        float lightness = hsl[2];
+        float saturation = hsl[1];
+        if (saturation <= 10) {
+            return "gray";
+        } else if (hue > 340 || hue <= 10) {
+            return "red";
+        } else if (hue > 10 && hue <= 40) {
+            return "orange";
+        } else if (hue > 40 && hue <= 70) {
+            return "yellow";
+        } else if (hue > 70 && hue <= 160) {
+            return "green";
+        } else if (hue > 160 && hue <= 260) {
+            return "blue";
+        } else if (hue > 260 && hue <= 290) {
+            return "purple";
+        } else if (hue > 290 && hue <= 340){
+            return "pink";
+        } else if (lightness <= 0.1) {
+            return "black";
+        } else if (lightness >= 0.95) {
+            return "white";
+        } else {
+            return "";
+        }
+    }
+
+    private boolean isBright(float[] hsl) {
+        float saturation = hsl[1];
+        return saturation >= 0.7;
+    }
+
+    private boolean isLight(float[] hsl) {
+        float lightness = hsl[2];
+        return lightness >= 0.75;
+    }
+
+    private boolean isDark(float[] hsl) {
+        float lightness = hsl[2];
+        return lightness <= 25;
+    }
+
+    private boolean areComplementary(String color1, String color2) {
+        return (color1.equals("yellow") && color2.equals("purple")) || (color1.equals("purple") && color2.equals("yellow"))
+                || (color1.equals("orange") && color2.equals("blue")) || (color1.equals("blue") && color2.equals("orange"))
+                || (color1.equals("green") && color2.equals("red")) || (color1.equals("red") && color2.equals("green"))
+                || (color1.equals("black") && color2.equals("white")) || (color1.equals("white") && color2.equals("black"));
+    }
+
+    private static Bitmap scaleCenterCrop(Bitmap source, int newHeight,
+                                          int newWidth) {
+        int sourceWidth = source.getWidth();
+        int sourceHeight = source.getHeight();
+
+        float xScale = (float) newWidth / sourceWidth;
+        float yScale = (float) newHeight / sourceHeight;
+        float scale = Math.max(xScale, yScale);
+
+        // Now get the size of the source bitmap when scaled
+        float scaledWidth = scale * sourceWidth;
+        float scaledHeight = scale * sourceHeight;
+
+        float left = (newWidth - scaledWidth) / 2;
+        float top = (newHeight - scaledHeight) / 2;
+
+        RectF targetRect = new RectF(left, top, left + scaledWidth, top
+                + scaledHeight);//from ww w  .j a va 2s. co m
+
+        Bitmap dest = Bitmap.createBitmap(newWidth, newHeight,
+                source.getConfig());
+        Canvas canvas = new Canvas(dest);
+        canvas.drawBitmap(source, null, targetRect, null);
+
+        return dest;
+    }
+
+
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (hasSubmitted) {
+            binding.btnSubmitToday.setVisibility(View.GONE);
+            binding.rbMatchScore.setVisibility(View.VISIBLE);
+            binding.tvNumStars.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public int getSquareCropDimension(Bitmap bitmap)
+    {
+        //use the smallest dimension of the image to crop to
+        return Math.min(bitmap.getWidth(), bitmap.getHeight());
+    }
 
     protected void onLaunchCamera(View view) {
         // create Intent to take a picture and return control to the calling application

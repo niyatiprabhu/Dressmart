@@ -81,7 +81,7 @@ public class FeedFragment extends Fragment {
         query.include(OutfitPost.KEY_BOTTOMS);
         query.include(OutfitPost.KEY_OUTER);
         query.include(OutfitPost.KEY_SHOES);
-
+        
         // limit query to latest 20 items
         query.setLimit(20);
         query.setSkip(skip);

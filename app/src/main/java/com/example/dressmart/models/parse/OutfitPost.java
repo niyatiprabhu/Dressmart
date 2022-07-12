@@ -22,12 +22,13 @@ public class OutfitPost extends ParseObject{
     public static final String KEY_BOTTOMS = "bottoms";
     public static final String KEY_OUTER = "outer";
     public static final String KEY_SHOES = "shoes";
+    public static final String KEY_COLOR_MATCH_SCORE = "colorMatchScore";
 
     public OutfitPost(){}
 
+
     public User getAuthor() {
         return (User) getParseUser(KEY_AUTHOR);
-
     }
 
     public void setParseAuthor(User user) {
@@ -46,7 +47,6 @@ public class OutfitPost extends ParseObject{
         put(KEY_LIKED_BY, newLikedBy);
     }
 
-    // TODO: getters and setters for top, bottom, outer, and shoes. finish editing the adapter class and then do the parse query
     public Garment getTop() {
         return (Garment) get(KEY_TOP);
     }
@@ -68,7 +68,9 @@ public class OutfitPost extends ParseObject{
     }
 
     public void setParseOuter(Garment outer) {
-        put(KEY_OUTER, outer);
+        if (outer != null) {
+            put(KEY_OUTER, outer);
+        }
     }
 
     public Garment getShoes() {
@@ -77,6 +79,14 @@ public class OutfitPost extends ParseObject{
 
     public void setParseShoes(Garment shoes) {
         put(KEY_SHOES, shoes);
+    }
+
+    public double getColorMatchScore() {
+        return getDouble(KEY_COLOR_MATCH_SCORE);
+    }
+
+    public void setColorMatchScore(double colorMatchScore) {
+        put(KEY_COLOR_MATCH_SCORE, colorMatchScore);
     }
 
     public ParseFile getWearingOutfitPicture() {
