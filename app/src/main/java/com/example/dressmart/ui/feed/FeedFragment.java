@@ -73,6 +73,7 @@ public class FeedFragment extends Fragment {
     protected void queryPosts(int skip) {
         // specify what type of data we want to query - Post.class
         ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
+
         // include data referred by user key
         query.include(OutfitPost.KEY_AUTHOR);
         query.include(OutfitPost.KEY_LIKED_BY);
@@ -80,6 +81,7 @@ public class FeedFragment extends Fragment {
         query.include(OutfitPost.KEY_BOTTOMS);
         query.include(OutfitPost.KEY_OUTER);
         query.include(OutfitPost.KEY_SHOES);
+        
         // limit query to latest 20 items
         query.setLimit(20);
         query.setSkip(skip);

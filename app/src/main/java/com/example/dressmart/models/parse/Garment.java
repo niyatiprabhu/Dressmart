@@ -18,13 +18,16 @@ public class Garment extends ParseObject implements Comparable<Garment>{
     public static final String KEY_SUBTYPE = "subType";
     public static final String KEY_GARMENT_PICTURE = "garmentPicture";
     public static final String KEY_DATE_LAST_WORN = "dateLastWorn";
+    public static final String KEY_OWNER = "owner";
 
     public Garment(){}
 
-    public Garment(String description, String garmentType, String subtype) {
-        setParseDescription(description);
-        setParseGarmentType(garmentType);
-        setParseSubtype(subtype);
+    public User getOwner() {
+        return (User) getParseUser(KEY_OWNER);
+    }
+
+    public void setOwner(User user) {
+        put(KEY_OWNER, user);
     }
 
     public String getDescription() {

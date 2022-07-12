@@ -384,7 +384,6 @@ public class TodayFragment extends Fragment {
                     binding.vpGarment4.setAdapter(shoesAdapter);
 
 
-
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -394,6 +393,7 @@ public class TodayFragment extends Fragment {
                             post.setParseTemperature((int)weatherCondition.getAvgTemp());
                             post.setParseConditions(weatherCondition.getConditions());
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
+
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
                             post.setParseLikedBy(new ArrayList<>());
 
@@ -439,8 +439,12 @@ public class TodayFragment extends Fragment {
 //                                    fragmentTransaction.addToBackStack(null);
 //                                    fragmentTransaction.commit();
 
+                                        }
+                                    });
                                 }
                             });
+                            post.setParseLikedBy(new ArrayList<>());
+
                         }
                     });
                 } else {

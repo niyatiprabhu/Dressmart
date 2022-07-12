@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.bumptech.glide.Glide;
 import com.example.dressmart.LoginActivity;
 import com.example.dressmart.adapters.ProfileAdapter;
+import com.example.dressmart.adapters.SearchAdapter;
 import com.example.dressmart.databinding.FragmentProfileBinding;
 import com.example.dressmart.models.parse.Garment;
 import com.example.dressmart.models.parse.OutfitPost;
@@ -46,8 +48,12 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
 
     private RecyclerView rvPostsProfile;
-    private ProfileAdapter adapter;
+    private ProfileAdapter profileAdapter;
     private List<OutfitPost> posts;
+
+    private RecyclerView rvSearchResults;
+    private SearchAdapter searchAdapter;
+    private List<OutfitPost> searchResults;
 
 
     private User user = (User) ParseUser.getCurrentUser();
@@ -67,57 +73,56 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-        Log.i(TAG, user.getNumOutfits());
-
-        // ********************************** TESTING ADDING A NEW OUTFIT POST AND SEEING IF IT SHOWS UP ON GRIDVIEW
-//        Garment top = new Garment("White tee", "Top", "Short-Sleeved");
-//        top.saveInBackground();
-//        Garment bottom = new Garment("Corduroy Pants", "Bottoms", "Pants");
-//        bottom.saveInBackground();
-//        Garment outer = new Garment("Green Sweater", "Outer", "Sweater");
-//        outer.saveInBackground();
-//        Garment shoes = new Garment("Black Converse", "Shoes", "Sneakers");
-//        shoes.saveInBackground();
-//        List<Garment> garments = new ArrayList<>();
-//        garments.add(top);
-//        garments.add(bottom);
-//        garments.add(outer);
-//        garments.add(shoes);
-//        user.setCloset(garments);
-//        OutfitPost newPost = new OutfitPost((User)ParseUser.getCurrentUser(), new ArrayList<>(), garments, 55, "Partly Cloudy");
-//        newPost.saveInBackground(new SaveCallback() {
-//            @Override
-//            public void done(ParseException e) {
-//                if (e != null) {
-//                    Log.e(TAG, e.getMessage(), e);
-//                    Toast.makeText(getContext(), "Error while saving!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                Log.i(TAG, "Post save was successful!");
-//                Toast.makeText(getContext(), "Success!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
-
-
-
-
         rvPostsProfile = binding.rvPostsProfile;
+        rvSearchResults = binding.rvSearchResults;
+        binding.rvSearchResults.setVisibility(View.GONE);
 
-
-        int numberOfColumns = 2;
-        GridLayoutManager glm = new GridLayoutManager(getContext(), numberOfColumns);
+        GridLayoutManager glm = new GridLayoutManager(getContext(), 2);
 
         // initialize the array that will hold posts and create a ProfileAdapter
         posts = new ArrayList<>();
-        adapter = new ProfileAdapter(getActivity(), posts);
+        profileAdapter = new ProfileAdapter(getActivity(), posts);
         // set the adapter on the recycler view
-        rvPostsProfile.setAdapter(adapter);
+        rvPostsProfile.setAdapter(profileAdapter);
         // set the layout manager on the recycler view
         rvPostsProfile.setLayoutManager(glm);
+
+        // same for the search feature
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        searchResults = new ArrayList<>();
+        searchAdapter = new SearchAdapter(getActivity(), searchResults);
+        rvSearchResults.setAdapter(searchAdapter);
+        rvSearchResults.setLayoutManager(llm);
+
+        binding.svFindOutfits.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                rvSearchResults.setVisibility(View.VISIBLE);
+                querySearchResults(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        binding.svFindOutfits.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rvPostsProfile.setVisibility(View.GONE);
+            }
+        });
+
+        binding.svFindOutfits.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                rvPostsProfile.setVisibility(View.VISIBLE);
+                rvSearchResults.setVisibility(View.GONE);
+                return false;
+            }
+        });
 
 
         binding.btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +151,7 @@ public class ProfileFragment extends Fragment {
                 binding.tvNumOutfitsProfile.setText(user.getNumOutfits());
             }
         });
-        Log.i(TAG, "Number of posts: " + adapter.getItemCount());
+        Log.i(TAG, "Number of posts: " + profileAdapter.getItemCount());
         queryPosts(0);
 
     }
@@ -154,7 +159,6 @@ public class ProfileFragment extends Fragment {
 
     protected void queryPosts(int skip) {
         // specify what type of data we want to query - Post.class
-        Log.i(TAG, "in queryPost");
         ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
         // include data referred by user key
         query.include(OutfitPost.KEY_AUTHOR);
@@ -181,8 +185,65 @@ public class ProfileFragment extends Fragment {
 
                 // save received posts to list and notify adapter of new data
                 posts.addAll(fetchedPosts);
-                adapter.notifyDataSetChanged();
+                profileAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    protected void querySearchResults(String description) {
+        // make a Garment query for each type of top to query the item that matches the description
+        ParseQuery<Garment> topQuery = ParseQuery.getQuery(Garment.class);
+        topQuery.include(Garment.KEY_OWNER);
+        topQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        topQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
+
+        ParseQuery<Garment> bottomsQuery = ParseQuery.getQuery(Garment.class);
+        bottomsQuery.include(Garment.KEY_OWNER);
+        bottomsQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        bottomsQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
+
+        ParseQuery<Garment> outerQuery = ParseQuery.getQuery(Garment.class);
+        outerQuery.include(Garment.KEY_OWNER);
+        outerQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        outerQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
+
+        ParseQuery<Garment> shoesQuery = ParseQuery.getQuery(Garment.class);
+        shoesQuery.include(Garment.KEY_OWNER);
+        shoesQuery.whereEqualTo(Garment.KEY_OWNER, user);
+        shoesQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
+
+        // make a compound query
+        List<ParseQuery<Garment>> queries = new ArrayList<>();
+        queries.add(topQuery);
+        queries.add(bottomsQuery);
+        queries.add(outerQuery);
+        queries.add(shoesQuery);
+
+        //ParseQuery<OutfitPost> mainQuery = ParseQuery.or(queries);
+//        mainQuery.include(OutfitPost.KEY_AUTHOR);
+//        mainQuery.include(OutfitPost.KEY_TOP);
+//        mainQuery.include(OutfitPost.KEY_BOTTOMS);
+//        mainQuery.include(OutfitPost.KEY_OUTER);
+//        mainQuery.include(OutfitPost.KEY_SHOES);
+//
+//        // limit query to current user
+//        mainQuery.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
+//        // limit query to include only garment with the description
+//        mainQuery.whereContains(Garment.KEY_DESCRIPTION, description);
+//        mainQuery.addDescendingOrder("createdAt");
+//        mainQuery.findInBackground(new FindCallback<OutfitPost>() {
+//            @Override
+//            public void done(List<OutfitPost> fetchedResults, ParseException e) {
+//                // check for errors
+//                if (e != null) {
+//                    Log.e(TAG, "Issue with getting search results", e);
+//                    return;
+//                }
+//
+//                // save received posts to list and notify adapter of new data
+//                searchAdapter.addAll(fetchedResults);
+//                searchAdapter.notifyDataSetChanged();
+//            }
+//        });
     }
 }
