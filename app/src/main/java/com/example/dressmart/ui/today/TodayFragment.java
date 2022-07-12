@@ -438,13 +438,8 @@ public class TodayFragment extends Fragment {
 //                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_activity_main, fragment);
 //                                    fragmentTransaction.addToBackStack(null);
 //                                    fragmentTransaction.commit();
-
-                                        }
-                                    });
                                 }
                             });
-                            post.setParseLikedBy(new ArrayList<>());
-
                         }
                     });
                 } else {
@@ -644,6 +639,5 @@ public class TodayFragment extends Fragment {
 
         return file;
     }
-
 
 }
