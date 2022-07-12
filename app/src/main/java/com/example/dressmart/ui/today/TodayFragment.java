@@ -265,10 +265,7 @@ public class TodayFragment extends Fragment {
                             closet.put(item.getGarmentType(), garments);
                         }
                     }
-                    Garment top = closet.get("Top").get(0);
-                    Garment bottoms = closet.get("Bottoms").get(0);
-                    Garment outer = null;
-                    Garment shoes = closet.get("Shoes").get(0);
+
 
                     Comparator<Garment> dateComparator = new Comparator<Garment>() {
                         @Override
@@ -281,6 +278,11 @@ public class TodayFragment extends Fragment {
                     Collections.sort(closet.get("Bottoms"), dateComparator);
                     Collections.sort(closet.get("Outer"), dateComparator);
                     Collections.sort(closet.get("Shoes"), dateComparator);
+
+                    Garment top = closet.get("Top").get(0);
+                    Garment bottoms = closet.get("Bottoms").get(0);
+                    Garment outer = null;
+                    Garment shoes = closet.get("Shoes").get(0);
 
                     // each list is sorted from least recently worn to most recently worn,
                     // so the items that will be recommended won't be the most recent items
@@ -366,14 +368,10 @@ public class TodayFragment extends Fragment {
                     binding.vpGarment4.setAdapter(new GarmentAdapter(closet.get("Shoes"), getContext()));
 
 
-
-                    // add the garments to a list to associate with the post that is created
-                    List<Garment> outfitGarments = new ArrayList<>();
-                    outfitGarments.add(top);
-                    outfitGarments.add(bottoms);
-                    outfitGarments.add(outer);
-                    outfitGarments.add(shoes);
-
+                    Garment finalTop = top;
+                    Garment finalBottoms = bottoms;
+                    Garment finalOuter = outer;
+                    Garment finalShoes = shoes;
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -383,7 +381,11 @@ public class TodayFragment extends Fragment {
                             post.setParseTemperature((int)weatherCondition.getAvgTemp());
                             post.setParseConditions(weatherCondition.getConditions());
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
-                            post.setParseGarments(outfitGarments);
+                            post.setParseTop(finalTop);
+                            post.setParseBottoms(finalBottoms);
+                            post.setParseOuter(finalOuter);
+                            post.setParseShoes(finalShoes);
+
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
                             post.setParseLikedBy(new ArrayList<>());
                             post.saveInBackground(new SaveCallback() {
