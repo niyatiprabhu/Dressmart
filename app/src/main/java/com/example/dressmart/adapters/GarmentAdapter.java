@@ -24,11 +24,11 @@ import java.util.List;
 
 public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder> {
     // this will have to be one of the "values" in the hashmap which corresponds to a list of a specific garment type
-    private ArrayList<Garment> garments;
+    private List<Garment> garments;
 
     private Context context;
 
-    public GarmentAdapter(ArrayList<Garment> garments, Context context){
+    public GarmentAdapter(List<Garment> garments, Context context){
         this.context = context;
         this.garments = garments;
     }
