@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,7 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.dressmart.R;
 import com.example.dressmart.models.parse.OutfitPost;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 
 import java.util.List;
 
@@ -42,8 +46,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         OutfitPost post = results.get(position);
-        holder.bind(post);
+        try {
+            holder.bind(post);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
+
 
     // Clean all elements of the recycler
     public void clear() {
@@ -78,20 +87,39 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             tvShoesSearch = itemView.findViewById(R.id.tvShoesSearch);
         }
 
-        public void bind(OutfitPost post) {
+        public void bind(OutfitPost post) throws ParseException {
             // Bind the post data to the view elements
+
             tvConditionsSearch.setText(post.getTemperature() + " and " + post.getConditions());
-            tvTopSearch.setText(post.getTop().getDescription());
-            tvBottomsSearch.setText(post.getBottoms().getDescription());
-            tvOuterSearch.setText(post.getOuter().getDescription());
-            tvShoesSearch.setText(post.getShoes().getDescription());
+            try {
+                tvTopSearch.setText("Top: " + post.getTop().getDescription());
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+            try {
+                tvBottomsSearch.setText("Bottoms: " + post.getBottoms().getDescription());
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+            if (post.getOuter() != null) {
+                try {
+                    tvOuterSearch.setText("Outer: " + post.getOuter().getDescription());
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                tvOuterSearch.setVisibility(View.GONE);
+            }
+            try {
+                tvShoesSearch.setText("Shoes: " + post.getShoes().getDescription());
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
             ParseFile image = post.getWearingOutfitPicture();
             if (image != null) {
-                Glide.with(context).load(image.getUrl()).into(ivWearingOutfitPicSearch);
+                Glide.with(context).load(image.getUrl()).centerCrop().into(ivWearingOutfitPicSearch);
             }
-
         }
-
 
     }
 

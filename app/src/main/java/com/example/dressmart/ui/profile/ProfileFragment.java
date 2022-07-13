@@ -39,6 +39,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
@@ -94,6 +96,7 @@ public class ProfileFragment extends Fragment {
         rvSearchResults.setAdapter(searchAdapter);
         rvSearchResults.setLayoutManager(llm);
 
+
         binding.svFindOutfits.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -104,6 +107,8 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                rvSearchResults.setVisibility(View.VISIBLE);
+                querySearchResults(newText);
                 return false;
             }
         });
@@ -118,6 +123,7 @@ public class ProfileFragment extends Fragment {
         binding.svFindOutfits.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                searchAdapter.clear();
                 rvPostsProfile.setVisibility(View.VISIBLE);
                 rvSearchResults.setVisibility(View.GONE);
                 return false;
@@ -191,61 +197,46 @@ public class ProfileFragment extends Fragment {
     }
 
     protected void querySearchResults(String description) {
-        // make a Garment query for each type of top to query the item that matches the description
-//        ParseQuery<ParseObject> topQuery = ParseQuery.getQuery("Garment");
-//        topQuery.include(Garment.KEY_OWNER);
-//        topQuery.whereEqualTo(Garment.KEY_OWNER, user);
-//        topQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
-//
-//        ParseQuery<ParseObject> bottomsQuery = ParseQuery.getQuery("Garment");
-//        bottomsQuery.include(Garment.KEY_OWNER);
-//        bottomsQuery.whereEqualTo(Garment.KEY_OWNER, user);
-//        bottomsQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
-//
-//        ParseQuery<ParseObject> outerQuery = ParseQuery.getQuery("Garment");
-//        outerQuery.include(Garment.KEY_OWNER);
-//        outerQuery.whereEqualTo(Garment.KEY_OWNER, user);
-//        outerQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
-//
-//        ParseQuery<ParseObject> shoesQuery = ParseQuery.getQuery("Garment");
-//        shoesQuery.include(Garment.KEY_OWNER);
-//        shoesQuery.whereEqualTo(Garment.KEY_OWNER, user);
-//        shoesQuery.whereEqualTo(Garment.KEY_DESCRIPTION, description);
-//
-//        // make a compound query
-//        List<ParseQuery<ParseObject>> queries = new ArrayList<>();
-//        queries.add(topQuery);
-//        queries.add(bottomsQuery);
-//        queries.add(outerQuery);
-//        queries.add(shoesQuery);
 
+        // query that matches any garment whose description contains the search term
+        ParseQuery<Garment> matchingGarmentQuery = ParseQuery.getQuery(Garment.class);
+        matchingGarmentQuery.whereContains(Garment.KEY_DESCRIPTION, description);
 
-        // do a query over the user's closet and match based on what matches the description
-        // then add all of those to a list and do another query for posts that contain those items
+        // outfit posts where the top matches the garment query
+        ParseQuery<OutfitPost> topQuery = ParseQuery.getQuery(OutfitPost.class);
+        topQuery.whereMatchesQuery(OutfitPost.KEY_TOP, matchingGarmentQuery);
 
-        ParseQuery<OutfitPost> mainQuery = ParseQuery.or(queries);
-        mainQuery.include(OutfitPost.KEY_AUTHOR);
-        mainQuery.include(OutfitPost.KEY_TOP);
-        mainQuery.include(OutfitPost.KEY_BOTTOMS);
-        mainQuery.include(OutfitPost.KEY_OUTER);
-        mainQuery.include(OutfitPost.KEY_SHOES);
+        // outfit posts where the bottoms matches the garment query
+        ParseQuery<OutfitPost> bottomQuery = ParseQuery.getQuery(OutfitPost.class);
+        bottomQuery.whereMatchesQuery(OutfitPost.KEY_BOTTOMS, matchingGarmentQuery);
 
-        // limit query to current user
-        mainQuery.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
-        // limit query to include only garment with the description
-        mainQuery.whereContains(Garment.KEY_DESCRIPTION, description);
-        mainQuery.addDescendingOrder("createdAt");
-        mainQuery.findInBackground(new FindCallback<OutfitPost>() {
+        // outfit posts where the outerwear matches the garment query
+        ParseQuery<OutfitPost> outerQuery = ParseQuery.getQuery(OutfitPost.class);
+        outerQuery.whereMatchesQuery(OutfitPost.KEY_OUTER, matchingGarmentQuery);
+
+        // outfit posts where the shoes matches the garment query
+        ParseQuery<OutfitPost> shoeQuery = ParseQuery.getQuery(OutfitPost.class);
+        shoeQuery.whereMatchesQuery(OutfitPost.KEY_SHOES, matchingGarmentQuery);
+
+        List<ParseQuery<OutfitPost>> allMatchingPostQueries = new ArrayList<>();
+        allMatchingPostQueries.add(topQuery);
+        allMatchingPostQueries.add(bottomQuery);
+        allMatchingPostQueries.add(outerQuery);
+        allMatchingPostQueries.add(shoeQuery);
+
+        // `OR` all of our outfit post queries, so results are any posts
+        // where any garment's description matches the search term.
+        ParseQuery<OutfitPost> matchingPostQuery = ParseQuery.or(allMatchingPostQueries);
+
+        // Posts by the user should only have items from the user's closet so I think checking this once is enough
+        matchingPostQuery.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
+
+        matchingPostQuery.findInBackground(new FindCallback<OutfitPost>() {
+            // find callback here to save the result list of OutfitPosts
             @Override
-            public void done(List<OutfitPost> fetchedResults, ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting search results", e);
-                    return;
-                }
-
-                // save received posts to list and notify adapter of new data
-                searchAdapter.addAll(fetchedResults);
+            public void done(List<OutfitPost> objects, ParseException e) {
+                searchResults.addAll(objects);
+                searchResults.removeAll(Collections.singletonList(null));
                 searchAdapter.notifyDataSetChanged();
             }
         });

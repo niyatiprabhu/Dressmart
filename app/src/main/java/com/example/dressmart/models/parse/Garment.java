@@ -30,8 +30,8 @@ public class Garment extends ParseObject implements Comparable<Garment>{
         put(KEY_OWNER, user);
     }
 
-    public String getDescription() {
-        return getString(KEY_DESCRIPTION);
+    public String getDescription() throws ParseException {
+        return fetchIfNeeded().getString(KEY_DESCRIPTION);
     }
 
     public void setParseDescription(String newDescription) {

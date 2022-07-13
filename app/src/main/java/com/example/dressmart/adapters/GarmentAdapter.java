@@ -17,6 +17,7 @@ import com.example.dressmart.R;
 import com.example.dressmart.models.parse.Garment;
 import com.example.dressmart.models.parse.User;
 import com.github.islamkhsh.CardSliderAdapter;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -53,7 +54,11 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
         Log.i("Garments Adapter", "size of garments: " + garments.size());
         if (chosenItem != null) {
             Glide.with(context).load(chosenItem.getGarmentPicture().getUrl()).into(viewHolder.ivGarmentPic);
-            viewHolder.tvGarmentDescription.setText(chosenItem.getDescription());
+            try {
+                viewHolder.tvGarmentDescription.setText(chosenItem.getDescription());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         } else {
             viewHolder.tvGarmentDescription.setText("None");
         }
