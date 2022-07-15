@@ -265,8 +265,9 @@ public class TodayFragment extends Fragment {
         query.getInBackground(user.getObjectId(), new GetCallback<User>() {
             public void done(User user, ParseException e) {
                 if (e == null) {
-                    getView().setVisibility(View.VISIBLE);
-
+                    if (getView() != null) {
+                        getView().setVisibility(View.VISIBLE);
+                    }
 
                     HashMap<String, List<Garment>> closet = new HashMap<>();
                     for(Garment item : user.getCloset()) {

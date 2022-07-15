@@ -109,15 +109,16 @@ public class ProfileFragment extends Fragment {
                 searchAdapter.clear();
                 querySearchResults(query);
                 binding.svFindOutfits.clearFocus(); // so that setOnQueryTextListener only runs once
-                Log.i(TAG, "Number of outfit posts: " + user.getOutfits().size());
-
+                int numResults = searchAdapter.getItemCount();
+                String resultsSuffix = numResults == 1 ? " Result" : " Results";
+                binding.tvNumResultsSearch.setText(numResults + resultsSuffix);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                rvSearchResults.setVisibility(View.VISIBLE);
-//                querySearchResults(newText);
+                rvSearchResults.setVisibility(View.VISIBLE);
+                querySearchResults(newText);
                 return false;
             }
         });
@@ -163,11 +164,9 @@ public class ProfileFragment extends Fragment {
                 Glide.with(getContext()).load(user.getProfilePicture().getUrl()).circleCrop().into(binding.ivProfilePicProfile);
                 binding.tvUsernameProfile.setText("@" + user.getUsername());
                 binding.tvDisplayNameProfile.setText(user.getDisplayName());
-                Log.i(TAG, "Number of fits: " + user.getNumOutfits());
                 binding.tvNumOutfitsProfile.setText(user.getNumOutfits());
             }
         });
-        Log.i(TAG, "Number of posts: " + profileAdapter.getItemCount());
         queryPosts(0);
 
     }
@@ -206,10 +205,6 @@ public class ProfileFragment extends Fragment {
     }
 
     protected void querySearchResults(String description) {
-
-        if (rvSearchResults.getVisibility() == View.VISIBLE) {
-            Log.i(TAG, "yes");
-        }
 
         // query that matches any garment whose description contains the search term
         ParseQuery<Garment> matchingGarmentQuery = ParseQuery.getQuery(Garment.class);
@@ -257,13 +252,7 @@ public class ProfileFragment extends Fragment {
 
                 objects.removeAll(Collections.singletonList(null));
                 searchResults.addAll(objects);
-                Log.i(TAG, "objects: " + objects.toString());
                 searchAdapter.notifyDataSetChanged();
-                int numResults = searchAdapter.getItemCount();
-                String resultsSuffix = numResults == 1 ? " Result" : " Results";
-                binding.tvNumResultsSearch.setText(numResults + resultsSuffix);
-                Log.i(TAG, "search results: " + searchResults.toString());
-
             }
         });
     }
