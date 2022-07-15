@@ -35,17 +35,18 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
+        Log.i("Search adapter", "size: " + results.size());
         return results.size();
     }
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SearchAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_search_result, parent, false);
-        return new ViewHolder(view);
+        return new SearchAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
         OutfitPost post = results.get(position);
 
         try {
@@ -92,48 +93,35 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         public void bind(OutfitPost post) throws ParseException {
             // Bind the post data to the view elements
-
-            Log.i("Search adapter", "in the search adapter");
-            tvConditionsSearch.setText("sunny and 75");
-            tvTopSearch.setText("This is the top");
-            tvBottomsSearch.setText("This is the bottoms");
-            tvOuterSearch.setText("This is the outer");
-            tvShoesSearch.setText("This is the shoes");
-
-
-
-
-
-
-//            tvConditionsSearch.setText(post.getTemperature() + " and " + post.getConditions());
-//            try {
-//                tvTopSearch.setText("Top: " + post.getTop().getDescription());
-//            } catch (ParseException ex) {
-//                ex.printStackTrace();
-//            }
-//            try {
-//                tvBottomsSearch.setText("Bottoms: " + post.getBottoms().getDescription());
-//            } catch (ParseException ex) {
-//                ex.printStackTrace();
-//            }
-//            if (post.getOuter() != null) {
-//                try {
-//                    tvOuterSearch.setText("Outer: " + post.getOuter().getDescription());
-//                } catch (ParseException ex) {
-//                    ex.printStackTrace();
-//                }
-//            } else {
-//                tvOuterSearch.setVisibility(View.GONE);
-//            }
-//            try {
-//                tvShoesSearch.setText("Shoes: " + post.getShoes().getDescription());
-//            } catch (ParseException ex) {
-//                ex.printStackTrace();
-//            }
-//            ParseFile image = post.getWearingOutfitPicture();
-//            if (image != null) {
-//                Glide.with(context).load(image.getUrl()).centerCrop().into(ivWearingOutfitPicSearch);
-//            }
+            tvConditionsSearch.setText(post.getTemperature() + " and " + post.getConditions());
+            try {
+                tvTopSearch.setText("Top: " + post.getTop().getDescription());
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+            try {
+                tvBottomsSearch.setText("Bottoms: " + post.getBottoms().getDescription());
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+            if (post.getOuter() != null) {
+                try {
+                    tvOuterSearch.setText("Outer: " + post.getOuter().getDescription());
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                tvOuterSearch.setVisibility(View.GONE);
+            }
+            try {
+                tvShoesSearch.setText("Shoes: " + post.getShoes().getDescription());
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+            ParseFile image = post.getWearingOutfitPicture();
+            if (image != null) {
+                Glide.with(context).load(image.getUrl()).centerCrop().into(ivWearingOutfitPicSearch);
+            }
         }
 
     }

@@ -359,7 +359,9 @@ public class TodayFragment extends Fragment {
                                     // set items last worn date to today
                                     post.getTop().setDateLastWorn(Calendar.getInstance().getTime());
                                     post.getBottoms().setDateLastWorn(Calendar.getInstance().getTime());
-                                    post.getOuter().setDateLastWorn(Calendar.getInstance().getTime());
+                                    if (post.getOuter() != null) {
+                                        post.getOuter().setDateLastWorn(Calendar.getInstance().getTime());
+                                    }
                                     post.getShoes().setDateLastWorn(Calendar.getInstance().getTime());
 
 

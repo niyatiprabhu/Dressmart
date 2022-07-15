@@ -58,8 +58,6 @@ public class ProfileFragment extends Fragment {
     private SearchAdapter searchAdapter;
     private List<OutfitPost> searchResults;
 
-    private boolean populatedResults;
-
 
     private User user = (User) ParseUser.getCurrentUser();
 
@@ -81,6 +79,7 @@ public class ProfileFragment extends Fragment {
         rvPostsProfile = binding.rvPostsProfile;
         rvSearchResults = binding.rvSearchResults;
         binding.rvSearchResults.setVisibility(View.GONE);
+        binding.tvNumResultsSearch.setVisibility(View.VISIBLE);
 
         GridLayoutManager glm = new GridLayoutManager(getContext(), 2);
 
@@ -106,14 +105,12 @@ public class ProfileFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 rvPostsProfile.setVisibility(View.GONE);
                 rvSearchResults.setVisibility(View.VISIBLE);
+                binding.tvNumResultsSearch.setVisibility(View.VISIBLE);
                 searchAdapter.clear();
                 querySearchResults(query);
                 binding.svFindOutfits.clearFocus(); // so that setOnQueryTextListener only runs once
                 Log.i(TAG, "Number of outfit posts: " + user.getOutfits().size());
 
-                if (rvSearchResults.getVisibility() == View.VISIBLE) {
-                    Log.i(TAG, "yes");
-                }
                 return false;
             }
 
@@ -138,6 +135,7 @@ public class ProfileFragment extends Fragment {
                 searchAdapter.clear();
                 rvPostsProfile.setVisibility(View.VISIBLE);
                 rvSearchResults.setVisibility(View.GONE);
+                binding.tvNumResultsSearch.setVisibility(View.GONE);
                 return false;
             }
         });
@@ -209,6 +207,10 @@ public class ProfileFragment extends Fragment {
 
     protected void querySearchResults(String description) {
 
+        if (rvSearchResults.getVisibility() == View.VISIBLE) {
+            Log.i(TAG, "yes");
+        }
+
         // query that matches any garment whose description contains the search term
         ParseQuery<Garment> matchingGarmentQuery = ParseQuery.getQuery(Garment.class);
         matchingGarmentQuery.whereContains(Garment.KEY_DESCRIPTION, description);
@@ -249,15 +251,19 @@ public class ProfileFragment extends Fragment {
             public void done(List<OutfitPost> objects, ParseException e) {
 
                 if(e != null) {
+                    Log.e(TAG, e.getMessage());
                     return;
                 }
-                if (!populatedResults) {
-                    objects.removeAll(Collections.singletonList(null));
-                    searchResults.addAll(objects);
-                    searchAdapter.notifyDataSetChanged();
-                    Log.i(TAG, "search results: " + searchResults.toString());
-                }
-                populatedResults = true;
+
+                objects.removeAll(Collections.singletonList(null));
+                searchResults.addAll(objects);
+                Log.i(TAG, "objects: " + objects.toString());
+                searchAdapter.notifyDataSetChanged();
+                int numResults = searchAdapter.getItemCount();
+                String resultsSuffix = numResults == 1 ? " Result" : " Results";
+                binding.tvNumResultsSearch.setText(numResults + resultsSuffix);
+                Log.i(TAG, "search results: " + searchResults.toString());
+
             }
         });
     }
