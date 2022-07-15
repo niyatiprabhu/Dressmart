@@ -28,6 +28,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 
@@ -83,6 +85,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -224,11 +227,11 @@ public class TodayFragment extends Fragment {
     private void setWeatherIcon() {
         @DrawableRes int icon;
         if (weatherCondition.getConditions().equals("Sunny")) {
-            icon = R.drawable.sun_icon;
+            icon = R.drawable.sunny;
         } else if (weatherCondition.getConditions().equals("Partly Cloudy")) {
             icon = R.drawable.partly_cloudy;
         } else {
-            icon = R.drawable.cloudy_weather;
+            icon = R.drawable.cloudy;
         }
         Glide.with(getActivity()).load(icon).override(400, 400).into(binding.ivWeatherIconToday);
     }
@@ -314,7 +317,6 @@ public class TodayFragment extends Fragment {
                             post.setParseAuthor((User)ParseUser.getCurrentUser());
 
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
-                            post.setParseLikedBy(new ArrayList<>());
 
                             // set the chosen garments to the actual cards the user chose
                             post.setParseTop(closet.get("Top").get(binding.vpGarment1.getCurrentItem()));
@@ -342,6 +344,8 @@ public class TodayFragment extends Fragment {
                                     user.saveInBackground();
                                     Log.i(TAG, "Post save was successful!");
 
+                                    Glide.with(getContext()).load(post.getWearingOutfitPicture().getUrl()).into(binding.ivWearingOutfitPicToday);
+
                                     // display the match score and remove the submit button
                                     binding.btnSubmitToday.setVisibility(View.GONE);
                                     binding.tvNumStars.setText("Match Score: " + String.valueOf(post.getColorMatchScore()) + "!");
@@ -352,11 +356,25 @@ public class TodayFragment extends Fragment {
                                     // set flag to true
                                     hasSubmitted = true;
 
+                                    // set items last worn date to today
+                                    post.getTop().setDateLastWorn(Calendar.getInstance().getTime());
+                                    post.getBottoms().setDateLastWorn(Calendar.getInstance().getTime());
+                                    post.getOuter().setDateLastWorn(Calendar.getInstance().getTime());
+                                    post.getShoes().setDateLastWorn(Calendar.getInstance().getTime());
+
+
                                     // navigate back to the feed fragment after successful post
 //                                    Fragment fragment = new FeedFragment();
 //                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_activity_main, fragment);
 //                                    fragmentTransaction.addToBackStack(null);
 //                                    fragmentTransaction.commit();
+
+                                    // fade out the gridview and fade in the imageview
+                                    Animation animFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+                                    binding.glGarments.startAnimation(animFadeOut);
+                                    Animation animFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+                                    binding.ivWearingOutfitPicToday.startAnimation(animFadeIn);
+                                    binding.tvOurPicks.setText("Your Outfit");
                                 }
                             });
                         }
@@ -382,8 +400,11 @@ public class TodayFragment extends Fragment {
             binding.btnSubmitToday.setVisibility(View.GONE);
             binding.rbMatchScore.setVisibility(View.VISIBLE);
             binding.tvNumStars.setVisibility(View.VISIBLE);
+            binding.glGarments.setVisibility(View.INVISIBLE);
+            binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
         }
     }
+
 
 
     protected void onLaunchCamera(View view) {

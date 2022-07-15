@@ -68,7 +68,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         private TextView tvDisplayName;
         private TextView tvTimestamp;
         private ImageView ivProfilePic;
-        private TextView tvNumLikes;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,14 +76,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             tvDisplayName = itemView.findViewById(R.id.tvDisplayName);
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
             ivProfilePic = itemView.findViewById(R.id.ivProfilePic);
-            tvNumLikes = itemView.findViewById(R.id.tvNumLikes);
         }
 
         public void bind(OutfitPost post) {
             // Bind the post data to the view elements
             tvDisplayName.setText(post.getAuthor().getDisplayName());
             tvWeather.setText(post.getTemperature() + " and " + post.getConditions());
-            //tvNumLikes.setText(post.getLikesCount());
             Date dateCreated = post.getCreatedAt();
             tvTimestamp.setText(TimeUtil.calculateTimeAgo(dateCreated));
             ParseFile image = post.getWearingOutfitPicture();

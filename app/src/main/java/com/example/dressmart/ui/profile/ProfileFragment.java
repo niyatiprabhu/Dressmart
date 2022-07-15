@@ -1,6 +1,7 @@
 package com.example.dressmart.ui.profile;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +58,8 @@ public class ProfileFragment extends Fragment {
     private SearchAdapter searchAdapter;
     private List<OutfitPost> searchResults;
 
+    private boolean populatedResults;
+
 
     private User user = (User) ParseUser.getCurrentUser();
 
@@ -93,6 +96,7 @@ public class ProfileFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         searchResults = new ArrayList<>();
         searchAdapter = new SearchAdapter(getActivity(), searchResults);
+
         rvSearchResults.setAdapter(searchAdapter);
         rvSearchResults.setLayoutManager(llm);
 
@@ -100,15 +104,23 @@ public class ProfileFragment extends Fragment {
         binding.svFindOutfits.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                rvPostsProfile.setVisibility(View.GONE);
                 rvSearchResults.setVisibility(View.VISIBLE);
+                searchAdapter.clear();
                 querySearchResults(query);
+                binding.svFindOutfits.clearFocus(); // so that setOnQueryTextListener only runs once
+                Log.i(TAG, "Number of outfit posts: " + user.getOutfits().size());
+
+                if (rvSearchResults.getVisibility() == View.VISIBLE) {
+                    Log.i(TAG, "yes");
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                rvSearchResults.setVisibility(View.VISIBLE);
-                querySearchResults(newText);
+//                rvSearchResults.setVisibility(View.VISIBLE);
+//                querySearchResults(newText);
                 return false;
             }
         });
@@ -172,7 +184,6 @@ public class ProfileFragment extends Fragment {
         query.include(OutfitPost.KEY_BOTTOMS);
         query.include(OutfitPost.KEY_OUTER);
         query.include(OutfitPost.KEY_SHOES);
-        query.include(OutfitPost.KEY_LIKED_BY);
         query.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
         // limit query to latest 20 items
         query.setLimit(20);
@@ -230,14 +241,23 @@ public class ProfileFragment extends Fragment {
 
         // Posts by the user should only have items from the user's closet so I think checking this once is enough
         matchingPostQuery.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
+        matchingPostQuery.setLimit(5);
 
         matchingPostQuery.findInBackground(new FindCallback<OutfitPost>() {
             // find callback here to save the result list of OutfitPosts
             @Override
             public void done(List<OutfitPost> objects, ParseException e) {
-                searchResults.addAll(objects);
-                searchResults.removeAll(Collections.singletonList(null));
-                searchAdapter.notifyDataSetChanged();
+
+                if(e != null) {
+                    return;
+                }
+                if (!populatedResults) {
+                    objects.removeAll(Collections.singletonList(null));
+                    searchResults.addAll(objects);
+                    searchAdapter.notifyDataSetChanged();
+                    Log.i(TAG, "search results: " + searchResults.toString());
+                }
+                populatedResults = true;
             }
         });
     }

@@ -40,24 +40,20 @@ App that suggests an outfit for the day based on weather predictions. User can l
 * Users can upload a "virtual closet" with each garment they have
 * Users will get a push notification in the morning to remind them
   * "Good morning! Check out today's weather to get started."
-* Users will get a push notification in the evening to give feedback
-  * "Hey there! How did your outfit work out today?"
-* Users can give feedback and set their preferences for hot/cold/etc
-  * The app will adjust outfit suggestions based on this
-* Users can friend other users and see friends' outfits on a feed
 * Users can share their outfits to friends
-* Users can search for other users and view their profiles
-* Users can "like" outfit posts
+* Users can see other users' outfit posts
+* Users can search for garments/outfits
+* Users will not be recommended the same items back to back.
+* Users will get a score based on how well the outfit matches
 
 ### 2. Screen Archetypes
 
 * Stream
-  * Users can "like" outfit posts
-* Likes
-  * Users can "like" outfit posts
+  * Users can see other users' outfit posts
 * Profile
   * Users can log out
   * Users can view their past outfits on their profile
+  * * Users can search for garments/outfits
 * Login
   * Users can log in
 * Account Creation
@@ -68,10 +64,8 @@ App that suggests an outfit for the day based on weather predictions. User can l
   * Users can view weather predictions for the day
   * Users can get a generated outfit suggestion for the day
   * Users can share their outfit to friends
-* Feedback
-  * Users can give feedback and set their preferences for hot/cold/etc
-* Outfit Detail
-  * Users can view their past outfits on their profile
+  * Users will get a score based on how well the outfit matches
+
 
 
 ### 3. Navigation
@@ -80,28 +74,19 @@ App that suggests an outfit for the day based on weather predictions. User can l
 
 * Feed
   * Profile (other users)
-  * Outfit detail
   * Stream
 * Profile
   * Logout
-  * Outfit Detail
 * Today
   * Today(includes weather and suggestion)
-  * Feedback
 
 
 **Flow Navigation** (Screen to Screen)
 
 * Stream
   * Profile (other users)
-  * Outfit Detail
 * Profile
-  * Outfit Detail
   * login
-* Likes
-  * Outfit Activity
-* Search
-  * Profile
 * Login
   * Account Creation
   * Profile
@@ -162,10 +147,3 @@ Garment
 - if garmentType==Outer
   subType=={coat, jacket}
 
-
-
-
-### Networking
-- [Add list of network requests by screen ]
-- [Create basic snippets for each Parse network request]
-- [OPTIONAL: List endpoints if using existing API such as Yelp]

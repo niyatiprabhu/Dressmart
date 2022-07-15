@@ -8,8 +8,9 @@
 
     <ImageView
         android:id="@+id/ivWearingOutfitPicSearch"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
@@ -17,6 +18,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
         android:gravity="center_vertical"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,9 +30,11 @@
             android:id="@+id/tvConditionsSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineSpacingExtra="10sp"
+            android:lineSpacingExtra="14sp"
             android:text="TextView"
             android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="italic"
             tools:text="75 and Sunny" />
 
         <TextView

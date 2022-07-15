@@ -4,60 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E2714F80"
+    android:background="#fff0db"
     tools:context=".LoginActivity">
-
-    <TextView
-        android:id="@+id/tvLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
-        android:text="LOG IN"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/etUsername"
-        android:layout_width="258dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="12dp"
-        android:background="#36FFFFFF"
-        android:ems="10"
-        android:hint="Username"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLogin" />
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="257dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="1dp"
-        android:background="#3BFFFFFF"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="@+id/etUsername"
-        app:layout_constraintStart_toStartOf="@+id/etUsername"
-        app:layout_constraintTop_toBottomOf="@+id/etUsername" />
 
     <TextView
         android:id="@+id/tvNewUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginBottom="16dp"
         android:text="New user? Sign up here"
-        app:layout_constraintEnd_toEndOf="@+id/etPassword"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="295dp"
+        android:layout_height="98dp"
+        android:layout_marginTop="196dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo_transparent" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="257dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="8dp"
+        android:background="#3BFFFFFF"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/etUsername"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/etUsername"
+        app:layout_constraintTop_toBottomOf="@+id/etUsername" />
+
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_width="258dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="4dp"
+        android:background="#36FFFFFF"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="77dp"
         android:layout_height="37dp"
+        android:layout_marginTop="12dp"
         android:text="LOG IN"
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="@+id/etPassword"

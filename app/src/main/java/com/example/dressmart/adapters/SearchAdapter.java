@@ -2,6 +2,7 @@ package com.example.dressmart.adapters;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,11 +47,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         OutfitPost post = results.get(position);
+
         try {
             holder.bind(post);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
     }
 
 
@@ -90,35 +93,47 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         public void bind(OutfitPost post) throws ParseException {
             // Bind the post data to the view elements
 
-            tvConditionsSearch.setText(post.getTemperature() + " and " + post.getConditions());
-            try {
-                tvTopSearch.setText("Top: " + post.getTop().getDescription());
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-            }
-            try {
-                tvBottomsSearch.setText("Bottoms: " + post.getBottoms().getDescription());
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-            }
-            if (post.getOuter() != null) {
-                try {
-                    tvOuterSearch.setText("Outer: " + post.getOuter().getDescription());
-                } catch (ParseException ex) {
-                    ex.printStackTrace();
-                }
-            } else {
-                tvOuterSearch.setVisibility(View.GONE);
-            }
-            try {
-                tvShoesSearch.setText("Shoes: " + post.getShoes().getDescription());
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-            }
-            ParseFile image = post.getWearingOutfitPicture();
-            if (image != null) {
-                Glide.with(context).load(image.getUrl()).centerCrop().into(ivWearingOutfitPicSearch);
-            }
+            Log.i("Search adapter", "in the search adapter");
+            tvConditionsSearch.setText("sunny and 75");
+            tvTopSearch.setText("This is the top");
+            tvBottomsSearch.setText("This is the bottoms");
+            tvOuterSearch.setText("This is the outer");
+            tvShoesSearch.setText("This is the shoes");
+
+
+
+
+
+
+//            tvConditionsSearch.setText(post.getTemperature() + " and " + post.getConditions());
+//            try {
+//                tvTopSearch.setText("Top: " + post.getTop().getDescription());
+//            } catch (ParseException ex) {
+//                ex.printStackTrace();
+//            }
+//            try {
+//                tvBottomsSearch.setText("Bottoms: " + post.getBottoms().getDescription());
+//            } catch (ParseException ex) {
+//                ex.printStackTrace();
+//            }
+//            if (post.getOuter() != null) {
+//                try {
+//                    tvOuterSearch.setText("Outer: " + post.getOuter().getDescription());
+//                } catch (ParseException ex) {
+//                    ex.printStackTrace();
+//                }
+//            } else {
+//                tvOuterSearch.setVisibility(View.GONE);
+//            }
+//            try {
+//                tvShoesSearch.setText("Shoes: " + post.getShoes().getDescription());
+//            } catch (ParseException ex) {
+//                ex.printStackTrace();
+//            }
+//            ParseFile image = post.getWearingOutfitPicture();
+//            if (image != null) {
+//                Glide.with(context).load(image.getUrl()).centerCrop().into(ivWearingOutfitPicSearch);
+//            }
         }
 
     }

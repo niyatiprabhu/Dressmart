@@ -76,7 +76,6 @@ public class FeedFragment extends Fragment {
 
         // include data referred by user key
         query.include(OutfitPost.KEY_AUTHOR);
-        query.include(OutfitPost.KEY_LIKED_BY);
         query.include(OutfitPost.KEY_TOP);
         query.include(OutfitPost.KEY_BOTTOMS);
         query.include(OutfitPost.KEY_OUTER);

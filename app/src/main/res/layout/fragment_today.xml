@@ -86,6 +86,17 @@
         tools:layout_conversion_absoluteHeight="19dp"
         tools:layout_conversion_absoluteWidth="110dp" />
 
+    <ImageView
+        android:id="@+id/ivWearingOutfitPicToday"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/rbMatchScore"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvOurPicks"
+        tools:src="@tools:sample/avatars" />
+
     <GridLayout
         android:id="@+id/glGarments"
         android:layout_width="0dp"
@@ -345,6 +356,7 @@
         android:id="@+id/rbMatchScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
         android:numStars="5"
         android:stepSize="0.5"
         app:layout_constraintBottom_toBottomOf="parent"

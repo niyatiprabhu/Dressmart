@@ -14,7 +14,6 @@ import java.util.List;
 public class OutfitPost extends ParseObject{
 
     public static final String KEY_AUTHOR = "author";
-    public static final String KEY_LIKED_BY = "likedBy";
     public static final String KEY_WEARING_OUTFIT_PICTURE = "wearingOutfitPicture";
     public static final String KEY_TEMPERATURE = "temperature";
     public static final String KEY_CONDITIONS = "conditions";
@@ -33,18 +32,6 @@ public class OutfitPost extends ParseObject{
 
     public void setParseAuthor(User user) {
         put(KEY_AUTHOR, user);
-    }
-
-    public List<User> getLikedBy() {
-        List<User> likedBy = getList(KEY_LIKED_BY);
-        if (likedBy == null) {
-            return new ArrayList<>();
-        }
-        return likedBy;
-    }
-
-    public void setParseLikedBy(List<User> newLikedBy) {
-        put(KEY_LIKED_BY, newLikedBy);
     }
 
     public Garment getTop() {
