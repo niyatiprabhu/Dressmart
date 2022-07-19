@@ -20,31 +20,19 @@ public class RecommendedOutfit {
         return top;
     }
 
-    public void setTop(Garment top) {
-        this.top = top;
-    }
 
     public Garment getBottoms() {
         return bottoms;
     }
 
-    public void setBottoms(Garment bottoms) {
-        this.bottoms = bottoms;
-    }
 
     public Garment getOuter() {
         return outer;
     }
 
-    public void setOuter(Garment outer) {
-        this.outer = outer;
-    }
 
     public Garment getShoes() {
         return shoes;
     }
 
-    public void setShoes(Garment shoes) {
-        this.shoes = shoes;
-    }
 }

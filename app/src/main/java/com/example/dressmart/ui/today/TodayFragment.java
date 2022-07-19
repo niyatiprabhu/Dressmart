@@ -1,5 +1,11 @@
 package com.example.dressmart.ui.today;
 
+import static com.example.dressmart.Constants.BOTTOMS;
+import static com.example.dressmart.Constants.OUTER;
+import static com.example.dressmart.Constants.SHOES;
+import static com.example.dressmart.Constants.TOP;
+import static com.example.dressmart.models.WeatherCondition.PARTLY_CLOUDY;
+import static com.example.dressmart.models.WeatherCondition.SUNNY;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 import android.Manifest;
@@ -50,6 +56,7 @@ import androidx.palette.graphics.Palette;
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.dressmart.Constants;
 import com.example.dressmart.R;
 import com.example.dressmart.adapters.GarmentAdapter;
 import com.example.dressmart.models.RecommendedOutfit;
@@ -226,9 +233,9 @@ public class TodayFragment extends Fragment {
 
     private void setWeatherIcon() {
         @DrawableRes int icon;
-        if (weatherCondition.getConditions().equals("Sunny")) {
+        if (weatherCondition.getConditions().equals(SUNNY)) {
             icon = R.drawable.sunny;
-        } else if (weatherCondition.getConditions().equals("Partly Cloudy")) {
+        } else if (weatherCondition.getConditions().equals(PARTLY_CLOUDY)) {
             icon = R.drawable.partly_cloudy;
         } else {
             icon = R.drawable.cloudy;
@@ -287,20 +294,20 @@ public class TodayFragment extends Fragment {
 
 
                     // put the chosen items at the top of their respective lists
-                    closet.get("Top").remove(recommendedOutfit.getTop());
-                    closet.get("Top").add(0, recommendedOutfit.getTop());
-                    closet.get("Bottoms").remove(recommendedOutfit.getBottoms());
-                    closet.get("Bottoms").add(0, recommendedOutfit.getBottoms());
-                    closet.get("Outer").remove(recommendedOutfit.getOuter());
-                    closet.get("Outer").add(0, recommendedOutfit.getOuter());
-                    closet.get("Shoes").remove(recommendedOutfit.getShoes());
-                    closet.get("Shoes").add(0, recommendedOutfit.getShoes());
+                    closet.get(TOP).remove(recommendedOutfit.getTop());
+                    closet.get(TOP).add(0, recommendedOutfit.getTop());
+                    closet.get(BOTTOMS).remove(recommendedOutfit.getBottoms());
+                    closet.get(BOTTOMS).add(0, recommendedOutfit.getBottoms());
+                    closet.get(OUTER).remove(recommendedOutfit.getOuter());
+                    closet.get(OUTER).add(0, recommendedOutfit.getOuter());
+                    closet.get(SHOES).remove(recommendedOutfit.getShoes());
+                    closet.get(SHOES).add(0, recommendedOutfit.getShoes());
 
                     // set the adapters for all 4 garment cards
-                    GarmentAdapter topAdapter = new GarmentAdapter(closet.get("Top"), getContext());
-                    GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get("Bottoms"), getContext());
-                    GarmentAdapter outerAdapter = new GarmentAdapter(closet.get("Outer"), getContext());
-                    GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get("Shoes"), getContext());
+                    GarmentAdapter topAdapter = new GarmentAdapter(closet.get(TOP), getContext());
+                    GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get(BOTTOMS), getContext());
+                    GarmentAdapter outerAdapter = new GarmentAdapter(closet.get(OUTER), getContext());
+                    GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get(SHOES), getContext());
                     binding.vpGarment1.setAdapter(topAdapter);
                     binding.vpGarment2.setAdapter(bottomsAdapter);
                     binding.vpGarment3.setAdapter(outerAdapter);
@@ -320,10 +327,10 @@ public class TodayFragment extends Fragment {
                             post.setParseWearingOutfitPicture(new ParseFile(photoFile));
 
                             // set the chosen garments to the actual cards the user chose
-                            post.setParseTop(closet.get("Top").get(binding.vpGarment1.getCurrentItem()));
-                            post.setParseBottoms(closet.get("Bottoms").get(binding.vpGarment2.getCurrentItem()));
-                            post.setParseOuter(closet.get("Outer").get(binding.vpGarment3.getCurrentItem()));
-                            post.setParseShoes(closet.get("Shoes").get(binding.vpGarment4.getCurrentItem()));
+                            post.setParseTop(closet.get(TOP).get(binding.vpGarment1.getCurrentItem()));
+                            post.setParseBottoms(closet.get(BOTTOMS).get(binding.vpGarment2.getCurrentItem()));
+                            post.setParseOuter(closet.get(OUTER).get(binding.vpGarment3.getCurrentItem()));
+                            post.setParseShoes(closet.get(SHOES).get(binding.vpGarment4.getCurrentItem()));
 
                             // calculate the match score of the 4 garments put together and display it
                             // in the rating stars, the number of stars filled up corresponds to the value of calculateMatchScore
