@@ -1,4 +1,4 @@
-package com.example.dressmart.ui.today;
+package com.example.dressmart.fragments;
 
 import static com.example.dressmart.Constants.BOTTOMS;
 import static com.example.dressmart.Constants.OUTER;
@@ -9,27 +9,14 @@ import static com.example.dressmart.models.WeatherCondition.SUNNY;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorSpace;
-import android.graphics.RectF;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,35 +26,25 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.AppOpsManagerCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-import com.example.dressmart.Constants;
 import com.example.dressmart.R;
 import com.example.dressmart.adapters.GarmentAdapter;
+import com.example.dressmart.databinding.FragmentTodayBinding;
 import com.example.dressmart.models.RecommendedOutfit;
 import com.example.dressmart.models.WeatherCondition;
-import com.example.dressmart.databinding.FragmentTodayBinding;
 import com.example.dressmart.models.parse.Garment;
 import com.example.dressmart.models.parse.OutfitPost;
 import com.example.dressmart.models.parse.User;
-import com.example.dressmart.ui.feed.FeedFragment;
 import com.example.dressmart.util.RecommendationUtil;
-import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -75,27 +52,18 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -129,9 +97,6 @@ public class TodayFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        TodayViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(TodayViewModel.class);
-
         binding = FragmentTodayBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
