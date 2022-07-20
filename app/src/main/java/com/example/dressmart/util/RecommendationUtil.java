@@ -1,5 +1,10 @@
 package com.example.dressmart.util;
 
+import static com.example.dressmart.Constants.BOTTOMS;
+import static com.example.dressmart.Constants.OUTER;
+import static com.example.dressmart.Constants.SHOES;
+import static com.example.dressmart.Constants.TOP;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -8,6 +13,7 @@ import android.util.Log;
 
 import androidx.palette.graphics.Palette;
 
+import com.example.dressmart.R;
 import com.example.dressmart.models.RecommendedOutfit;
 import com.example.dressmart.models.WeatherCondition;
 import com.example.dressmart.models.parse.Garment;
@@ -20,6 +26,32 @@ import java.util.List;
 
 public class RecommendationUtil {
 
+    // constants for Garment subtypes
+    private static final String LONG_SLEEVED = "Long-Sleeved";
+    private static final String SHORT_SLEEVED = "Short-Sleeved";
+    private static final String PANTS = "Pants";
+    private static final String SHORTS = "Shorts";
+    private static final String COAT = "Coat";
+    private static final String JACKET = "Jacket";
+    private static final String SWEATER = "Sweater";
+    private static final String BOOTS = "Boots";
+    private static final String SANDALS = "Sandals";
+    private static final String SNEAKERS = "Sneakers";
+
+    // constants for colors
+    private static final String GRAY = "gray";
+    private static final String RED = "red";
+    private static final String ORANGE = "orange";
+    private static final String YELLOW = "yellow";
+    private static final String GREEN = "green";
+    private static final String BLUE = "blue";
+    private static final String PURPLE = "purple";
+    private static final String PINK = "pink";
+    private static final String BLACK = "black";
+    private static final String WHITE = "white";
+
+
+
     public static RecommendedOutfit getRecommendation(WeatherCondition weatherCondition, HashMap<String, List<Garment>> closet) {
         Comparator<Garment> dateComparator = new Comparator<Garment>() {
             @Override
@@ -27,78 +59,79 @@ public class RecommendationUtil {
                 return g1.getDateLastWorn().compareTo(g2.getDateLastWorn());
             }
         };
-        // sort each list by ascending date last worn
-        Collections.sort(closet.get("Top"), dateComparator);
-        Collections.sort(closet.get("Bottoms"), dateComparator);
-        Collections.sort(closet.get("Outer"), dateComparator);
-        Collections.sort(closet.get("Shoes"), dateComparator);
 
-        Garment top = closet.get("Top").get(0);
-        Garment bottoms = closet.get("Bottoms").get(0);
+        // sort each list by ascending date last worn
+        Collections.sort(closet.get(TOP), dateComparator);
+        Collections.sort(closet.get(BOTTOMS), dateComparator);
+        Collections.sort(closet.get(OUTER), dateComparator);
+        Collections.sort(closet.get(SHOES), dateComparator);
+
+        Garment top = closet.get(TOP).get(0);
+        Garment bottoms = closet.get(BOTTOMS).get(0);
         Garment outer = null;
-        Garment shoes = closet.get("Shoes").get(0);
+        Garment shoes = closet.get(SHOES).get(0);
 
         // each list is sorted from least recently worn to most recently worn,
         // so the items that will be recommended won't be the most recent items
-        for (Garment item : closet.get("Top")) {
+        for (Garment item : closet.get(TOP)) {
             if (weatherCondition.getAvgTemp() < 60) {
-                if (item.getSubtype().equals("Long-Sleeved")) {
+                if (item.getSubtype().equals(LONG_SLEEVED)) {
                     top = item;
                     break;
                 }
             } else {
-                if (item.getSubtype().equals("Short-Sleeved")) {
+                if (item.getSubtype().equals(SHORT_SLEEVED)) {
                     top = item;
                     break;
                 }
             }
         }
-        for (Garment item : closet.get("Bottoms")) {
+        for (Garment item : closet.get(BOTTOMS)) {
             if (weatherCondition.getAvgTemp() < 60) {
-                if (item.getSubtype().equals("Pants")) {
+                if (item.getSubtype().equals(PANTS)) {
                     bottoms = item;
                     break;
                 }
             } else if (weatherCondition.getAvgTemp() >= 60) {
-                if (item.getSubtype().equals("Shorts")) {
+                if (item.getSubtype().equals(SHORTS)) {
                     bottoms = item;
                     break;
                 }
             }
         }
-        for (Garment item : closet.get("Outer")) {
+        for (Garment item : closet.get(OUTER)) {
             if (weatherCondition.getAvgTemp() < 40) {
-                if (item.getSubtype().equals("Coat")) {
+                if (item.getSubtype().equals(COAT)) {
                     outer = item;
                     break;
                 }
             } else if (weatherCondition.getAvgTemp() < 60) {
                 if (weatherCondition.getWindSpeed() > 15 || weatherCondition.getChanceOfPrecip() > 50) {
-                    if (item.getSubtype().equals("Jacket")) {
+                    if (item.getSubtype().equals(JACKET)) {
                         outer = item;
                         break;
                     }
                 } else {
-                    if (item.getSubtype().equals("Sweater")) {
+                    if (item.getSubtype().equals(SWEATER)) {
                         outer = item;
                         break;
                     }
                 }
             }
         }
-        for (Garment item : closet.get("Shoes")) {
+        for (Garment item : closet.get(SHOES)) {
             if (weatherCondition.getAvgTemp() < 40 || weatherCondition.getChanceOfPrecip() > 70) {
-                if (item.getSubtype().equals("Boots")) {
+                if (item.getSubtype().equals(BOOTS)) {
                     shoes = item;
                     break;
                 }
             } else if (weatherCondition.getAvgTemp() > 70 && !weatherCondition.getConditions().equals("Overcast")) {
-                if (item.getSubtype().equals("Sandals")) {
+                if (item.getSubtype().equals(SANDALS)) {
                     shoes = item;
                     break;
                 }
             } else {
-                if (item.getSubtype().equals("Sneakers")) {
+                if (item.getSubtype().equals(SNEAKERS)) {
                     shoes = item;
                     break;
                 }
@@ -194,29 +227,29 @@ public class RecommendationUtil {
         float hue = hsl[0];
         float lightness = hsl[2];
         float saturation = hsl[1];
+        String color = "";
         if (saturation <= 10) {
-            return "gray";
+            color += GRAY;
         } else if (hue > 340 || hue <= 10) {
-            return "red";
+            color += RED;
         } else if (hue > 10 && hue <= 40) {
-            return "orange";
+            color += ORANGE;
         } else if (hue > 40 && hue <= 70) {
-            return "yellow";
+            color += YELLOW;
         } else if (hue > 70 && hue <= 160) {
-            return "green";
+            color += GREEN;
         } else if (hue > 160 && hue <= 260) {
-            return "blue";
+            color += BLUE;
         } else if (hue > 260 && hue <= 290) {
-            return "purple";
+            color += PURPLE;
         } else if (hue > 290 && hue <= 340){
-            return "pink";
+            color += PINK;
         } else if (lightness <= 0.1) {
-            return "black";
+            color += BLACK;
         } else if (lightness >= 0.95) {
-            return "white";
-        } else {
-            return "";
+            color += WHITE;
         }
+        return color;
     }
 
     private static boolean isBright(float[] hsl) {
@@ -235,10 +268,10 @@ public class RecommendationUtil {
     }
 
     private static boolean areComplementary(String color1, String color2) {
-        return (color1.equals("yellow") && color2.equals("purple")) || (color1.equals("purple") && color2.equals("yellow"))
-                || (color1.equals("orange") && color2.equals("blue")) || (color1.equals("blue") && color2.equals("orange"))
-                || (color1.equals("green") && color2.equals("red")) || (color1.equals("red") && color2.equals("green"))
-                || (color1.equals("black") && color2.equals("white")) || (color1.equals("white") && color2.equals("black"));
+        return (color1.equals(YELLOW) && color2.equals(PURPLE)) || (color1.equals(PURPLE) && color2.equals(YELLOW))
+                || (color1.equals(ORANGE) && color2.equals(BLUE)) || (color1.equals(BLUE) && color2.equals(ORANGE))
+                || (color1.equals(GREEN) && color2.equals(RED)) || (color1.equals(RED) && color2.equals(GREEN))
+                || (color1.equals(BLACK) && color2.equals(WHITE)) || (color1.equals(WHITE) && color2.equals(BLACK));
     }
 
 

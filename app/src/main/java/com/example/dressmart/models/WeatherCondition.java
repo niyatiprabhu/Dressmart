@@ -15,6 +15,10 @@ public class WeatherCondition {
 
     private static final String TAG = "WeatherCond";
 
+    public static final String SUNNY = "Sunny";
+    public static final String PARTLY_CLOUDY = "Partly Cloudy";
+    public static final String OVERCAST = "Overcast";
+
 
     private double avgTemp;
     private double chanceOfPrecip;
@@ -52,11 +56,11 @@ public class WeatherCondition {
 
     public String getConditions() {
         if (getCloudCoveragePercentage() < 25) {
-            return "Sunny";
+            return SUNNY;
         } else if (getCloudCoveragePercentage() < 60) {
-            return "Partly Cloudy";
+            return PARTLY_CLOUDY;
         } else {
-            return "Overcast";
+            return OVERCAST;
         }
     }
 

@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_feed"
-        android:name="com.example.dressmart.ui.feed.FeedFragment"
+        android:name="com.example.dressmart.fragments.FeedFragment"
         android:label="@string/title_feed"
         tools:layout="@layout/fragment_feed" />
 
     <fragment
         android:id="@+id/navigation_today"
-        android:name="com.example.dressmart.ui.today.TodayFragment"
+        android:name="com.example.dressmart.fragments.TodayFragment"
         android:label="@string/title_today"
         tools:layout="@layout/fragment_today" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.example.dressmart.ui.profile.ProfileFragment"
+        android:name="com.example.dressmart.fragments.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>
