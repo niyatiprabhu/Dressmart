@@ -131,7 +131,6 @@ public class TodayFragment extends Fragment {
         LocationSettingsRequest locationSettingsRequest = builder.build();
 
         // Check whether location settings are satisfied
-        // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
         SettingsClient settingsClient = LocationServices.getSettingsClient(getActivity());
         settingsClient.checkLocationSettings(locationSettingsRequest);
 
@@ -148,7 +147,6 @@ public class TodayFragment extends Fragment {
                             Toast.makeText(getActivity(), "locationResult is null", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        //onLocationChanged(locationResult.getLastLocation());
                         Location location = locationResult.getLastLocation();
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
@@ -158,37 +156,33 @@ public class TodayFragment extends Fragment {
     }
 
 
-
-    // If everything is alright then
-    @Override
-    public void
-    onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_ID) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                getLastLocation();
-            }
-        }
-    }
-
-
     private void weatherFromJson() {
-        String paramFahrenheit = "units=I&";
-        String paramOneDay = "days=1&";
-        String paramLatLong = "lat=" + latitude + "&" + "lon=" + longitude + "&";
-        String secretKey = "key=" + getActivity().getString(R.string.api_key);
-
-        Log.i(TAG, paramLatLong);
-
         AsyncHttpClient client = new AsyncHttpClient();
-        client.get(BASE_URL + paramFahrenheit + paramOneDay + paramLatLong + secretKey, new JsonHttpResponseHandler() {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https")
+                .authority("api.weatherbit.io")
+                .appendPath("v2.0")
+                .appendPath("forecast")
+                .appendPath("daily")
+                .appendQueryParameter("units", "I")
+                .appendQueryParameter("days", "1")
+                .appendQueryParameter("lat", String.valueOf(latitude))
+                .appendQueryParameter("lon", String.valueOf(longitude))
+                .appendQueryParameter("key", getActivity().getString(R.string.api_key));
+        String myUrl = builder.build().toString();
+        client.get(myUrl, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.d(TAG, "onSuccess");
-                parseJson(json);
-            }
+                try {
+                    weatherCondition = WeatherCondition.weatherFromJson(json.jsonObject);
+                    bind();
+                    selectOutfit();
+                } catch (JSONException | ParseException e) {
+                    e.printStackTrace();
+                }
 
+            }
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.i(TAG, "Oops! onFailure. " + throwable.getMessage());
@@ -216,15 +210,6 @@ public class TodayFragment extends Fragment {
         binding.tvNumStars.setVisibility(View.GONE);
     }
 
-    public void parseJson(JsonHttpResponseHandler.JSON json) {
-        try {
-            weatherCondition = WeatherCondition.weatherFromJson(json.jsonObject);
-            bind();
-            selectOutfit();
-        } catch (JSONException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void selectOutfit() throws ParseException {
         User user = (User) ParseUser.getCurrentUser();
@@ -241,43 +226,13 @@ public class TodayFragment extends Fragment {
                         getView().setVisibility(View.VISIBLE);
                     }
 
-                    HashMap<String, List<Garment>> closet = new HashMap<>();
-                    for(Garment item : user.getCloset()) {
-                        if(closet.containsKey(item.getGarmentType())) {
-                            //Add to existing list
-                            closet.get(item.getGarmentType()).add(item);
+                    HashMap<String, List<Garment>> closet = createCloset(user);
 
-                        } else {
-                            //Create new list
-                            ArrayList<Garment> garments = new ArrayList<Garment>(1);
-                            garments.add(item);
-                            closet.put(item.getGarmentType(), garments);
-                        }
-                    }
+                    // check if there are any clothes in the closet yet
+
 
                     RecommendedOutfit recommendedOutfit = RecommendationUtil.getRecommendation(weatherCondition, closet);
-
-
-                    // put the chosen items at the top of their respective lists
-                    closet.get(TOP).remove(recommendedOutfit.getTop());
-                    closet.get(TOP).add(0, recommendedOutfit.getTop());
-                    closet.get(BOTTOMS).remove(recommendedOutfit.getBottoms());
-                    closet.get(BOTTOMS).add(0, recommendedOutfit.getBottoms());
-                    closet.get(OUTER).remove(recommendedOutfit.getOuter());
-                    closet.get(OUTER).add(0, recommendedOutfit.getOuter());
-                    closet.get(SHOES).remove(recommendedOutfit.getShoes());
-                    closet.get(SHOES).add(0, recommendedOutfit.getShoes());
-
-                    // set the adapters for all 4 garment cards
-                    GarmentAdapter topAdapter = new GarmentAdapter(closet.get(TOP), getContext());
-                    GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get(BOTTOMS), getContext());
-                    GarmentAdapter outerAdapter = new GarmentAdapter(closet.get(OUTER), getContext());
-                    GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get(SHOES), getContext());
-                    binding.vpGarment1.setAdapter(topAdapter);
-                    binding.vpGarment2.setAdapter(bottomsAdapter);
-                    binding.vpGarment3.setAdapter(outerAdapter);
-                    binding.vpGarment4.setAdapter(shoesAdapter);
-
+                    displayRecommendedOutfit(recommendedOutfit, closet);
 
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -285,17 +240,7 @@ public class TodayFragment extends Fragment {
                             // prompt camera app to take outfit pic
                             onLaunchCamera(v);
                             OutfitPost post = new OutfitPost();
-                            post.setParseTemperature((int)weatherCondition.getAvgTemp());
-                            post.setParseConditions(weatherCondition.getConditions());
-                            post.setParseAuthor((User)ParseUser.getCurrentUser());
-
-                            post.setParseWearingOutfitPicture(new ParseFile(photoFile));
-
-                            // set the chosen garments to the actual cards the user chose
-                            post.setParseTop(closet.get(TOP).get(binding.vpGarment1.getCurrentItem()));
-                            post.setParseBottoms(closet.get(BOTTOMS).get(binding.vpGarment2.getCurrentItem()));
-                            post.setParseOuter(closet.get(OUTER).get(binding.vpGarment3.getCurrentItem()));
-                            post.setParseShoes(closet.get(SHOES).get(binding.vpGarment4.getCurrentItem()));
+                            populatePost(post, closet);
 
                             // calculate the match score of the 4 garments put together and display it
                             // in the rating stars, the number of stars filled up corresponds to the value of calculateMatchScore
@@ -310,46 +255,18 @@ public class TodayFragment extends Fragment {
                                 public void done(ParseException e) {
                                     if (e != null) {
                                         Log.e(TAG, "Issue with saving post", e);
-                                        //Toast.makeText(getActivity(), "Error while saving!", Toast.LENGTH_SHORT).show();
                                         return;
                                     }
                                     user.addParseOutfit(post);
                                     user.saveInBackground();
                                     Log.i(TAG, "Post save was successful!");
-
-                                    Glide.with(getContext()).load(post.getWearingOutfitPicture().getUrl()).into(binding.ivWearingOutfitPicToday);
-
-                                    // display the match score and remove the submit button
-                                    binding.btnSubmitToday.setVisibility(View.GONE);
-                                    binding.tvNumStars.setText("Match Score: " + String.valueOf(post.getColorMatchScore()) + "!");
-                                    binding.rbMatchScore.setRating((float) post.getColorMatchScore());
-                                    binding.tvNumStars.setVisibility(View.VISIBLE);
-                                    binding.rbMatchScore.setVisibility(View.VISIBLE);
+                                    updateUIAfterPosting(post);
 
                                     // set flag to true
                                     hasSubmitted = true;
 
-                                    // set items last worn date to today
-                                    post.getTop().setDateLastWorn(Calendar.getInstance().getTime());
-                                    post.getBottoms().setDateLastWorn(Calendar.getInstance().getTime());
-                                    if (post.getOuter() != null) {
-                                        post.getOuter().setDateLastWorn(Calendar.getInstance().getTime());
-                                    }
-                                    post.getShoes().setDateLastWorn(Calendar.getInstance().getTime());
-
-
-                                    // navigate back to the feed fragment after successful post
-//                                    Fragment fragment = new FeedFragment();
-//                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_activity_main, fragment);
-//                                    fragmentTransaction.addToBackStack(null);
-//                                    fragmentTransaction.commit();
-
-                                    // fade out the gridview and fade in the imageview
-                                    Animation animFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
-                                    binding.glGarments.startAnimation(animFadeOut);
-                                    Animation animFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
-                                    binding.ivWearingOutfitPicToday.startAnimation(animFadeIn);
-                                    binding.tvOurPicks.setText("Your Outfit");
+                                    setLastWorn(post);
+                                    doSubmitAnimation();
                                 }
                             });
                         }
@@ -359,6 +276,88 @@ public class TodayFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private HashMap<String, List<Garment>> createCloset(User user) {
+        HashMap<String, List<Garment>> closet = new HashMap<>();
+        for(Garment item : user.getCloset()) {
+            if(closet.containsKey(item.getGarmentType())) {
+                //Add to existing list
+                closet.get(item.getGarmentType()).add(item);
+
+            } else {
+                //Create new list
+                ArrayList<Garment> garments = new ArrayList<Garment>(1);
+                garments.add(item);
+                closet.put(item.getGarmentType(), garments);
+            }
+        }
+        return closet;
+    }
+
+    private void displayRecommendedOutfit(RecommendedOutfit recommendedOutfit, HashMap<String, List<Garment>> closet) {
+        // put the chosen items at the top of their respective lists
+        closet.get(TOP).remove(recommendedOutfit.getTop());
+        closet.get(TOP).add(0, recommendedOutfit.getTop());
+        closet.get(BOTTOMS).remove(recommendedOutfit.getBottoms());
+        closet.get(BOTTOMS).add(0, recommendedOutfit.getBottoms());
+        closet.get(OUTER).remove(recommendedOutfit.getOuter());
+        closet.get(OUTER).add(0, recommendedOutfit.getOuter());
+        closet.get(SHOES).remove(recommendedOutfit.getShoes());
+        closet.get(SHOES).add(0, recommendedOutfit.getShoes());
+
+        // set the adapters for all 4 garment cards
+        GarmentAdapter topAdapter = new GarmentAdapter(closet.get(TOP), getContext());
+        GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get(BOTTOMS), getContext());
+        GarmentAdapter outerAdapter = new GarmentAdapter(closet.get(OUTER), getContext());
+        GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get(SHOES), getContext());
+        binding.vpGarment1.setAdapter(topAdapter);
+        binding.vpGarment2.setAdapter(bottomsAdapter);
+        binding.vpGarment3.setAdapter(outerAdapter);
+        binding.vpGarment4.setAdapter(shoesAdapter);
+    }
+
+    private void setLastWorn(OutfitPost post) {
+        // set items last worn date to today
+        post.getTop().setDateLastWorn(Calendar.getInstance().getTime());
+        post.getBottoms().setDateLastWorn(Calendar.getInstance().getTime());
+        if (post.getOuter() != null) {
+            post.getOuter().setDateLastWorn(Calendar.getInstance().getTime());
+        }
+        post.getShoes().setDateLastWorn(Calendar.getInstance().getTime());
+    }
+
+    private void doSubmitAnimation() {
+        // fade out the gridview and fade in the imageview
+        Animation animFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+        binding.glGarments.startAnimation(animFadeOut);
+        Animation animFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+        binding.ivWearingOutfitPicToday.startAnimation(animFadeIn);
+    }
+
+    private void updateUIAfterPosting(OutfitPost post) {
+        // display the match score and remove the submit button
+        binding.btnSubmitToday.setVisibility(View.GONE);
+        binding.tvNumStars.setText("Match Score: " + String.valueOf(post.getColorMatchScore()) + "!");
+        binding.rbMatchScore.setRating((float) post.getColorMatchScore());
+        binding.tvNumStars.setVisibility(View.VISIBLE);
+        binding.rbMatchScore.setVisibility(View.VISIBLE);
+        Glide.with(getContext()).load(post.getWearingOutfitPicture().getUrl()).into(binding.ivWearingOutfitPicToday);
+        binding.tvOurPicks.setText("Your Outfit");
+
+    }
+
+    private void populatePost(OutfitPost post, HashMap<String,List<Garment>> closet) {
+        post.setParseTemperature((int)weatherCondition.getAvgTemp());
+        post.setParseConditions(weatherCondition.getConditions());
+        post.setParseAuthor((User)ParseUser.getCurrentUser());
+        post.setParseWearingOutfitPicture(new ParseFile(photoFile));
+
+        // set the chosen garments to the actual cards the user chose
+        post.setParseTop(closet.get(TOP).get(binding.vpGarment1.getCurrentItem()));
+        post.setParseBottoms(closet.get(BOTTOMS).get(binding.vpGarment2.getCurrentItem()));
+        post.setParseOuter(closet.get(OUTER).get(binding.vpGarment3.getCurrentItem()));
+        post.setParseShoes(closet.get(SHOES).get(binding.vpGarment4.getCurrentItem()));
     }
 
 

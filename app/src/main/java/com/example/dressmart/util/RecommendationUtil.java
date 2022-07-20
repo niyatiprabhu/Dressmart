@@ -66,39 +66,40 @@ public class RecommendationUtil {
         Collections.sort(closet.get(OUTER), dateComparator);
         Collections.sort(closet.get(SHOES), dateComparator);
 
-        Garment top = closet.get(TOP).get(0);
-        Garment bottoms = closet.get(BOTTOMS).get(0);
-        Garment outer = null;
-        Garment shoes = closet.get(SHOES).get(0);
-
         // each list is sorted from least recently worn to most recently worn,
         // so the items that will be recommended won't be the most recent items
-        for (Garment item : closet.get(TOP)) {
-            if (weatherCondition.getAvgTemp() < 60) {
-                if (item.getSubtype().equals(LONG_SLEEVED)) {
-                    top = item;
+        Garment top = selectTop(weatherCondition, closet);
+        Garment bottoms = selectBottoms(weatherCondition, closet);
+        Garment outer = selectOuter(weatherCondition, closet);
+        Garment shoes = selectShoes(weatherCondition, closet);
+        return new RecommendedOutfit(top, bottoms, outer, shoes);
+    }
+
+    private static Garment selectShoes(WeatherCondition weatherCondition, HashMap<String, List<Garment>> closet) {
+        Garment shoes = closet.get(SHOES).get(0);
+        for (Garment item : closet.get(SHOES)) {
+            if (weatherCondition.getAvgTemp() < 40 || weatherCondition.getChanceOfPrecip() > 70) {
+                if (item.getSubtype().equals(BOOTS)) {
+                    shoes = item;
+                    break;
+                }
+            } else if (weatherCondition.getAvgTemp() > 70 && !weatherCondition.getConditions().equals("Overcast")) {
+                if (item.getSubtype().equals(SANDALS)) {
+                    shoes = item;
                     break;
                 }
             } else {
-                if (item.getSubtype().equals(SHORT_SLEEVED)) {
-                    top = item;
+                if (item.getSubtype().equals(SNEAKERS)) {
+                    shoes = item;
                     break;
                 }
             }
         }
-        for (Garment item : closet.get(BOTTOMS)) {
-            if (weatherCondition.getAvgTemp() < 60) {
-                if (item.getSubtype().equals(PANTS)) {
-                    bottoms = item;
-                    break;
-                }
-            } else if (weatherCondition.getAvgTemp() >= 60) {
-                if (item.getSubtype().equals(SHORTS)) {
-                    bottoms = item;
-                    break;
-                }
-            }
-        }
+        return shoes;
+    }
+
+    private static Garment selectOuter(WeatherCondition weatherCondition, HashMap<String, List<Garment>> closet) {
+        Garment outer = null;
         for (Garment item : closet.get(OUTER)) {
             if (weatherCondition.getAvgTemp() < 40) {
                 if (item.getSubtype().equals(COAT)) {
@@ -119,25 +120,43 @@ public class RecommendationUtil {
                 }
             }
         }
-        for (Garment item : closet.get(SHOES)) {
-            if (weatherCondition.getAvgTemp() < 40 || weatherCondition.getChanceOfPrecip() > 70) {
-                if (item.getSubtype().equals(BOOTS)) {
-                    shoes = item;
+        return outer;
+    }
+
+    private static Garment selectBottoms(WeatherCondition weatherCondition, HashMap<String, List<Garment>> closet) {
+        Garment bottoms = closet.get(BOTTOMS).get(0);
+        for (Garment item : closet.get(BOTTOMS)) {
+            if (weatherCondition.getAvgTemp() < 60) {
+                if (item.getSubtype().equals(PANTS)) {
+                    bottoms = item;
                     break;
                 }
-            } else if (weatherCondition.getAvgTemp() > 70 && !weatherCondition.getConditions().equals("Overcast")) {
-                if (item.getSubtype().equals(SANDALS)) {
-                    shoes = item;
-                    break;
-                }
-            } else {
-                if (item.getSubtype().equals(SNEAKERS)) {
-                    shoes = item;
+            } else if (weatherCondition.getAvgTemp() >= 60) {
+                if (item.getSubtype().equals(SHORTS)) {
+                    bottoms = item;
                     break;
                 }
             }
         }
-        return new RecommendedOutfit(top, bottoms, outer, shoes);
+        return bottoms;
+    }
+
+    private static Garment selectTop(WeatherCondition weatherCondition, HashMap<String, List<Garment>> closet) {
+        Garment top = closet.get(TOP).get(0);
+        for (Garment item : closet.get(TOP)) {
+            if (weatherCondition.getAvgTemp() < 60) {
+                if (item.getSubtype().equals(LONG_SLEEVED)) {
+                    top = item;
+                    break;
+                }
+            } else {
+                if (item.getSubtype().equals(SHORT_SLEEVED)) {
+                    top = item;
+                    break;
+                }
+            }
+        }
+        return top;
     }
 
     public static double calculateMatchScore(Garment top, Garment bottoms, Garment shoes) throws ParseException {
