@@ -37,6 +37,9 @@ public class SignupActivity extends AppCompatActivity {
 
     private ParseFile photoFile;
 
+    private static final int TAKE_PHOTO = 0;
+    private static final int CHOOSE_FROM_GALLERY = 1;
+
 
 
     @Override
@@ -86,11 +89,11 @@ public class SignupActivity extends AppCompatActivity {
 
                 if (options[item].equals("Take Photo")) {
                     Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(takePicture, 0);
+                    startActivityForResult(takePicture, TAKE_PHOTO);
 
                 } else if (options[item].equals("Choose from Gallery")) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto , 1);
+                    startActivityForResult(pickPhoto , CHOOSE_FROM_GALLERY);
 
                 } else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
@@ -105,7 +108,7 @@ public class SignupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_CANCELED) {
             switch (requestCode) {
-                case 0:
+                case TAKE_PHOTO:
                     if (resultCode == RESULT_OK && data != null) {
                         Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
                         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
@@ -116,7 +119,7 @@ public class SignupActivity extends AppCompatActivity {
                     }
 
                     break;
-                case 1:
+                case CHOOSE_FROM_GALLERY:
                     if (resultCode == RESULT_OK && data != null) {
                         Uri selectedImage = data.getData();
                         String[] filePathColumn = {MediaStore.Images.Media.DATA};
