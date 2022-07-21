@@ -14,4 +14,8 @@
     <string name="condition_overcast">Overcast</string>
     <string name="heading_outfit"> Outfit</string>
     <string name="heading_outfits_plural"> Outfits</string>
+    <string name="heading_result"> Result</string>
+    <string name="heading_results_plural"> Results</string>
+
+
 </resources>

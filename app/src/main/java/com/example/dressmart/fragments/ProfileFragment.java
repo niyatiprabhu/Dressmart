@@ -95,12 +95,12 @@ public class ProfileFragment extends Fragment {
                 rvPostsProfile.setVisibility(View.GONE);
                 rvSearchResults.setVisibility(View.VISIBLE);
                 binding.tvNumResultsSearch.setVisibility(View.VISIBLE);
-                searchAdapter.clear();
                 querySearchResults(query);
                 binding.svFindOutfits.clearFocus(); // so that setOnQueryTextListener only runs once
                 int numResults = searchAdapter.getItemCount();
-                String resultsSuffix = numResults == 1 ? " Result" : " Results";
-                binding.tvNumResultsSearch.setText(numResults + resultsSuffix);
+                searchAdapter.clear();
+                String resultsSuffix = numResults == 1 ? getString(R.string.heading_result) : getString(R.string.heading_results_plural);
+                binding.tvNumResultsSearch.setText(numResults + " " + resultsSuffix);
                 return false;
             }
 
@@ -162,7 +162,8 @@ public class ProfileFragment extends Fragment {
 
     public String getNumOutfits(User user) {
         int numOutfits = user.getOutfits().size();
-        return numOutfits == 1 ? numOutfits + getString(R.string.heading_outfit) : numOutfits + getString(R.string.heading_outfits_plural);
+        String suffix = numOutfits == 1 ? getString(R.string.heading_outfit) : getString(R.string.heading_outfits_plural);
+        return numOutfits + " " + suffix;
     }
 
 
@@ -232,7 +233,7 @@ public class ProfileFragment extends Fragment {
 
         // Posts by the user should only have items from the user's closet so I think checking this once is enough
         matchingPostQuery.whereEqualTo(OutfitPost.KEY_AUTHOR, user);
-        matchingPostQuery.setLimit(5);
+        matchingPostQuery.setLimit(10);
 
         matchingPostQuery.findInBackground(new FindCallback<OutfitPost>() {
             // find callback here to save the result list of OutfitPosts

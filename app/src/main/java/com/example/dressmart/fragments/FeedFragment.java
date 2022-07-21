@@ -83,7 +83,7 @@ public class FeedFragment extends Fragment {
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         // maybe only display posts from today?? like BeReal
-        query.whereEqualTo("createdAt", );
+        //query.whereEqualTo("createdAt", );
         // start an asynchronous call for posts
         query.findInBackground(new FindCallback<OutfitPost>() {
             @Override
