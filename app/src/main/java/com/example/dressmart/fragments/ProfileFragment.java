@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.dressmart.LoginActivity;
+import com.example.dressmart.R;
 import com.example.dressmart.adapters.ProfileAdapter;
 import com.example.dressmart.adapters.SearchAdapter;
 import com.example.dressmart.databinding.FragmentProfileBinding;
@@ -152,11 +153,16 @@ public class ProfileFragment extends Fragment {
                 Glide.with(getContext()).load(user.getProfilePicture().getUrl()).circleCrop().into(binding.ivProfilePicProfile);
                 binding.tvUsernameProfile.setText("@" + user.getUsername());
                 binding.tvDisplayNameProfile.setText(user.getDisplayName());
-                binding.tvNumOutfitsProfile.setText(user.getNumOutfits());
+                binding.tvNumOutfitsProfile.setText(getNumOutfits(user));
             }
         });
         queryPosts(0);
 
+    }
+
+    public String getNumOutfits(User user) {
+        int numOutfits = user.getOutfits().size();
+        return numOutfits == 1 ? numOutfits + getString(R.string.heading_outfit) : numOutfits + getString(R.string.heading_outfits_plural);
     }
 
 

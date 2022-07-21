@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.Toolbar;
 
+import com.example.dressmart.models.parse.OutfitPost;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +24,18 @@ import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    public ActivityMainBinding binding;
+
+    public boolean hasPostedToday;
+    public boolean hasClothes;
+    public OutfitPost todaysPost;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        hasClothes = true;
 
         // default ACLs for User object
         ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
@@ -38,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        BottomNavigationView navView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -48,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setActionBar(toolbar);
+        binding.navView.setSelectedItemId(R.id.navigation_today);
     }
 
 }

@@ -5,4 +5,13 @@
     <string name="title_feed">Feed</string>
     <string name="title_today">Today</string>
     <string name="title_profile">Profile</string>
+    <string name="header_today">Today</string>
+    <string name="header_your_outfit">Your Outfit</string>
+    <string name="header_our_picks">Our Picks For You</string>
+    <string name="popup_match_score">Match Score: </string>
+    <string name="condition_sunny">Sunny</string>
+    <string name="condition_partly_cloudy">Partly Cloudy</string>
+    <string name="condition_overcast">Overcast</string>
+    <string name="heading_outfit"> Outfit</string>
+    <string name="heading_outfits_plural"> Outfits</string>
 </resources>

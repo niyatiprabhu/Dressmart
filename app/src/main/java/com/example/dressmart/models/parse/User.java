@@ -64,8 +64,4 @@ public class User extends ParseUser {
         put(KEY_CLOSET, newCloset);
     }
 
-    public String getNumOutfits() {
-        int numOutfits = getOutfits().size();
-        return numOutfits == 1 ? numOutfits + " Outfit" : numOutfits + " Outfits";
-    }
 }

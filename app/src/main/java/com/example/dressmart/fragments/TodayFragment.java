@@ -4,8 +4,6 @@ import static com.example.dressmart.Constants.BOTTOMS;
 import static com.example.dressmart.Constants.OUTER;
 import static com.example.dressmart.Constants.SHOES;
 import static com.example.dressmart.Constants.TOP;
-import static com.example.dressmart.models.WeatherCondition.PARTLY_CLOUDY;
-import static com.example.dressmart.models.WeatherCondition.SUNNY;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 import android.Manifest;
@@ -17,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +35,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.dressmart.MainActivity;
 import com.example.dressmart.R;
 import com.example.dressmart.adapters.GarmentAdapter;
 import com.example.dressmart.databinding.FragmentTodayBinding;
@@ -52,6 +52,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -89,7 +90,7 @@ public class TodayFragment extends Fragment {
 
     private LocationRequest mLocationRequest;
 
-    private static boolean hasSubmitted;
+    private MainActivity mainActivity;
 
     // move to weather class
     WeatherCondition weatherCondition;
@@ -99,7 +100,7 @@ public class TodayFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTodayBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
+        mainActivity = (MainActivity) getActivity();
         return root;
     }
 
@@ -175,9 +176,12 @@ public class TodayFragment extends Fragment {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.d(TAG, "onSuccess");
                 try {
-                    weatherCondition = WeatherCondition.weatherFromJson(json.jsonObject);
+                    weatherCondition = WeatherCondition.weatherFromJson(getContext(), json.jsonObject);
                     bind();
-                    selectOutfit();
+                    if(mainActivity.hasClothes) {
+                        selectOutfit();
+                        //mainActivity.binding.navView.setSelectedItemId(R.id.navigation_feed);
+                    }
                 } catch (JSONException | ParseException e) {
                     e.printStackTrace();
                 }
@@ -192,9 +196,9 @@ public class TodayFragment extends Fragment {
 
     private void setWeatherIcon() {
         @DrawableRes int icon;
-        if (weatherCondition.getConditions().equals(SUNNY)) {
+        if (weatherCondition.getConditions().equals(getString(R.string.condition_sunny))) {
             icon = R.drawable.sunny;
-        } else if (weatherCondition.getConditions().equals(PARTLY_CLOUDY)) {
+        } else if (weatherCondition.getConditions().equals(getString(R.string.condition_partly_cloudy))) {
             icon = R.drawable.partly_cloudy;
         } else {
             icon = R.drawable.cloudy;
@@ -203,11 +207,24 @@ public class TodayFragment extends Fragment {
     }
 
     public void bind() {
+        // set weather info at the top that will not change
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
         setWeatherIcon();
         binding.tvTempToday.setText(String.valueOf((int) weatherCondition.getAvgTemp()));
-        binding.rbMatchScore.setVisibility(View.GONE);
-        binding.tvNumStars.setVisibility(View.GONE);
+
+        // decide UI: either empty, already posted, or displaying recommendation
+        checkIfHasClothes();
+        checkIfPostedToday();
+        if (!mainActivity.hasClothes) {
+            setEmptyUI();
+        } else if (mainActivity.hasPostedToday) {
+            updateUIAfterPosting(mainActivity.todaysPost);
+        } else {
+            binding.tvOurPicks.setText(getString(R.string.header_our_picks));
+            binding.rbMatchScore.setVisibility(View.GONE);
+            binding.tvNumStars.setVisibility(View.GONE);
+            binding.tvNoItemsYet.setVisibility(View.GONE);
+        }
     }
 
 
@@ -262,10 +279,7 @@ public class TodayFragment extends Fragment {
                                     Log.i(TAG, "Post save was successful!");
                                     updateUIAfterPosting(post);
 
-                                    // set flag to true
-                                    hasSubmitted = true;
-
-                                    setLastWorn(post);
+                                    setGarmentsLastWorn(post);
                                     doSubmitAnimation();
                                 }
                             });
@@ -317,7 +331,7 @@ public class TodayFragment extends Fragment {
         binding.vpGarment4.setAdapter(shoesAdapter);
     }
 
-    private void setLastWorn(OutfitPost post) {
+    private void setGarmentsLastWorn(OutfitPost post) {
         // set items last worn date to today
         post.getTop().setDateLastWorn(Calendar.getInstance().getTime());
         post.getBottoms().setDateLastWorn(Calendar.getInstance().getTime());
@@ -333,18 +347,21 @@ public class TodayFragment extends Fragment {
         binding.glGarments.startAnimation(animFadeOut);
         Animation animFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
         binding.ivWearingOutfitPicToday.startAnimation(animFadeIn);
+        binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
     }
 
     private void updateUIAfterPosting(OutfitPost post) {
         // display the match score and remove the submit button
+        binding.tvNoItemsYet.setVisibility(View.GONE);
         binding.btnSubmitToday.setVisibility(View.GONE);
-        binding.tvNumStars.setText("Match Score: " + String.valueOf(post.getColorMatchScore()) + "!");
+        binding.glGarments.setVisibility(View.GONE);
+        binding.tvNumStars.setText(getString(R.string.popup_match_score) + String.valueOf(post.getColorMatchScore()) + "!");
         binding.rbMatchScore.setRating((float) post.getColorMatchScore());
         binding.tvNumStars.setVisibility(View.VISIBLE);
         binding.rbMatchScore.setVisibility(View.VISIBLE);
+        binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
         Glide.with(getContext()).load(post.getWearingOutfitPicture().getUrl()).into(binding.ivWearingOutfitPicToday);
-        binding.tvOurPicks.setText("Your Outfit");
-
+        binding.tvOurPicks.setText(getString(R.string.header_your_outfit));
     }
 
     private void populatePost(OutfitPost post, HashMap<String,List<Garment>> closet) {
@@ -360,6 +377,15 @@ public class TodayFragment extends Fragment {
         post.setParseShoes(closet.get(SHOES).get(binding.vpGarment4.getCurrentItem()));
     }
 
+    private void setEmptyUI() {
+        binding.btnSubmitToday.setVisibility(View.INVISIBLE);
+        binding.glGarments.setVisibility(View.INVISIBLE);
+        binding.tvNumStars.setVisibility(View.INVISIBLE);
+        binding.rbMatchScore.setVisibility(View.INVISIBLE);
+        binding.tvOurPicks.setVisibility(View.INVISIBLE);
+        binding.tvNoItemsYet.setVisibility(View.VISIBLE);
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -367,16 +393,64 @@ public class TodayFragment extends Fragment {
         binding = null;
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-        if (hasSubmitted) {
-            binding.btnSubmitToday.setVisibility(View.GONE);
-            binding.rbMatchScore.setVisibility(View.VISIBLE);
-            binding.tvNumStars.setVisibility(View.VISIBLE);
-            binding.glGarments.setVisibility(View.INVISIBLE);
-            binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
+        checkIfPostedToday();
+        if (mainActivity.hasPostedToday) {
+            updateUIAfterPosting(mainActivity.todaysPost);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart");
+        checkIfHasClothes();
+        if (!mainActivity.hasClothes) {
+            setEmptyUI();
+        } else {
+            checkIfPostedToday();
+            if (mainActivity.hasPostedToday) {
+                updateUIAfterPosting(mainActivity.todaysPost);
+            }
+        }
+
+    }
+
+    private void checkIfHasClothes() {
+        User user = (User) ParseUser.getCurrentUser();
+        if (user.getCloset().isEmpty()) {
+            mainActivity.hasClothes = false;
+        }
+    }
+
+    private void checkIfPostedToday() {
+        // query posts and check if the most recent post matches today's date
+        ParseQuery<OutfitPost> query = ParseQuery.getQuery(OutfitPost.class);
+        query.include(OutfitPost.KEY_AUTHOR);
+        query.whereEqualTo(OutfitPost.KEY_AUTHOR, ParseUser.getCurrentUser());
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<OutfitPost>() {
+            @Override
+            public void done(List<OutfitPost> fetchedPosts, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting posts", e);
+                    return;
+                }
+                // save received posts to list and notify adapter of new data
+                if (!fetchedPosts.isEmpty()) {
+                    // check if the date of the last post matches the date of today
+                    Log.i(TAG, "is today: " + DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime()));
+                    if (DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime())) {
+                        mainActivity.hasPostedToday = true;
+                        mainActivity.todaysPost = fetchedPosts.get(0);
+                    }
+                }
+            }
+        });
     }
 
 
@@ -418,5 +492,6 @@ public class TodayFragment extends Fragment {
 
         return file;
     }
+
 
 }
