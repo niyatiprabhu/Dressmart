@@ -391,7 +391,6 @@ public class TodayFragment extends Fragment {
     }
 
     private void setEmptyUI() {
-        s
         binding.btnSubmitToday.setVisibility(View.INVISIBLE);
         binding.glGarments.setVisibility(View.INVISIBLE);
         binding.tvNumStars.setVisibility(View.INVISIBLE);
