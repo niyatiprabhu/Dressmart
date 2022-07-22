@@ -1,6 +1,8 @@
 package com.example.dressmart.models;
 
 
+import android.content.Context;
+
 import com.bumptech.glide.Glide;
 import com.example.dressmart.R;
 
@@ -12,12 +14,10 @@ import org.json.JSONObject;
  */
 public class WeatherCondition {
 
+    private static Context myContext;
 
     private static final String TAG = "WeatherCond";
 
-    public static final String SUNNY = "Sunny";
-    public static final String PARTLY_CLOUDY = "Partly Cloudy";
-    public static final String OVERCAST = "Overcast";
 
 
     private double avgTemp;
@@ -25,7 +25,8 @@ public class WeatherCondition {
     private double windSpeed;
     private double cloudCoveragePercentage;
 
-    public static WeatherCondition weatherFromJson(JSONObject jsonObject) throws JSONException {
+    public static WeatherCondition weatherFromJson(Context context, JSONObject jsonObject) throws JSONException {
+        myContext = context;
         WeatherCondition weatherCond = new WeatherCondition();
         JSONObject data = jsonObject.getJSONArray("data").getJSONObject(0);
         JSONObject weather = data.getJSONObject("weather");
@@ -56,11 +57,11 @@ public class WeatherCondition {
 
     public String getConditions() {
         if (getCloudCoveragePercentage() < 25) {
-            return SUNNY;
+            return myContext.getString(R.string.condition_sunny);
         } else if (getCloudCoveragePercentage() < 60) {
-            return PARTLY_CLOUDY;
+            return myContext.getString(R.string.condition_partly_cloudy);
         } else {
-            return OVERCAST;
+            return myContext.getString(R.string.condition_overcast);
         }
     }
 
