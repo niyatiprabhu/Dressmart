@@ -391,11 +391,12 @@ public class TodayFragment extends Fragment {
     }
 
     private void setEmptyUI() {
-        binding.btnSubmitToday.setVisibility(View.INVISIBLE);
-        binding.glGarments.setVisibility(View.INVISIBLE);
-        binding.tvNumStars.setVisibility(View.INVISIBLE);
-        binding.rbMatchScore.setVisibility(View.INVISIBLE);
-        binding.tvOurPicks.setVisibility(View.INVISIBLE);
+        Log.i(TAG, "in setEmptyUI");
+        binding.btnSubmitToday.setVisibility(View.GONE);
+        binding.glGarments.setVisibility(View.GONE);
+        binding.tvNumStars.setVisibility(View.GONE);
+        binding.rbMatchScore.setVisibility(View.GONE);
+        binding.tvOurPicks.setVisibility(View.GONE);
         binding.tvNoItemsYet.setVisibility(View.VISIBLE);
     }
 
@@ -406,23 +407,6 @@ public class TodayFragment extends Fragment {
         binding = null;
     }
 
-
-
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        Log.i(TAG, "onStart");
-//        checkIfHasClothes();
-//        if (!hasClothes) {
-//            setEmptyUI();
-//        } else {
-//            checkIfPostedToday();
-//            if (hasPostedToday) {
-//                updateUIAfterPosting(todaysPost);
-//            }
-//        }
-//
-//    }
 
     private void checkIfHasClothes() throws ParseException {
         User user = (User) ParseUser.getCurrentUser();

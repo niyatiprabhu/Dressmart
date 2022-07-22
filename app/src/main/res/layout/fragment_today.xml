@@ -193,13 +193,13 @@
 
     <TextView
         android:id="@+id/tvNoItemsYet"
-        app:layout_constraintTop_toBottomOf="@id/tvOurPicks"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Items Added Yet!" />
+        android:text="No Items Added Yet!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clWeather" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
