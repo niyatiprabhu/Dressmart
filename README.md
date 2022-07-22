@@ -10,10 +10,10 @@ Original App Design Project - README Template
 2. [Schema](#Schema)
 
 ## Overview
-![Empty User](https://user-images.githubusercontent.com/73393929/180579117-53aec52d-e527-4e7a-8eeb-08624abb67c4.gif)
-![Sign Up User](https://user-images.githubusercontent.com/73393929/180579136-c0a84b79-35f1-4e44-bd26-b298a49122f9.gif)
-![Posted Today](https://user-images.githubusercontent.com/73393929/180579138-97bf460a-4285-47f8-aea0-a72401d8c962.gif)
-![Recommendation](https://user-images.githubusercontent.com/73393929/180579144-57249499-b03a-405f-91b9-b2114113aeb3.gif)
+![Empty User](https://user-images.githubusercontent.com/73393929/180579117-53aec52d-e527-4e7a-8eeb-08624abb67c4.gif =50X100)
+![Sign Up User](https://user-images.githubusercontent.com/73393929/180579136-c0a84b79-35f1-4e44-bd26-b298a49122f9.gif =50X100)
+![Posted Today](https://user-images.githubusercontent.com/73393929/180579138-97bf460a-4285-47f8-aea0-a72401d8c962.gif =50X100)
+![Recommendation](https://user-images.githubusercontent.com/73393929/180579144-57249499-b03a-405f-91b9-b2114113aeb3.gif =50X100)
 
 
 ### Description
