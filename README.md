@@ -1,7 +1,7 @@
-Original App Design Project - README Template
-===
 
 # Dressmart
+
+===
 
 ## Table of Contents
 1. [Overview](#Overview)
@@ -45,10 +45,9 @@ Demo of Dressmart as a user who has not yet chosen an outfit for the day. When t
 
 
 ### App Evaluation
-[Evaluation of your app across the following attributes]
 - **Category:** Weather, Fashion, Social
 - **Mobile:** Camera, Location
-- **Story:** Gives users a smarter way to plan out what to wear for the day based on weather predictions and the user's past preferences.
+- **Story:** Gives users a smarter way to plan out what to wear for the day based on weather predictions and the user's past outfits.
 - **Market:** Anyone who checks the weather and picks out clothing based on that would find this application useful.
 - **Habit:** The app would be useful to check every morning before getting ready. It would form a habit to plan out outfits and log "feedback" at the end of every day.
 - **Scope:** Main features are for each specific user - logging and tracking their own outfits based on the weather. This could expand to create a social feed of other people's outfits for that day and being able to view other users' outfit profiles.
@@ -104,7 +103,6 @@ Demo of Dressmart as a user who has not yet chosen an outfit for the day. When t
 **Tab Navigation** (Tab to Screen)
 
 * Feed
-  * Profile (other users)
   * Stream
 * Profile
   * Logout
@@ -128,14 +126,10 @@ Demo of Dressmart as a user who has not yet chosen an outfit for the day. When t
 [Add picture of your hand sketched wireframes in this section]
 ![IMG_0063](https://user-images.githubusercontent.com/73393929/174159974-5f6fd541-ded2-4834-8348-15988b151440.JPG)
 
-### [BONUS] Digital Wireframes & Mockups
-
-### [BONUS] Interactive Prototype
 
 ## Schema
-[This section will be completed in Unit 9]
+
 ### Models
-[Add table of models]
 
 User Model
 | property         | id             | description     |
