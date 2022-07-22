@@ -7,6 +7,7 @@
     <string name="title_profile">Profile</string>
     <string name="header_today">Today</string>
     <string name="header_your_outfit">Your Outfit</string>
+    <string name="header_no_items_added_yet">No Items Added Yet!</string>
     <string name="header_our_picks">Our Picks For You</string>
     <string name="popup_match_score">Match Score: </string>
     <string name="condition_sunny">Sunny</string>

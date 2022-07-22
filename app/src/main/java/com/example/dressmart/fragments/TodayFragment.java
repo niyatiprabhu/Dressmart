@@ -114,7 +114,7 @@ public class TodayFragment extends Fragment {
         try {
             checkIfHasClothes();
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(TAG, String.valueOf(e.getStackTrace()));
         }
         checkIfPostedToday();
 
@@ -391,6 +391,9 @@ public class TodayFragment extends Fragment {
     }
 
     private void setEmptyUI() {
+        if (getView() != null) {
+            getView().setVisibility(View.VISIBLE);
+        }
         Log.i(TAG, "in setEmptyUI");
         binding.btnSubmitToday.setVisibility(View.GONE);
         binding.glGarments.setVisibility(View.GONE);
