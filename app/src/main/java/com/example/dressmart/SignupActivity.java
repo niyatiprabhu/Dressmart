@@ -13,8 +13,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.dressmart.databinding.ActivitySignupBinding;
 import com.example.dressmart.models.parse.User;
@@ -160,6 +163,7 @@ public class SignupActivity extends AppCompatActivity {
                 } else {
                     // Sign up didn't succeed.
                     Log.e(TAG, e.getMessage());
+
                 }
             }
         });

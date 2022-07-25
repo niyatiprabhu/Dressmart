@@ -33,6 +33,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.dressmart.MainActivity;
@@ -373,7 +374,7 @@ public class TodayFragment extends Fragment {
         binding.tvNumStars.setVisibility(View.VISIBLE);
         binding.rbMatchScore.setVisibility(View.VISIBLE);
         binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
-        Glide.with(getContext()).load(post.getWearingOutfitPicture().getUrl()).into(binding.ivWearingOutfitPicToday);
+        Glide.with(getContext()).load(post.getWearingOutfitPicture().getUrl()).transform(new RoundedCorners(50)).into(binding.ivWearingOutfitPicToday);
         binding.tvOurPicks.setText(getString(R.string.header_your_outfit));
     }
 

@@ -29,9 +29,11 @@
             android:id="@+id/tvDisplayNameProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/alegreya"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textSize="20sp"
+            android:textSize="24sp"
             app:layout_constraintStart_toEndOf="@+id/ivProfilePicProfile"
             app:layout_constraintTop_toTopOf="@+id/ivProfilePicProfile"
             tools:text="Niyati P" />
@@ -40,34 +42,35 @@
             android:id="@+id/tvUsernameProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/alegreya"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/tvDisplayNameProfile"
-            app:layout_constraintTop_toTopOf="@+id/tvDisplayNameProfile"
+            app:layout_constraintStart_toStartOf="@+id/tvDisplayNameProfile"
+            app:layout_constraintTop_toBottomOf="@+id/tvDisplayNameProfile"
             tools:text="niyatiprabhu" />
 
         <TextView
             android:id="@+id/tvNumOutfitsProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginTop="28dp"
+            android:fontFamily="@font/alegreya"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/ivProfilePicProfile"
-            app:layout_constraintTop_toBottomOf="@+id/tvDisplayNameProfile"
+            app:layout_constraintStart_toStartOf="@+id/btnLogout"
+            app:layout_constraintTop_toTopOf="@+id/tvUsernameProfile"
             tools:text="6 Outfits" />
 
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="78dp"
             android:layout_height="34dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginStart="52dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/alegreya"
             android:text="log out"
             android:textSize="8sp"
-            app:layout_constraintStart_toEndOf="@+id/tvNumOutfitsProfile"
-            app:layout_constraintTop_toBottomOf="@+id/tvUsernameProfile" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/tvDisplayNameProfile"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

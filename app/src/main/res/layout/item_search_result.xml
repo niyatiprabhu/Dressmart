@@ -32,17 +32,19 @@
             android:id="@+id/tvConditionsSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/alegreya"
             android:lineSpacingExtra="14sp"
             android:text="TextView"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:textStyle="italic"
+            android:textStyle="bold|italic"
             tools:text="75 and Sunny" />
 
         <TextView
             android:id="@+id/tvTopSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/alegreya"
             android:text="TextView"
             tools:text="Top: white tee" />
 
@@ -50,6 +52,7 @@
             android:id="@+id/tvBottomsSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/alegreya"
             android:text="TextView"
             tools:text="Bottoms: corduroy pants" />
 
@@ -57,6 +60,7 @@
             android:id="@+id/tvOuterSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/alegreya"
             android:text="TextView"
             tools:text="Outer: none" />
 
@@ -64,6 +68,7 @@
             android:id="@+id/tvShoesSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/alegreya"
             android:text="TextView"
             tools:text="Shoes: Nike air max" />
     </LinearLayout>
