@@ -29,6 +29,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -36,7 +37,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-import com.example.dressmart.MainActivity;
 import com.example.dressmart.R;
 import com.example.dressmart.adapters.GarmentAdapter;
 import com.example.dressmart.databinding.FragmentTodayBinding;
@@ -91,10 +91,6 @@ public class TodayFragment extends Fragment {
 
     private LocationRequest mLocationRequest;
 
-    public boolean hasPostedToday;
-    public boolean hasClothes;
-    public OutfitPost todaysPost;
-
     // move to weather class
     WeatherCondition weatherCondition;
 
@@ -111,18 +107,9 @@ public class TodayFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.setVisibility(View.INVISIBLE);
-
-        try {
-            checkIfHasClothes();
-        } catch (ParseException e) {
-            Log.e(TAG, String.valueOf(e.getStackTrace()));
-        }
-        checkIfPostedToday();
-
         mFusedLocationClient = getFusedLocationProviderClient(getActivity());
         startLocationUpdates();
-        weatherFromJson();
-
+        checkIfPostedToday();
     }
 
 
@@ -153,6 +140,7 @@ public class TodayFragment extends Fragment {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
                         // do work here
+                        Log.i(TAG, "inside of onLocationResult");
                         if (locationResult == null) {
                             Toast.makeText(getActivity(), "locationResult is null", Toast.LENGTH_SHORT).show();
                             return;
@@ -163,10 +151,28 @@ public class TodayFragment extends Fragment {
                     }
                 },
                 Looper.myLooper());
+        Log.i(TAG, "lat: " + latitude + " lon: " + longitude);
     }
 
 
-    private void weatherFromJson() {
+    // If everything is alright then
+    @Override
+    public void
+    onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                mFusedLocationClient.getLastLocation();
+            }
+        }
+    }
+
+
+    private void weatherFromJson(OutfitPost todaysPost, boolean hasClothes) {
         AsyncHttpClient client = new AsyncHttpClient();
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https")
@@ -184,16 +190,16 @@ public class TodayFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.d(TAG, "onSuccess");
+
                 try {
                     weatherCondition = WeatherCondition.weatherFromJson(getContext(), json.jsonObject);
-                    bind();
-                    if(hasClothes) {
-                        selectOutfit();
-                    }
-                } catch (JSONException | ParseException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                bind(todaysPost, hasClothes);
+                if(hasClothes) {
+                    selectOutfit();
+                }
             }
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
@@ -214,7 +220,7 @@ public class TodayFragment extends Fragment {
         Glide.with(getActivity()).load(icon).override(400, 400).into(binding.ivWeatherIconToday);
     }
 
-    public void bind() throws ParseException {
+    public void bind(OutfitPost todaysPost, boolean hasClothes) {
         // set weather info at the top that will not change
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
         setWeatherIcon();
@@ -224,7 +230,7 @@ public class TodayFragment extends Fragment {
         // decide UI: either empty, already posted, or displaying recommendation
         if (!hasClothes) {
             setEmptyUI();
-        } else if (hasPostedToday) {
+        } else if (todaysPost != null) {
             updateUIAfterPosting(todaysPost);
         } else {
             binding.tvOurPicks.setText(getString(R.string.header_our_picks));
@@ -235,7 +241,7 @@ public class TodayFragment extends Fragment {
     }
 
 
-    public void selectOutfit() throws ParseException {
+    public void selectOutfit() {
         User user = (User) ParseUser.getCurrentUser();
         Log.i(TAG, "in select outfit");
         // Specify which class to query
@@ -251,14 +257,8 @@ public class TodayFragment extends Fragment {
                     }
 
                     HashMap<String, List<Garment>> closet = null;
-                    try {
-                        closet = createCloset(user);
-                    } catch (ParseException ex) {
-                        ex.printStackTrace();
-                    }
 
-                    // check if there are any clothes in the closet yet
-
+                    closet = createCloset(user);
 
                     RecommendedOutfit recommendedOutfit = RecommendationUtil.getRecommendation(weatherCondition, closet);
                     displayRecommendedOutfit(recommendedOutfit, closet);
@@ -305,18 +305,24 @@ public class TodayFragment extends Fragment {
         });
     }
 
-    private HashMap<String, List<Garment>> createCloset(User user) throws ParseException {
+    private HashMap<String, List<Garment>> createCloset(User user) {
         HashMap<String, List<Garment>> closet = new HashMap<>();
         for(Garment item : user.getCloset()) {
-            if(closet.containsKey(item.getGarmentType())) {
+            String garmentType = "";
+            try {
+                garmentType = item.getGarmentType();
+            } catch (ParseException e){
+                e.printStackTrace();
+            }
+            if(closet.containsKey(garmentType)) {
                 //Add to existing list
-                closet.get(item.getGarmentType()).add(item);
+                closet.get(garmentType).add(item);
 
             } else {
                 //Create new list
                 ArrayList<Garment> garments = new ArrayList<Garment>(1);
                 garments.add(item);
-                closet.put(item.getGarmentType(), garments);
+                closet.put(garmentType, garments);
             }
         }
         return closet;
@@ -412,11 +418,16 @@ public class TodayFragment extends Fragment {
     }
 
 
-    private void checkIfHasClothes() throws ParseException {
+    private boolean hasClothes() {
         User user = (User) ParseUser.getCurrentUser();
         int numTops = 0, numBottoms = 0, numShoes = 0;
         for (Garment item : user.getCloset()) {
-            String garmentType = item.getGarmentType();
+            String garmentType = "";
+            try {
+                garmentType = item.getGarmentType();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             if (garmentType.equals(TOP)) {
                 numTops++;
             } else if (garmentType.equals(BOTTOMS)) {
@@ -425,8 +436,7 @@ public class TodayFragment extends Fragment {
                 numShoes++;
             }
         }
-        hasClothes = numTops >= 1 && numBottoms >= 1 && numShoes >= 1;
-        Log.i(TAG, "has clothes: " + hasClothes);
+        return numTops >= 1 && numBottoms >= 1 && numShoes >= 1;
     }
 
     private void checkIfPostedToday() {
@@ -448,8 +458,11 @@ public class TodayFragment extends Fragment {
                     // check if the date of the last post matches the date of today
                     Log.i(TAG, "is today: " + DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime()));
                     if (DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime())) {
-                        hasPostedToday = true;
-                        todaysPost = fetchedPosts.get(0);
+                        // already posted
+                        weatherFromJson(fetchedPosts.get(0), hasClothes());
+                    } else {
+                        // have not posted
+                        weatherFromJson(null, hasClothes());
                     }
                 }
             }
