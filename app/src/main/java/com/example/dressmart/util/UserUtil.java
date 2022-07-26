@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -15,6 +17,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.dressmart.MainActivity;
 import com.example.dressmart.R;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -32,6 +36,14 @@ public class UserUtil {
                 if (e != null) {
                     // something went wrong
                     Log.e(TAG, "Issue with login", e);
+                    EditText etUsername = activity.findViewById(R.id.etUsername);
+                    EditText etPassword = activity.findViewById(R.id.etPassword);
+                    Animation shake = AnimationUtils.loadAnimation(activity, R.anim.shake);
+                    etUsername.startAnimation(shake);
+                    etUsername.getText().clear();
+                    etPassword.startAnimation(shake);
+                    etPassword.getText().clear();
+                    Snackbar.make(activity.findViewById(R.id.clLoginView), activity.getString(R.string.message_wrong_password), BaseTransientBottomBar.LENGTH_LONG).show();
                     return;
                 }
                 goMainActivity(activity);

@@ -19,4 +19,5 @@
     <string name="heading_results_plural"> Results</string>
     <string name="message_wrong_password"> Incorrect username or password. Please try again.</string>
     <string name="message_user_exists"> Username is already taken. </string>
+    <string name="message_empty_fields"> Fields are required. </string>
 </resources>

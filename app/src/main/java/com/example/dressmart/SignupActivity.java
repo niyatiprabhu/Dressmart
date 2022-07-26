@@ -15,6 +15,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +24,8 @@ import android.widget.TextView;
 import com.example.dressmart.databinding.ActivitySignupBinding;
 import com.example.dressmart.models.parse.User;
 import com.example.dressmart.util.UserUtil;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -163,6 +167,28 @@ public class SignupActivity extends AppCompatActivity {
                 } else {
                     // Sign up didn't succeed.
                     Log.e(TAG, e.getMessage());
+                    Animation shake = AnimationUtils.loadAnimation(SignupActivity.this, R.anim.shake);
+                    if (binding.etDisplayNameSignup.getText().toString().equals("") || binding.etUsernameSignup.getText().toString().equals("")
+                            || binding.etPasswordSignup.getText().toString().equals("")) {
+                        if (binding.etDisplayNameSignup.getText().toString().equals("")) {
+                            binding.etDisplayNameSignup.startAnimation(shake);
+                        }
+                        if (binding.etUsernameSignup.getText().toString().equals("")) {
+                            binding.etUsernameSignup.startAnimation(shake);
+
+                        }
+                        if (binding.etPasswordSignup.getText().toString().equals("")) {
+                            binding.etPasswordSignup.startAnimation(shake);
+
+                        }
+                        Snackbar.make(findViewById(R.id.clSignupView), getString(R.string.message_empty_fields), BaseTransientBottomBar.LENGTH_LONG).show();
+                    } else {
+                        binding.etUsernameSignup.startAnimation(shake);
+                        binding.etUsernameSignup.getText().clear();
+                        Snackbar.make(findViewById(R.id.clSignupView), getString(R.string.message_user_exists), BaseTransientBottomBar.LENGTH_LONG).show();
+                    }
+
+
 
                 }
             }
