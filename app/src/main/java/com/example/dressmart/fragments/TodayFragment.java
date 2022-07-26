@@ -29,7 +29,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -90,6 +89,7 @@ public class TodayFragment extends Fragment {
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
 
     private LocationRequest mLocationRequest;
+
 
     // move to weather class
     WeatherCondition weatherCondition;
@@ -221,6 +221,10 @@ public class TodayFragment extends Fragment {
     }
 
     public void bind(OutfitPost todaysPost, boolean hasClothes) {
+
+        if (getView() != null) {
+            getView().setVisibility(View.VISIBLE);
+        }
         // set weather info at the top that will not change
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
         setWeatherIcon();
@@ -398,9 +402,7 @@ public class TodayFragment extends Fragment {
     }
 
     private void setEmptyUI() {
-        if (getView() != null) {
-            getView().setVisibility(View.VISIBLE);
-        }
+
         Log.i(TAG, "in setEmptyUI");
         binding.btnSubmitToday.setVisibility(View.GONE);
         binding.glGarments.setVisibility(View.GONE);
@@ -453,17 +455,20 @@ public class TodayFragment extends Fragment {
                     Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
+                boolean hasClothes = hasClothes();
                 // save received posts to list and notify adapter of new data
                 if (!fetchedPosts.isEmpty()) {
                     // check if the date of the last post matches the date of today
                     Log.i(TAG, "is today: " + DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime()));
                     if (DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime())) {
                         // already posted
-                        weatherFromJson(fetchedPosts.get(0), hasClothes());
+                        weatherFromJson(fetchedPosts.get(0), hasClothes);
                     } else {
                         // have not posted
-                        weatherFromJson(null, hasClothes());
+                        weatherFromJson(null, hasClothes);
                     }
+                } else {
+                    weatherFromJson(null, hasClothes);
                 }
             }
         });
