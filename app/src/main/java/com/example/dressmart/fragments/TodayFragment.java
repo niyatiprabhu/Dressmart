@@ -200,9 +200,13 @@ public class TodayFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                bind(todaysPost, hasClothes);
-                if(hasClothes) {
+                bindWeatherInfo();
+                if(!hasClothes) {
+                    bindEmptyUI();
+                } else if (todaysPost == null){
                     selectOutfit();
+                } else {
+                    bindDisplayOutfitUI(todaysPost);
                 }
             }
             @Override
@@ -216,7 +220,7 @@ public class TodayFragment extends Fragment {
         @DrawableRes int icon;
         if (weatherCondition.getConditions().equals(getString(R.string.condition_sunny))) {
             icon = R.drawable.sunny;
-        } else if (weatherCondition.getConditions().equals(getString(R.string.condition_partly_cloudy))) {
+        } else if (weatherCondition.getConditions().equals(myContext.getString(R.string.condition_partly_cloudy))) {
             icon = R.drawable.partly_cloudy;
         } else {
             icon = R.drawable.cloudy;
@@ -224,36 +228,26 @@ public class TodayFragment extends Fragment {
         Glide.with(getActivity()).load(icon).override(400, 400).into(binding.ivWeatherIconToday);
     }
 
-    public void bind(OutfitPost todaysPost, boolean hasClothes) {
+    public void bindWeatherInfo() {
 
-        if (binding == null) {
+        if (binding == null || getView() == null) {
             return;
-        }
-
-        if (getView() != null) {
-            getView().setVisibility(View.VISIBLE);
         } else {
-            return;
-        }
+            getView().setVisibility(View.VISIBLE);
 
+        }
 
         // set weather info at the top that will not change
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
         setWeatherIcon();
         binding.tvTempToday.setText(String.valueOf((int) weatherCondition.getAvgTemp()));
+    }
 
-        Log.i(TAG, "in Bind");
-        // decide UI: either empty, already posted, or displaying recommendation
-        if (!hasClothes) {
-            setEmptyUI();
-        } else if (todaysPost != null) {
-            updateUIAfterPosting(todaysPost);
-        } else {
-            binding.tvOurPicks.setText(getString(R.string.header_our_picks));
-            binding.rbMatchScore.setVisibility(View.GONE);
-            binding.tvNumStars.setVisibility(View.GONE);
-            binding.tvNoItemsYet.setVisibility(View.GONE);
-        }
+    public void bindRecommendationUI() {
+        binding.tvOurPicks.setText(myContext.getString(R.string.header_our_picks));
+        binding.rbMatchScore.setVisibility(View.GONE);
+        binding.tvNumStars.setVisibility(View.GONE);
+        binding.tvNoItemsYet.setVisibility(View.GONE);
     }
 
 
@@ -277,7 +271,8 @@ public class TodayFragment extends Fragment {
                     closet = createCloset(user);
 
                     RecommendedOutfit recommendedOutfit = RecommendationUtil.getRecommendation(weatherCondition, closet);
-                    displayRecommendedOutfit(recommendedOutfit, closet);
+                    attachRecommendedOutfit(recommendedOutfit, closet);
+                    bindRecommendationUI();
 
                     HashMap<String, List<Garment>> finalCloset = closet;
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
@@ -306,7 +301,7 @@ public class TodayFragment extends Fragment {
                                     user.addParseOutfit(post);
                                     user.saveInBackground();
                                     Log.i(TAG, "Post save was successful!");
-                                    updateUIAfterPosting(post);
+                                    bindDisplayOutfitUI(post);
 
                                     setGarmentsLastWorn(post);
                                     doSubmitAnimation();
@@ -319,6 +314,9 @@ public class TodayFragment extends Fragment {
                 }
             }
         });
+
+
+
     }
 
     private HashMap<String, List<Garment>> createCloset(User user) {
@@ -344,7 +342,7 @@ public class TodayFragment extends Fragment {
         return closet;
     }
 
-    private void displayRecommendedOutfit(RecommendedOutfit recommendedOutfit, HashMap<String, List<Garment>> closet) {
+    private void attachRecommendedOutfit(RecommendedOutfit recommendedOutfit, HashMap<String, List<Garment>> closet) {
         // put the chosen items at the top of their respective lists
         closet.get(TOP).remove(recommendedOutfit.getTop());
         closet.get(TOP).add(0, recommendedOutfit.getTop());
@@ -385,19 +383,19 @@ public class TodayFragment extends Fragment {
         binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
     }
 
-    private void updateUIAfterPosting(OutfitPost post) {
+    private void bindDisplayOutfitUI(OutfitPost post) {
         // display the match score and remove the submit button
         Log.i(TAG, "in update ui after postig");
         binding.tvNoItemsYet.setVisibility(View.GONE);
         binding.btnSubmitToday.setVisibility(View.GONE);
         binding.glGarments.setVisibility(View.GONE);
-        binding.tvNumStars.setText(getString(R.string.popup_match_score) + " " + String.valueOf(post.getColorMatchScore()) + "!");
+        binding.tvNumStars.setText(myContext.getString(R.string.popup_match_score) + " " + String.valueOf(post.getColorMatchScore()) + "!");
         binding.rbMatchScore.setRating((float) post.getColorMatchScore());
         binding.tvNumStars.setVisibility(View.VISIBLE);
         binding.rbMatchScore.setVisibility(View.VISIBLE);
         binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
         Glide.with(myContext).load(post.getWearingOutfitPicture().getUrl()).transform(new RoundedCorners(50)).into(binding.ivWearingOutfitPicToday);
-        binding.tvOurPicks.setText(getString(R.string.header_your_outfit));
+        binding.tvOurPicks.setText(myContext.getString(R.string.header_your_outfit));
     }
 
     private void populatePost(OutfitPost post, HashMap<String,List<Garment>> closet) {
@@ -413,7 +411,7 @@ public class TodayFragment extends Fragment {
         post.setParseShoes(closet.get(SHOES).get(binding.vpGarment4.getCurrentItem()));
     }
 
-    private void setEmptyUI() {
+    private void bindEmptyUI() {
 
         Log.i(TAG, "in setEmptyUI");
         binding.btnSubmitToday.setVisibility(View.GONE);
