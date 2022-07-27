@@ -93,9 +93,6 @@ public class TodayFragment extends Fragment {
 
     Context myContext;
 
-    // move to weather class
-    WeatherCondition weatherCondition;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -138,22 +135,23 @@ public class TodayFragment extends Fragment {
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        getFusedLocationProviderClient(getActivity()).requestLocationUpdates(mLocationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        // do work here
-                        Log.i(TAG, "inside of onLocationResult");
-                        if (locationResult == null) {
-                            Toast.makeText(getActivity(), "locationResult is null", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Location location = locationResult.getLastLocation();
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
-                        checkIfPostedToday();
-                    }
-                },
-                Looper.myLooper());
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                Log.i(TAG, "inside of onLocationResult");
+                if (locationResult == null) {
+                    Toast.makeText(getActivity(), "locationResult is null", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Location location = locationResult.getLastLocation();
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                checkIfPostedToday();
+            }
+        };
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper());
+        //mFusedLocationClient.removeLocationUpdates(locationCallback);
         Log.i(TAG, "lat: " + latitude + " lon: " + longitude);
     }
 
@@ -175,7 +173,7 @@ public class TodayFragment extends Fragment {
     }
 
 
-    private void weatherFromJson(OutfitPost todaysPost, boolean hasClothes) {
+    private void fetchWeather(OutfitPost todaysPost, boolean hasClothes) {
         AsyncHttpClient client = new AsyncHttpClient();
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https")
@@ -194,17 +192,17 @@ public class TodayFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.d(TAG, "onSuccess");
-
+                WeatherCondition weatherCondition = null;
                 try {
                     weatherCondition = WeatherCondition.weatherFromJson(myContext, json.jsonObject);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                bindWeatherInfo();
+                bindWeatherInfo(weatherCondition);
                 if(!hasClothes) {
                     bindEmptyUI();
                 } else if (todaysPost == null){
-                    selectOutfit();
+                    fetchOutfit(weatherCondition);
                 } else {
                     bindDisplayOutfitUI(todaysPost);
                 }
@@ -216,7 +214,7 @@ public class TodayFragment extends Fragment {
         });
     }
 
-    private void setWeatherIcon() {
+    private void setWeatherIcon(WeatherCondition weatherCondition) {
         @DrawableRes int icon;
         if (weatherCondition.getConditions().equals(getString(R.string.condition_sunny))) {
             icon = R.drawable.sunny;
@@ -228,7 +226,7 @@ public class TodayFragment extends Fragment {
         Glide.with(getActivity()).load(icon).override(400, 400).into(binding.ivWeatherIconToday);
     }
 
-    public void bindWeatherInfo() {
+    public void bindWeatherInfo(WeatherCondition weatherCondition) {
 
         if (binding == null || getView() == null) {
             return;
@@ -239,7 +237,7 @@ public class TodayFragment extends Fragment {
 
         // set weather info at the top that will not change
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
-        setWeatherIcon();
+        setWeatherIcon(weatherCondition);
         binding.tvTempToday.setText(String.valueOf((int) weatherCondition.getAvgTemp()));
     }
 
@@ -251,7 +249,7 @@ public class TodayFragment extends Fragment {
     }
 
 
-    public void selectOutfit() {
+    public void fetchOutfit(WeatherCondition weatherCondition) {
         User user = (User) ParseUser.getCurrentUser();
         Log.i(TAG, "in select outfit");
         // Specify which class to query
@@ -281,7 +279,7 @@ public class TodayFragment extends Fragment {
                             // prompt camera app to take outfit pic
                             onLaunchCamera(v);
                             OutfitPost post = new OutfitPost();
-                            populatePost(post, finalCloset);
+                            populatePost(weatherCondition, post, finalCloset);
 
                             // calculate the match score of the 4 garments put together and display it
                             // in the rating stars, the number of stars filled up corresponds to the value of calculateMatchScore
@@ -398,7 +396,7 @@ public class TodayFragment extends Fragment {
         binding.tvOurPicks.setText(myContext.getString(R.string.header_your_outfit));
     }
 
-    private void populatePost(OutfitPost post, HashMap<String,List<Garment>> closet) {
+    private void populatePost(WeatherCondition weatherCondition, OutfitPost post, HashMap<String,List<Garment>> closet) {
         post.setParseTemperature((int)weatherCondition.getAvgTemp());
         post.setParseConditions(weatherCondition.getConditions());
         post.setParseAuthor((User)ParseUser.getCurrentUser());
@@ -469,18 +467,12 @@ public class TodayFragment extends Fragment {
                 }
                 boolean hasClothes = hasClothes();
                 // save received posts to list and notify adapter of new data
-                if (!fetchedPosts.isEmpty()) {
-                    // check if the date of the last post matches the date of today
-                    Log.i(TAG, "is today: " + DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime()));
-                    if (DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime())) {
-                        // already posted
-                        weatherFromJson(fetchedPosts.get(0), hasClothes);
-                    } else {
-                        // have not posted
-                        weatherFromJson(null, hasClothes);
-                    }
+                if (!fetchedPosts.isEmpty() && DateUtils.isToday(fetchedPosts.get(0).getCreatedAt().getTime())) {
+                    // already posted
+                    fetchWeather(fetchedPosts.get(0), hasClothes);
                 } else {
-                    weatherFromJson(null, hasClothes);
+                    // has not posted
+                    fetchWeather(null, hasClothes);
                 }
             }
         });
