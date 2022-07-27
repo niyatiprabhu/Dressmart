@@ -1,76 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cvPostCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="10dp">
+    android:layout_rowWeight="1"
+    android:layout_columnWeight="1"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@color/white"
+    android:elevation="8dp"
+    app:cardCornerRadius="5dp">
 
-    <ImageView
-        android:id="@+id/ivWearingOutfitPicSearch"
-        android:layout_width="150dp"
-        android:layout_height="200dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:gravity="center_vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivWearingOutfitPicSearch"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingVertical="10dp">
 
-        <TextView
-            android:id="@+id/tvConditionsSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/alegreya"
-            android:lineSpacingExtra="14sp"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="bold|italic"
-            tools:text="75 and Sunny" />
+        <ImageView
+            android:id="@+id/ivWearingOutfitPicSearch"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
 
-        <TextView
-            android:id="@+id/tvTopSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/alegreya"
-            android:text="TextView"
-            tools:text="Top: white tee" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivWearingOutfitPicSearch"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvBottomsSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/alegreya"
-            android:text="TextView"
-            tools:text="Bottoms: corduroy pants" />
+            <TextView
+                android:id="@+id/tvConditionsSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alegreya"
+                android:lineSpacingExtra="14sp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold|italic"
+                tools:text="75 and Sunny" />
 
-        <TextView
-            android:id="@+id/tvOuterSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/alegreya"
-            android:text="TextView"
-            tools:text="Outer: none" />
+            <TextView
+                android:id="@+id/tvTopSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alegreya"
+                android:text="TextView"
+                tools:text="Top: white tee" />
 
-        <TextView
-            android:id="@+id/tvShoesSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/alegreya"
-            android:text="TextView"
-            tools:text="Shoes: Nike air max" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvBottomsSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alegreya"
+                android:text="TextView"
+                tools:text="Bottoms: corduroy pants" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tvOuterSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alegreya"
+                android:text="TextView"
+                tools:text="Outer: none" />
+
+            <TextView
+                android:id="@+id/tvShoesSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alegreya"
+                android:text="TextView"
+                tools:text="Shoes: Nike air max" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

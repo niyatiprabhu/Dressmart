@@ -7,6 +7,7 @@ import static com.example.dressmart.Constants.TOP;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -90,6 +91,7 @@ public class TodayFragment extends Fragment {
 
     private LocationRequest mLocationRequest;
 
+    Context myContext;
 
     // move to weather class
     WeatherCondition weatherCondition;
@@ -109,7 +111,7 @@ public class TodayFragment extends Fragment {
         view.setVisibility(View.INVISIBLE);
         mFusedLocationClient = getFusedLocationProviderClient(getActivity());
         startLocationUpdates();
-        checkIfPostedToday();
+        //checkIfPostedToday();
     }
 
 
@@ -148,6 +150,7 @@ public class TodayFragment extends Fragment {
                         Location location = locationResult.getLastLocation();
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
+                        checkIfPostedToday();
                     }
                 },
                 Looper.myLooper());
@@ -163,7 +166,7 @@ public class TodayFragment extends Fragment {
 
         if (requestCode == PERMISSION_ID) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 mFusedLocationClient.getLastLocation();
@@ -184,15 +187,16 @@ public class TodayFragment extends Fragment {
                 .appendQueryParameter("days", "1")
                 .appendQueryParameter("lat", String.valueOf(latitude))
                 .appendQueryParameter("lon", String.valueOf(longitude))
-                .appendQueryParameter("key", getActivity().getString(R.string.api_key));
+                .appendQueryParameter("key", myContext.getString(R.string.api_key));
         String myUrl = builder.build().toString();
+        Log.i(TAG, "url: " + myUrl);
         client.get(myUrl, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.d(TAG, "onSuccess");
 
                 try {
-                    weatherCondition = WeatherCondition.weatherFromJson(getContext(), json.jsonObject);
+                    weatherCondition = WeatherCondition.weatherFromJson(myContext, json.jsonObject);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -203,7 +207,7 @@ public class TodayFragment extends Fragment {
             }
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.i(TAG, "Oops! onFailure. " + throwable.getMessage());
+                Log.i(TAG, "Oops! onFailure. " + throwable.getMessage() + response);
             }
         });
     }
@@ -222,9 +226,17 @@ public class TodayFragment extends Fragment {
 
     public void bind(OutfitPost todaysPost, boolean hasClothes) {
 
+        if (binding == null) {
+            return;
+        }
+
         if (getView() != null) {
             getView().setVisibility(View.VISIBLE);
+        } else {
+            return;
         }
+
+
         // set weather info at the top that will not change
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
         setWeatherIcon();
@@ -303,7 +315,7 @@ public class TodayFragment extends Fragment {
                         }
                     });
                 } else {
-                    Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(myContext, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -344,10 +356,10 @@ public class TodayFragment extends Fragment {
         closet.get(SHOES).add(0, recommendedOutfit.getShoes());
 
         // set the adapters for all 4 garment cards
-        GarmentAdapter topAdapter = new GarmentAdapter(closet.get(TOP), getContext());
-        GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get(BOTTOMS), getContext());
-        GarmentAdapter outerAdapter = new GarmentAdapter(closet.get(OUTER), getContext());
-        GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get(SHOES), getContext());
+        GarmentAdapter topAdapter = new GarmentAdapter(closet.get(TOP), myContext);
+        GarmentAdapter bottomsAdapter = new GarmentAdapter(closet.get(BOTTOMS), myContext);
+        GarmentAdapter outerAdapter = new GarmentAdapter(closet.get(OUTER), myContext);
+        GarmentAdapter shoesAdapter = new GarmentAdapter(closet.get(SHOES), myContext);
         binding.vpGarment1.setAdapter(topAdapter);
         binding.vpGarment2.setAdapter(bottomsAdapter);
         binding.vpGarment3.setAdapter(outerAdapter);
@@ -366,9 +378,9 @@ public class TodayFragment extends Fragment {
 
     private void doSubmitAnimation() {
         // fade out the gridview and fade in the imageview
-        Animation animFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+        Animation animFadeOut = AnimationUtils.loadAnimation(myContext, R.anim.fade_out);
         binding.glGarments.startAnimation(animFadeOut);
-        Animation animFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+        Animation animFadeIn = AnimationUtils.loadAnimation(myContext, R.anim.fade_in);
         binding.ivWearingOutfitPicToday.startAnimation(animFadeIn);
         binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
     }
@@ -384,7 +396,7 @@ public class TodayFragment extends Fragment {
         binding.tvNumStars.setVisibility(View.VISIBLE);
         binding.rbMatchScore.setVisibility(View.VISIBLE);
         binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
-        Glide.with(getContext()).load(post.getWearingOutfitPicture().getUrl()).transform(new RoundedCorners(50)).into(binding.ivWearingOutfitPicToday);
+        Glide.with(myContext).load(post.getWearingOutfitPicture().getUrl()).transform(new RoundedCorners(50)).into(binding.ivWearingOutfitPicToday);
         binding.tvOurPicks.setText(getString(R.string.header_your_outfit));
     }
 
@@ -414,14 +426,16 @@ public class TodayFragment extends Fragment {
 
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        myContext = context;
     }
-
 
     private boolean hasClothes() {
         User user = (User) ParseUser.getCurrentUser();
+        if (user == null) {
+            return false;
+        }
         int numTops = 0, numBottoms = 0, numShoes = 0;
         for (Garment item : user.getCloset()) {
             String garmentType = "";
