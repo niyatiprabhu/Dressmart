@@ -83,8 +83,7 @@ public class TodayFragment extends Fragment {
     private String photoFileName = "photo.jpg";
 
     private FusedLocationProviderClient mFusedLocationClient;
-    private double latitude;
-    private double longitude;
+    private Location location;
     private int PERMISSION_ID = 44;
 
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
@@ -97,6 +96,7 @@ public class TodayFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTodayBinding.inflate(inflater, container, false);
+        mFusedLocationClient = getFusedLocationProviderClient(getActivity());
         View root = binding.getRoot();
         return root;
     }
@@ -106,7 +106,6 @@ public class TodayFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.setVisibility(View.INVISIBLE);
-        mFusedLocationClient = getFusedLocationProviderClient(getActivity());
         startLocationUpdates();
         //checkIfPostedToday();
     }
@@ -144,15 +143,15 @@ public class TodayFragment extends Fragment {
                     Toast.makeText(getActivity(), "locationResult is null", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Location location = locationResult.getLastLocation();
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+                location = locationResult.getLastLocation();
                 checkIfPostedToday();
             }
         };
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper());
-        //mFusedLocationClient.removeLocationUpdates(locationCallback);
-        Log.i(TAG, "lat: " + latitude + " lon: " + longitude);
+        if (location != null) {
+            mFusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+        //Log.i(TAG, "lat: " + location.getLatitude() + " lon: " + location.getLongitude());
     }
 
 
@@ -183,8 +182,8 @@ public class TodayFragment extends Fragment {
                 .appendPath("daily")
                 .appendQueryParameter("units", "I")
                 .appendQueryParameter("days", "1")
-                .appendQueryParameter("lat", String.valueOf(latitude))
-                .appendQueryParameter("lon", String.valueOf(longitude))
+                .appendQueryParameter("lat", String.valueOf(location.getLatitude()))
+                .appendQueryParameter("lon", String.valueOf(location.getLongitude()))
                 .appendQueryParameter("key", myContext.getString(R.string.api_key));
         String myUrl = builder.build().toString();
         Log.i(TAG, "url: " + myUrl);

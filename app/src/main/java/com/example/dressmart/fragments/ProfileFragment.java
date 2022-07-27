@@ -97,10 +97,8 @@ public class ProfileFragment extends Fragment {
                 binding.tvNumResultsSearch.setVisibility(View.VISIBLE);
                 querySearchResults(query);
                 binding.svFindOutfits.clearFocus(); // so that setOnQueryTextListener only runs once
-                int numResults = searchAdapter.getItemCount();
                 searchAdapter.clear();
-                String resultsSuffix = numResults == 1 ? getString(R.string.heading_result) : getString(R.string.heading_results_plural);
-                binding.tvNumResultsSearch.setText(numResults + " " + resultsSuffix);
+                binding.tvNumResultsSearch.setText(getString(R.string.heading_result) + " " + query + ":");
                 return false;
             }
 
