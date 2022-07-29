@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -104,8 +105,7 @@ public class TodayFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        view.setVisibility(View.INVISIBLE);
+        binding.pbLoading.setVisibility(ProgressBar.VISIBLE);
         startLocationUpdates();
         //checkIfPostedToday();
     }
@@ -184,6 +184,7 @@ public class TodayFragment extends Fragment {
                 .appendQueryParameter("days", "1")
                 .appendQueryParameter("lat", String.valueOf(location.getLatitude()))
                 .appendQueryParameter("lon", String.valueOf(location.getLongitude()))
+//                .appendQueryParameter("city", "Seattle")
                 .appendQueryParameter("key", myContext.getString(R.string.api_key));
         String myUrl = builder.build().toString();
         Log.i(TAG, "url: " + myUrl);
@@ -223,6 +224,7 @@ public class TodayFragment extends Fragment {
             icon = R.drawable.cloudy;
         }
         Glide.with(getActivity()).load(icon).override(400, 400).into(binding.ivWeatherIconToday);
+        binding.ivWeatherIconToday.setVisibility(View.VISIBLE);
     }
 
     public void bindWeatherInfo(WeatherCondition weatherCondition) {
@@ -235,16 +237,19 @@ public class TodayFragment extends Fragment {
         }
 
         // set weather info at the top that will not change
+        binding.tvConditionsToday.setVisibility(View.VISIBLE);
         binding.tvConditionsToday.setText(weatherCondition.getConditions());
+        binding.tvToday.setVisibility(View.VISIBLE);
         setWeatherIcon(weatherCondition);
+        binding.tvTempToday.setVisibility(View.VISIBLE);
         binding.tvTempToday.setText(String.valueOf((int) weatherCondition.getAvgTemp()));
     }
 
     public void bindRecommendationUI() {
+        binding.tvOurPicks.setVisibility(View.VISIBLE);
         binding.tvOurPicks.setText(myContext.getString(R.string.header_our_picks));
-        binding.rbMatchScore.setVisibility(View.GONE);
-        binding.tvNumStars.setVisibility(View.GONE);
-        binding.tvNoItemsYet.setVisibility(View.GONE);
+        binding.glGarments.setVisibility(View.VISIBLE);
+        binding.btnSubmitToday.setVisibility(View.VISIBLE);
     }
 
 
@@ -270,6 +275,7 @@ public class TodayFragment extends Fragment {
                     RecommendedOutfit recommendedOutfit = RecommendationUtil.getRecommendation(weatherCondition, closet);
                     attachRecommendedOutfit(recommendedOutfit, closet);
                     bindRecommendationUI();
+                    binding.pbLoading.setVisibility(View.INVISIBLE);
 
                     HashMap<String, List<Garment>> finalCloset = closet;
                     binding.btnSubmitToday.setOnClickListener(new View.OnClickListener() {
@@ -345,8 +351,10 @@ public class TodayFragment extends Fragment {
         closet.get(TOP).add(0, recommendedOutfit.getTop());
         closet.get(BOTTOMS).remove(recommendedOutfit.getBottoms());
         closet.get(BOTTOMS).add(0, recommendedOutfit.getBottoms());
-        closet.get(OUTER).remove(recommendedOutfit.getOuter());
-        closet.get(OUTER).add(0, recommendedOutfit.getOuter());
+        if (closet.get(OUTER) != null) {
+            closet.get(OUTER).remove(recommendedOutfit.getOuter());
+            closet.get(OUTER).add(0, recommendedOutfit.getOuter());
+        }
         closet.get(SHOES).remove(recommendedOutfit.getShoes());
         closet.get(SHOES).add(0, recommendedOutfit.getShoes());
 
@@ -377,15 +385,15 @@ public class TodayFragment extends Fragment {
         binding.glGarments.startAnimation(animFadeOut);
         Animation animFadeIn = AnimationUtils.loadAnimation(myContext, R.anim.fade_in);
         binding.ivWearingOutfitPicToday.startAnimation(animFadeIn);
+        binding.glGarments.setVisibility(View.INVISIBLE);
+        binding.btnSubmitToday.setVisibility(View.INVISIBLE);
         binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
     }
 
     private void bindDisplayOutfitUI(OutfitPost post) {
         // display the match score and remove the submit button
+        binding.pbLoading.setVisibility(View.INVISIBLE);
         Log.i(TAG, "in update ui after postig");
-        binding.tvNoItemsYet.setVisibility(View.GONE);
-        binding.btnSubmitToday.setVisibility(View.GONE);
-        binding.glGarments.setVisibility(View.GONE);
         binding.tvNumStars.setText(myContext.getString(R.string.popup_match_score) + " " + String.valueOf(post.getColorMatchScore()) + "!");
         binding.rbMatchScore.setRating((float) post.getColorMatchScore());
         binding.tvNumStars.setVisibility(View.VISIBLE);
@@ -393,6 +401,8 @@ public class TodayFragment extends Fragment {
         binding.ivWearingOutfitPicToday.setVisibility(View.VISIBLE);
         Glide.with(myContext).load(post.getWearingOutfitPicture().getUrl()).transform(new RoundedCorners(50)).into(binding.ivWearingOutfitPicToday);
         binding.tvOurPicks.setText(myContext.getString(R.string.header_your_outfit));
+        binding.tvOurPicks.setVisibility(View.VISIBLE);
+        binding.btnSubmitToday.setVisibility(View.INVISIBLE);
     }
 
     private void populatePost(WeatherCondition weatherCondition, OutfitPost post, HashMap<String,List<Garment>> closet) {
@@ -409,13 +419,8 @@ public class TodayFragment extends Fragment {
     }
 
     private void bindEmptyUI() {
-
+        binding.pbLoading.setVisibility(View.INVISIBLE);
         Log.i(TAG, "in setEmptyUI");
-        binding.btnSubmitToday.setVisibility(View.GONE);
-        binding.glGarments.setVisibility(View.GONE);
-        binding.tvNumStars.setVisibility(View.GONE);
-        binding.rbMatchScore.setVisibility(View.GONE);
-        binding.tvOurPicks.setVisibility(View.GONE);
         binding.tvNoItemsYet.setVisibility(View.VISIBLE);
     }
 

@@ -31,11 +31,15 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
 
     public GarmentAdapter(List<Garment> garments, Context context){
         this.context = context;
+
         this.garments = garments;
     }
 
     @Override
     public int getItemCount(){
+        if (garments == null) {
+            return 0;
+        }
         return garments.size();
     }
 
@@ -50,6 +54,9 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
     @Override
     public void bindVH(@NonNull GarmentAdapter.ViewHolder viewHolder, int i) {
         // makes sure that when a certain garment is chosen, it will appear on top.
+        if (garments == null) {
+            viewHolder.tvGarmentDescription.setText(R.string.description_none);
+        }
         Garment chosenItem = garments.get(i);
         Log.i("Garments Adapter", "size of garments: " + garments.size());
         if (chosenItem != null) {
@@ -60,7 +67,7 @@ public class GarmentAdapter extends CardSliderAdapter<GarmentAdapter.ViewHolder>
                 e.printStackTrace();
             }
         } else {
-            viewHolder.tvGarmentDescription.setText("None");
+            viewHolder.tvGarmentDescription.setText(R.string.description_none);
         }
     }
 

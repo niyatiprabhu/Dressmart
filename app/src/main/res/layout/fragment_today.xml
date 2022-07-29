@@ -9,6 +9,17 @@
     android:orientation="vertical"
     tools:context=".fragments.TodayFragment">
 
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/maroon"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvToday"
         android:layout_width="wrap_content"
@@ -17,6 +28,7 @@
         android:fontFamily="@font/alegreya"
         android:text="Today"
         android:textAlignment="center"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,6 +50,7 @@
             android:id="@+id/ivWeatherIconToday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_conversion_absoluteHeight="128dp"
@@ -53,6 +66,7 @@
             android:fontFamily="@font/alegreya"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textSize="34sp"
+            android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@+id/ivWeatherIconToday"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_conversion_absoluteHeight="45dp"
@@ -68,6 +82,7 @@
             android:fontFamily="@font/alegreya"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textSize="24sp"
+            android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@+id/tvTempToday"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_conversion_absoluteHeight="30dp"
@@ -85,6 +100,7 @@
         android:gravity="center"
         android:text="@string/header_our_picks"
         android:textAlignment="center"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clWeather"
@@ -110,6 +126,7 @@
         android:layout_height="0dp"
         android:columnCount="2"
         android:rowCount="2"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/btnSubmitToday"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -167,6 +184,7 @@
         android:text="show it off"
         android:textAlignment="center"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:icon="@android:drawable/ic_menu_camera"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -183,6 +201,7 @@
         android:numStars="5"
         android:progressTint="@color/mauve"
         android:stepSize="0.5"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -194,6 +213,7 @@
         android:text="TextView"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/rbMatchScore"
         app:layout_constraintEnd_toStartOf="@+id/rbMatchScore"
         app:layout_constraintStart_toStartOf="parent"
@@ -207,6 +227,7 @@
         android:fontFamily="@font/alegreya"
         android:text="No Items Added Yet!"
         android:textSize="20sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

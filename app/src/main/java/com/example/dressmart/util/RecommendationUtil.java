@@ -63,7 +63,9 @@ public class RecommendationUtil {
         // sort each list by ascending date last worn
         Collections.sort(closet.get(TOP), dateComparator);
         Collections.sort(closet.get(BOTTOMS), dateComparator);
-        Collections.sort(closet.get(OUTER), dateComparator);
+        if (closet.get(OUTER) != null) {
+            Collections.sort(closet.get(OUTER), dateComparator);
+        }
         Collections.sort(closet.get(SHOES), dateComparator);
 
         // each list is sorted from least recently worn to most recently worn,
@@ -100,6 +102,9 @@ public class RecommendationUtil {
 
     private static Garment selectOuter(WeatherCondition weatherCondition, HashMap<String, List<Garment>> closet) {
         Garment outer = null;
+        if (closet.get(OUTER) == null) {
+            return outer;
+        }
         for (Garment item : closet.get(OUTER)) {
             if (weatherCondition.getAvgTemp() < 40) {
                 if (item.getSubtype().equals(COAT)) {

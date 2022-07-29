@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment {
         rvPostsProfile = binding.rvPostsProfile;
         rvSearchResults = binding.rvSearchResults;
         binding.rvSearchResults.setVisibility(View.GONE);
-        binding.tvNumResultsSearch.setVisibility(View.VISIBLE);
+        binding.tvResultsFor.setVisibility(View.GONE);
 
         GridLayoutManager glm = new GridLayoutManager(getContext(), 2);
 
@@ -94,11 +94,12 @@ public class ProfileFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 rvPostsProfile.setVisibility(View.GONE);
                 rvSearchResults.setVisibility(View.VISIBLE);
-                binding.tvNumResultsSearch.setVisibility(View.VISIBLE);
+                binding.tvResultsFor.setVisibility(View.VISIBLE);
                 querySearchResults(query);
                 binding.svFindOutfits.clearFocus(); // so that setOnQueryTextListener only runs once
                 searchAdapter.clear();
-                binding.tvNumResultsSearch.setText(getString(R.string.heading_result) + " " + query + ":");
+                binding.tvResultsFor.setText(getString(R.string.heading_result) + " " + query + ":");
+                binding.tvResultsFor.setVisibility(View.VISIBLE);
                 return false;
             }
 
@@ -123,7 +124,7 @@ public class ProfileFragment extends Fragment {
                 searchAdapter.clear();
                 rvPostsProfile.setVisibility(View.VISIBLE);
                 rvSearchResults.setVisibility(View.GONE);
-                binding.tvNumResultsSearch.setVisibility(View.GONE);
+                binding.tvResultsFor.setVisibility(View.GONE);
                 return false;
             }
         });
@@ -244,6 +245,7 @@ public class ProfileFragment extends Fragment {
                 }
 
                 objects.removeAll(Collections.singletonList(null));
+                searchAdapter.clear();
                 searchResults.addAll(objects);
                 searchAdapter.notifyDataSetChanged();
             }
